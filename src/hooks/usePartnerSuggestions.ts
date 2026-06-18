@@ -1,6 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/components/providers/AuthProvider";
+// TODO: cablear fase 2
 import type { RatingSport } from "@/lib/rating-utils";
 
 export interface FitSignal {
@@ -31,27 +29,9 @@ export interface PartnerSuggestion {
 }
 
 export const usePartnerSuggestions = (
-  limit = 12,
-  sport: RatingSport = "tenis_singles",
+  _limit = 12,
+  _sport: RatingSport = "tenis_singles",
 ) => {
-  const { user } = useAuth();
-  const [rows, setRows] = useState<PartnerSuggestion[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const refresh = useCallback(async () => {
-    if (!user) return;
-    setLoading(true);
-    const { data, error } = await supabase.rpc("get_partner_suggestions", {
-      _limit: limit,
-      _sport: sport,
-    });
-    if (!error && data) setRows(data as unknown as PartnerSuggestion[]);
-    setLoading(false);
-  }, [user, limit, sport]);
-
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
-
-  return { rows, loading, refresh };
+  // TODO: cablear fase 2
+  return { rows: [] as PartnerSuggestion[], loading: false, refresh: async () => {} };
 };

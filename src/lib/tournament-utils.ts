@@ -1,14 +1,13 @@
-import type { Database } from "@/integrations/supabase/types";
 
-export type TournamentStatus = Database["public"]["Enums"]["tournament_status"];
-export type TournamentDiscipline = Database["public"]["Enums"]["tournament_discipline"];
-export type RegistrationStatus = Database["public"]["Enums"]["registration_status"];
-export type MatchStatus = Database["public"]["Enums"]["match_status"];
-export type CourtSurface = Database["public"]["Enums"]["court_surface"];
-export type ResultValidationMode = Database["public"]["Enums"]["result_validation_mode"];
-export type CategoryGender = Database["public"]["Enums"]["category_gender"];
-export type MatchResultProposalStatus = Database["public"]["Enums"]["match_result_proposal_status"];
-export type RescheduleRequestStatus = Database["public"]["Enums"]["reschedule_request_status"];
+export type TournamentStatus = string /* TODO: cablear fase 2 */;
+export type TournamentDiscipline = string /* TODO: cablear fase 2 */;
+export type RegistrationStatus = string /* TODO: cablear fase 2 */;
+export type MatchStatus = string /* TODO: cablear fase 2 */;
+export type CourtSurface = string /* TODO: cablear fase 2 */;
+export type ResultValidationMode = string /* TODO: cablear fase 2 */;
+export type CategoryGender = string /* TODO: cablear fase 2 */;
+export type MatchResultProposalStatus = string /* TODO: cablear fase 2 */;
+export type RescheduleRequestStatus = string /* TODO: cablear fase 2 */;
 
 /**
  * Zona de riesgo en standings (PRD 5 · QA 2.2.1–2.2.4).

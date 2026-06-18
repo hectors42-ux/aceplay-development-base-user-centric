@@ -1,6 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-
+// TODO: cablear fase 2
 export interface ChallengeablePlayer {
   user_id: string;
   pos: number;
@@ -16,42 +14,12 @@ export interface ChallengeablePlayer {
   score: number;
 }
 
-interface State {
-  loading: boolean;
-  rows: ChallengeablePlayer[];
-  error: string | null;
-}
-
-/**
- * Devuelve la lista de rivales que puedo desafiar en una Pirámide,
- * ordenados por score de compatibilidad (rating, actividad, horarios, revancha).
- */
-export const useChallengeablePlayers = (ladderId: string | null) => {
-  const [state, setState] = useState<State>({ loading: false, rows: [], error: null });
-
-  const refresh = useCallback(async () => {
-    if (!ladderId) {
-      setState({ loading: false, rows: [], error: null });
-      return;
-    }
-    setState((s) => ({ ...s, loading: true, error: null }));
-    const { data, error } = await supabase.rpc("get_challengeable_players", {
-      _ladder_id: ladderId,
-    });
-    if (error) {
-      setState({ loading: false, rows: [], error: error.message });
-      return;
-    }
-    setState({
-      loading: false,
-      rows: (data ?? []) as unknown as ChallengeablePlayer[],
-      error: null,
-    });
-  }, [ladderId]);
-
-  useEffect(() => {
-    void refresh();
-  }, [refresh]);
-
-  return { ...state, refresh };
+export const useChallengeablePlayers = (_ladderId: string | null) => {
+  // TODO: cablear fase 2
+  return {
+    loading: false,
+    rows: [] as ChallengeablePlayer[],
+    error: null as string | null,
+    refresh: async () => {},
+  };
 };

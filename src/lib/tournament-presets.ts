@@ -1,8 +1,7 @@
-import type { Database } from "@/integrations/supabase/types";
 
-export type CompetitionMotor = Database["public"]["Enums"]["competition_motor"];
-export type TournamentSport = Database["public"]["Enums"]["tournament_sport"];
-export type TournamentModality = Database["public"]["Enums"]["tournament_modality"];
+export type CompetitionMotor = string /* TODO: cablear fase 2 */;
+export type TournamentSport = string /* TODO: cablear fase 2 */;
+export type TournamentModality = string /* TODO: cablear fase 2 */;
 
 export type Scoring =
   | "sets_2_de_3"

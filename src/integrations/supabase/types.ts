@@ -206,10 +206,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_access_space: { Args: { p_space: string }; Returns: boolean }
+      is_member_of_space: { Args: { p_space: string }; Returns: boolean }
       is_minor: {
         Args: { p: Database["public"]["Tables"]["profiles"]["Row"] }
         Returns: boolean
       }
+      space_admin: { Args: { p_space: string }; Returns: boolean }
       text2ltree: { Args: { "": string }; Returns: unknown }
     }
     Enums: {

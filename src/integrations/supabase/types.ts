@@ -391,33 +391,69 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          backhand: string | null
+          bio: string | null
           birthdate: string | null
           created_at: string
           data_consent: Json
           display_name: string
+          dominant_hand: string | null
+          favorite_shot: string | null
+          favorite_surface: string | null
+          first_name: string | null
           handle: string
           id: string
+          last_name: string | null
+          phone: string | null
+          playing_style: string | null
           rut: string | null
+          show_email: boolean
+          show_phone: boolean
+          years_playing: number | null
         }
         Insert: {
           avatar_url?: string | null
+          backhand?: string | null
+          bio?: string | null
           birthdate?: string | null
           created_at?: string
           data_consent?: Json
           display_name: string
+          dominant_hand?: string | null
+          favorite_shot?: string | null
+          favorite_surface?: string | null
+          first_name?: string | null
           handle: string
           id: string
+          last_name?: string | null
+          phone?: string | null
+          playing_style?: string | null
           rut?: string | null
+          show_email?: boolean
+          show_phone?: boolean
+          years_playing?: number | null
         }
         Update: {
           avatar_url?: string | null
+          backhand?: string | null
+          bio?: string | null
           birthdate?: string | null
           created_at?: string
           data_consent?: Json
           display_name?: string
+          dominant_hand?: string | null
+          favorite_shot?: string | null
+          favorite_surface?: string | null
+          first_name?: string | null
           handle?: string
           id?: string
+          last_name?: string | null
+          phone?: string | null
+          playing_style?: string | null
           rut?: string | null
+          show_email?: boolean
+          show_phone?: boolean
+          years_playing?: number | null
         }
         Relationships: []
       }
@@ -726,6 +762,10 @@ export type Database = {
     }
     Functions: {
       can_access_space: { Args: { p_space: string }; Returns: boolean }
+      get_player_category: {
+        Args: { _nivel: number; _sport?: string }
+        Returns: string
+      }
       is_member_of_space: { Args: { p_space: string }; Returns: boolean }
       is_minor: {
         Args: { p: Database["public"]["Tables"]["profiles"]["Row"] }

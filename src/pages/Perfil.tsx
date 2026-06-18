@@ -70,23 +70,25 @@ export default function Perfil() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-2xl">Tu perfil</h1>
-        <p className="text-sm text-muted-foreground">Datos visibles para otros jugadores y clubes.</p>
-      </div>
+      <section className="relative overflow-hidden rounded-3xl border border-primary/15 bg-gradient-to-br from-primary/10 via-card to-card p-5 shadow-sm">
+        <div className="flex items-center gap-4">
+          <Avatar className="h-20 w-20 ring-2 ring-primary/30">
+            {avatarUrl && <AvatarImage src={avatarUrl} />}
+            <AvatarFallback className="bg-primary/10 font-display text-xl text-primary">
+              {(displayName || profile.handle).slice(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0">
+            <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-primary">Perfil</p>
+            <h1 className="mt-1 font-display text-2xl leading-tight">{displayName || profile.handle}</h1>
+            <p className="truncate text-xs text-muted-foreground">@{profile.handle} · {user.email}</p>
+          </div>
+        </div>
+      </section>
 
       <Card>
         <CardContent className="space-y-4 p-4">
-          <div className="flex items-center gap-4">
-            <Avatar className="h-14 w-14">
-              {avatarUrl && <AvatarImage src={avatarUrl} />}
-              <AvatarFallback>{displayName.slice(0, 2).toUpperCase()}</AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="font-display text-lg">@{profile.handle}</p>
-              <p className="text-xs text-muted-foreground">{user.email}</p>
-            </div>
-          </div>
+          <p className="font-display text-lg">Tus datos</p>
           <div className="space-y-1.5">
             <Label htmlFor="display">Nombre a mostrar</Label>
             <Input id="display" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
@@ -100,7 +102,7 @@ export default function Perfil() {
               placeholder="https://…"
             />
           </div>
-          <Button onClick={saveBasics} disabled={saving}>
+          <Button onClick={saveBasics} disabled={saving} className="rounded-full">
             {saving ? "Guardando…" : "Guardar cambios"}
           </Button>
         </CardContent>
@@ -141,7 +143,7 @@ export default function Perfil() {
         </CardContent>
       </Card>
 
-      <Button variant="outline" className="w-full" onClick={onSignOut}>
+      <Button variant="outline" className="w-full rounded-full" onClick={onSignOut}>
         Cerrar sesión
       </Button>
     </div>

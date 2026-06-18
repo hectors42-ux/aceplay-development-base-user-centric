@@ -51,10 +51,10 @@ export default function Perfil() {
   };
 
   const savePrivacy = async (key: "analytics" | "brand_targeting", value: boolean) => {
-    const next = { ...(profile.data_consent ?? {}), [key]: value } as Record<string, unknown>;
+    const next = { ...(profile.data_consent ?? {}), [key]: value };
     const { error } = await supabase
       .from("profiles")
-      .update({ data_consent: next })
+      .update({ data_consent: next as never })
       .eq("id", user.id);
     if (error) {
       toast.error(error.message);

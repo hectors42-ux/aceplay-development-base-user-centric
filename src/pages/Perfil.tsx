@@ -1,151 +1,237 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { useState } from "react";
+import { SportBadge } from "@/components/SportBadge";
+import {
+  ArrowLeft,
+  Pencil,
+  FileText,
+  LogOut,
+  Settings,
+  Megaphone,
+  Users,
+  Trophy,
+  ListOrdered,
+  ChevronRight,
+  GraduationCap,
+  Download,
+  Sparkles,
+  
+  BarChart3,
+} from "lucide-react";
+import { AnalyticsManualDialog } from "@/components/analytics/AnalyticsManualDialog";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { BottomNav } from "@/components/BottomNav";
+import { ThemePicker } from "@/components/ThemePicker";
+import { PlayerProfileCard } from "@/components/profile/PlayerProfileCard";
+import { BadgesGrid } from "@/components/profile/BadgesGrid";
+import { ProfileEditDialog } from "@/components/profile/ProfileEditDialog";
+
+import { LegalLinksList } from "@/components/legal/LegalLinksList";
+import { WelcomeTour, resetWelcomeTour } from "@/components/onboarding/WelcomeTour";
+import { NotificationPreferencesCard } from "@/components/profile/NotificationPreferencesCard";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent } from "@/components/ui/card";
-import { useAuth } from "@/lib/auth";
-import { supabase } from "@/integrations/supabase/client";
+import { useMyCoachProfile } from "@/hooks/useCoaches";
+import { useClubBrand } from "@/components/providers/ClubBrandProvider";
 
-export default function Perfil() {
-  const { user, profile, refreshProfile, signOut } = useAuth();
-  const nav = useNavigate();
-  const [displayName, setDisplayName] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState("");
-  const [analytics, setAnalytics] = useState(false);
-  const [brand, setBrand] = useState(false);
-  const [saving, setSaving] = useState(false);
+const Perfil = () => {
+  const { profile, user, isAdmin, signOut } = useAuth();
+  const { data: coachProfile } = useMyCoachProfile();
+  const { brand } = useClubBrand();
+  const [editing, setEditing] = useState(false);
+  const [tourOpen, setTourOpen] = useState(false);
 
-  useEffect(() => {
-    document.title = "Perfil · AcePlay";
-  }, []);
-
-  useEffect(() => {
-    if (profile) {
-      setDisplayName(profile.display_name);
-      setAvatarUrl(profile.avatar_url ?? "");
-      const c = (profile.data_consent ?? {}) as Record<string, unknown>;
-      setAnalytics(Boolean(c["analytics"]));
-      setBrand(Boolean(c["brand_targeting"]));
-    }
-  }, [profile]);
-
-  if (!user || !profile) return null;
-
-  const saveBasics = async () => {
-    setSaving(true);
-    const { error } = await supabase
-      .from("profiles")
-      .update({ display_name: displayName, avatar_url: avatarUrl || null })
-      .eq("id", user.id);
-    setSaving(false);
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    await refreshProfile();
-    toast.success("Perfil actualizado");
+  const openTour = () => {
+    resetWelcomeTour();
+    setTourOpen(true);
   };
 
-  const savePrivacy = async (key: "analytics" | "brand_targeting", value: boolean) => {
-    const next = { ...(profile.data_consent ?? {}), [key]: value };
-    const { error } = await supabase
-      .from("profiles")
-      .update({ data_consent: next as never })
-      .eq("id", user.id);
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    await refreshProfile();
-  };
+  const memberName = profile
+    ? `${profile.first_name} ${profile.last_name}`.trim()
+    : "Mi perfil";
 
-  const onSignOut = async () => {
-    await signOut();
-    nav("/login", { replace: true });
-  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const ext = (profile ?? {}) as any;
 
   return (
-    <div className="space-y-6">
-      <section className="relative overflow-hidden rounded-3xl border border-primary/15 bg-gradient-to-br from-primary/10 via-card to-card p-5 shadow-sm">
-        <div className="flex items-center gap-4">
-          <Avatar className="h-20 w-20 ring-2 ring-primary/30">
-            {avatarUrl && <AvatarImage src={avatarUrl} />}
-            <AvatarFallback className="bg-primary/10 font-display text-xl text-primary">
-              {(displayName || profile.handle).slice(0, 2).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          <div className="min-w-0">
-            <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-primary">Perfil</p>
-            <h1 className="mt-1 font-display text-2xl leading-tight">{displayName || profile.handle}</h1>
-            <p className="truncate text-xs text-muted-foreground">@{profile.handle} · {user.email}</p>
-          </div>
-        </div>
-      </section>
-
-      <Card>
-        <CardContent className="space-y-4 p-4">
-          <p className="font-display text-lg">Tus datos</p>
-          <div className="space-y-1.5">
-            <Label htmlFor="display">Nombre a mostrar</Label>
-            <Input id="display" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="avatar">Avatar (URL)</Label>
-            <Input
-              id="avatar"
-              value={avatarUrl}
-              onChange={(e) => setAvatarUrl(e.target.value)}
-              placeholder="https://…"
-            />
-          </div>
-          <Button onClick={saveBasics} disabled={saving} className="rounded-full">
-            {saving ? "Guardando…" : "Guardar cambios"}
-          </Button>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="space-y-4 p-4">
-          <div>
-            <p className="font-display text-lg">Privacidad</p>
-            <p className="text-xs text-muted-foreground">
-              Controla cómo se usan tus datos. Ley 21.719.
+    <div className="min-h-screen bg-gradient-warm">
+      <header className="safe-top sticky top-0 z-10 border-b border-border bg-background/85 backdrop-blur-md">
+        <div className="mx-auto flex max-w-md items-center gap-3 px-5 pb-3 pt-3">
+          <Link
+            to="/"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-foreground transition-smooth hover:bg-muted/70"
+            aria-label="Volver al inicio"
+          >
+            <ArrowLeft className="h-4 w-4" strokeWidth={2.5} />
+          </Link>
+          <div className="min-w-0 flex-1">
+            <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+              Perfil
             </p>
+            <h1 className="truncate font-display text-lg font-semibold text-foreground">
+              {memberName}
+            </h1>
           </div>
-          <label className="flex items-start gap-3 text-sm">
-            <Checkbox
-              checked={analytics}
-              onCheckedChange={(v) => {
-                const next = v === true;
-                setAnalytics(next);
-                savePrivacy("analytics", next);
-              }}
-              className="mt-0.5"
-            />
-            <span>Analítica opcional para mejorar AcePlay.</span>
-          </label>
-          <label className="flex items-start gap-3 text-sm">
-            <Checkbox
-              checked={brand}
-              onCheckedChange={(v) => {
-                const next = v === true;
-                setBrand(next);
-                savePrivacy("brand_targeting", next);
-              }}
-              className="mt-0.5"
-            />
-            <span>Uso anonimizado para campañas de marcas patrocinadoras.</span>
-          </label>
-        </CardContent>
-      </Card>
+          <SportBadge />
+          {profile && (
+            <Button size="sm" variant="outline" onClick={() => setEditing(true)}>
+              <Pencil className="mr-1 h-3 w-3" /> Editar
+            </Button>
+          )}
+        </div>
+      </header>
 
-      <Button variant="outline" className="w-full rounded-full" onClick={onSignOut}>
-        Cerrar sesión
-      </Button>
+      <main className="mx-auto max-w-md space-y-4 pb-24 pt-3">
+        {user && (
+          <section className="px-5">
+            <PlayerProfileCard userId={user.id} mode="own" />
+          </section>
+        )}
+
+        {user && (
+          <section className="space-y-2 px-5">
+            <h2 className="font-display text-base font-semibold">Logros</h2>
+            <BadgesGrid userId={user.id} />
+          </section>
+        )}
+
+        <section className="space-y-2 px-5">
+          <h2 className="flex items-center gap-2 font-display text-base font-semibold">
+            <Settings className="h-4 w-4" /> Preferencias
+          </h2>
+          <div className="rounded-2xl border border-border bg-card p-4 shadow-card">
+            <ThemePicker />
+          </div>
+        </section>
+
+        {coachProfile && (
+          <section className="space-y-2 px-5">
+            <h2 className="flex items-center gap-2 font-display text-base font-semibold">
+              <GraduationCap className="h-4 w-4" /> Soy coach
+            </h2>
+            <Link
+              to="/coach"
+              className="flex items-center justify-between rounded-2xl border border-border bg-card px-4 py-3 text-sm font-medium text-foreground shadow-card transition-smooth hover:bg-muted"
+            >
+              <span className="flex items-center gap-2">
+                <GraduationCap className="h-4 w-4 text-primary" />
+                Mi panel de coach
+              </span>
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            </Link>
+          </section>
+        )}
+
+        {isAdmin && (
+          <section className="space-y-2 px-5">
+            <h2 className="flex items-center gap-2 font-display text-base font-semibold">
+              <Settings className="h-4 w-4" /> Administración del club
+            </h2>
+            <div className="space-y-2">
+              {[
+                { to: "/admin/canchas", icon: Settings, label: "Canchas y reglas" },
+                { to: "/admin/socios", icon: Users, label: "Administrar socios" },
+                { to: "/admin/torneos", icon: Trophy, label: "Administrar torneos" },
+                { to: "/admin/ladder", icon: ListOrdered, label: "Administrar Pirámide" },
+                { to: "/admin/clases", icon: GraduationCap, label: "Clases & coaches" },
+                { to: "/admin/comunicaciones", icon: Megaphone, label: "Anuncios del club" },
+                { to: "/admin/documentos", icon: FileText, label: "Reglamentos y documentos" },
+              ].map(({ to, icon: Icon, label }) => (
+                <Link
+                  key={to}
+                  to={to}
+                  className="flex items-center justify-between rounded-2xl border border-border bg-card px-4 py-3 text-sm font-medium text-foreground shadow-card transition-smooth hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <span className="flex items-center gap-2">
+                    <Icon className="h-4 w-4 text-primary" />
+                    {label}
+                  </span>
+                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                </Link>
+              ))}
+            </div>
+
+            <div className="space-y-2 rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 via-card to-card p-3 shadow-card">
+              <Link
+                to="/admin/analytics"
+                className="flex items-center justify-between rounded-xl bg-primary/10 px-3 py-2 text-sm font-semibold text-foreground transition-smooth hover:bg-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <span className="flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4 text-primary" />
+                  Analítica del club
+                </span>
+                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              </Link>
+              <AnalyticsManualDialog />
+            </div>
+          </section>
+        )}
+
+        <NotificationPreferencesCard />
+
+        <section className="space-y-2 px-5">
+          <h2 className="flex items-center gap-2 font-display text-base font-semibold">
+            <FileText className="h-4 w-4" /> Documentos y ayuda
+          </h2>
+          <LegalLinksList />
+          <button
+            type="button"
+            onClick={openTour}
+            className="flex w-full items-center justify-between rounded-2xl border border-border bg-card px-4 py-3 text-sm font-medium text-foreground shadow-card transition-smooth hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <span className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-primary" />
+              Ver tour de bienvenida
+            </span>
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          </button>
+          <Link
+            to="/install"
+            className="flex items-center justify-between rounded-2xl border border-border bg-card px-4 py-3 text-sm font-medium text-foreground shadow-card transition-smooth hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <span className="flex items-center gap-2">
+              <Download className="h-4 w-4 text-primary" />
+              Instalar app en tu teléfono
+            </span>
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          </Link>
+        </section>
+
+
+        <section className="px-5">
+          <Button
+            variant="outline"
+            className="w-full justify-center gap-2"
+            onClick={() => signOut()}
+          >
+            <LogOut className="h-4 w-4" />
+            Cerrar sesión
+          </Button>
+        </section>
+
+        <footer className="space-y-1 px-5 pt-2 text-center">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+            {brand.name} · {new Date().getFullYear()}
+          </p>
+          <p className="text-[10px] text-muted-foreground/80">
+            Todos los derechos reservados.
+          </p>
+        </footer>
+      </main>
+
+      {profile && (
+        <ProfileEditDialog
+          open={editing}
+          onOpenChange={setEditing}
+          profile={profile as never}
+          onSaved={() => undefined}
+        />
+      )}
+
+      <WelcomeTour open={tourOpen} onOpenChange={setTourOpen} />
+
+      <BottomNav />
     </div>
   );
-}
+};
+
+export default Perfil;

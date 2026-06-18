@@ -1,47 +1,77 @@
-## Seed determinístico v1 — `seed/demo.sql` (idempotente)
+## UI Fase 1 — Player-first (AcePlay)
 
-Una sola migración (sin código frontend). Estrategia: **DELETE por slug/handle → INSERT** + `on conflict do nothing/update` como red de seguridad. UUIDs derivados de `md5(slug)::uuid` para que cada re-run produzca exactamente los mismos IDs y los FKs cuadren entre corridas.
+Construyo el esqueleto de navegación centrado en el jugador sobre el schema existente. Sin motor de torneos, sin rating/puntos, sin tablas nuevas.
 
-### 1. `category_config` — semilla canónica §11.2
-Tal cual el bloque que mandaste (12 filas, `on conflict (sport, rank_order) do update`). Tenis 1-5, padel 1-7.
-
-### 2. Espacio demo (idempotente)
-
-**Slugs estables** (base de los UUIDs vía `md5`):
-- club: `demo-club` → path `demo_club`
-- tournament: `torneo-apertura` (parent club) → path `demo_club.torneo_apertura`
-- category: `cuarta` (parent tournament) → path `demo_club.torneo_apertura.cuarta`
-- escalerilla: `escalerilla` (parent club) → path `demo_club.escalerilla`
-
-**Configs 1:1:**
-- `club_profile`: `legal_name='Club Demo'`, `branding='{}'`, sin tax_id.
-- `tournament_config`: `disciplina='tennis'`, `motor='round_robin'`, `scoring='best_of_3'`, `prestige_mult=1.0`.
-- `escalerilla_config`: `season_label='T1'`, `pyramid='{}'`, `challenge_rules='{}'`.
-
-**Profiles demo (16):** handles `demo01`..`demo16`, display_name `Demo 01`..`Demo 16`, UUIDs vía `md5('demo-profile-'||handle)::uuid`. Sin `auth.users` real (los seeds no autentican). `data_consent='{}'`.
-
-**`space_membership`:**
-- Los 16 en el club (`role='player'`, `status='active'`). `demo01` además es `owner` del club y `organizer_id` de los 4 spaces.
-- Primeros 8 (`demo01`..`demo08`) miembros de la categoría.
-- Últimos 8 (`demo09`..`demo16`) miembros de la escalerilla.
-
-### 3. Orden de borrado (cascade hace el resto)
+### 0. Pre-requisito SQL (1 migración)
+Ampliar policy de lectura de `space_membership` para que un miembro/admin/usuario-con-acceso pueda ver a los demás:
 ```sql
-delete from space_membership where player_id in (select id from profiles where handle like 'demo%');
-delete from space where slug in ('demo-club','torneo-apertura','cuarta','escalerilla')
-  and (path::text like 'demo_club%' or slug='demo-club');
--- club_profile / tournament_config / escalerilla_config caen por FK on delete cascade
-delete from profiles where handle like 'demo%';
+drop policy if exists sm_read on public.space_membership;
+create policy sm_read on public.space_membership for select
+  using (player_id = auth.uid() or public.space_admin(space_id) or public.can_access_space(space_id));
 ```
 
-### 4. Forma de ejecución
-- Va por **migration tool** (cambios deterministas; no usa `auth.uid()`).
-- Re-correr la migration produce el mismo estado final (UUIDs estables, deletes previos).
+### 1. Setup base
+- Instalar shadcn/ui (button, card, input, tabs, badge, avatar, dialog, checkbox, label, sonner, skeleton).
+- Tailwind tokens Clay: primary `#C85C2D`, background `#FDF9F4`, foreground `#2A1F17` mapeados en `index.css` como HSL semantic tokens. Serif (Georgia) para titulares, sans system para cuerpo.
+- React Router + TanStack Query providers en `App.tsx`.
+- Provider `AuthProvider` con `supabase.auth.onAuthStateChange` + sesión inicial.
+- Configurar Google OAuth en backend (provider) y URL redirect a `${origin}/`.
 
-### Asunciones que conviene confirmar antes de codear
-1. **Deporte del torneo y la escalerilla:** asumo `tennis` para ambos. ¿OK o uno de los dos en padel?
-2. **Motor del torneo:** asumo `round_robin`. ¿Prefieres `grupos_playoff` o `americano`?
-3. **`profiles.id` sin FK a `auth.users`:** el schema actual no la tiene, así que los 16 demos son "shadow profiles" (no podrán loguearse, solo sirven para QA visual). ¿Confirmas o quieres que también cree usuarios reales en `auth` vía edge function?
-4. **Visibilidad de los spaces:** asumo `members` para club/torneo/categoría/escalerilla. ¿O quieres el club `public` para que se vea sin login?
+### 2. Rutas
+```
+/login          público
+/onboarding     auth obligatorio, sin onboarded
+/               Compite (home, mis espacios)
+/descubrir      Descubrir + unirse
+/space/:id      Vista de espacio
+/perfil         Perfil + privacidad + logout
+```
+- `<RequireAuth>` redirige a `/login` si no hay sesión.
+- `<RequireOnboarded>` redirige a `/onboarding` si `profiles.data_consent->>'onboarded'` es null.
+- Tras login completo: redirect a `/`.
 
-Dime las 4 respuestas (o "todo OK con los defaults") y emito la migration.
+### 3. Layout
+- `AppShell` con `<Outlet/>` + `BottomNav` mobile-first con 3 items: **Compite** (/) · **Descubrir** (/descubrir) · **Perfil** (/perfil). Reservar slots Reserva/Ranking/Torneos para fases futuras (no renderizar).
+
+### 4. Pantallas
+
+**`/login`** — Card centrada. Botón "Continuar con Google" (`signInWithOAuth`) + input email → "Enviar magic link" (`signInWithOtp`). Toast de confirmación.
+
+**`/onboarding`** — Form: `handle` (validación en blur con `select id from profiles where handle = ?` excluyendo propio; slugify minúsculas, sin espacios, `[a-z0-9_]`), `display_name`, avatar opcional (upload a bucket `avatars`, guardar `avatar_url`), checkboxes Ley 21.719: `terms` (requerido), `analytics` (opt-in), `brand_targeting` (opt-in). Submit → `update profiles set handle, display_name, avatar_url, data_consent = { onboarded:true, analytics, brand_targeting, accepted_at: ISO } where id = auth.uid()` → navigate `/`.
+
+**`/` Compite** — Query `space_membership` con `status='active'` join `space`. Agrupar por `space.type` en secciones: Clubes, Torneos, Escalerillas, Ligas. Card: nombre + badge type + badge role (si owner/admin/organizer) + sport. Para `type='category'` resolver nombre del torneo padre (`parent_space_id`). Vacío → CTA Descubrir. Tap → `/space/:id`.
+
+**`/space/:id`** — Fetch single space (RLS gobierna; error → 403 amable "No tienes acceso a este espacio"). Header: nombre, badge type, ícono candado/globo según visibility, sport. Tabs:
+- **Participantes**: lista `space_membership` del espacio con `profiles` (handle, display_name, avatar, role). Fila propia destacada (`ring-2 ring-primary`). Si existe `space_standing` propia, mostrar `local_rank` como "Posición #N" (sin rating).
+- **Info**: `settings.description` si hay, `join_policy`, organizador resuelto.
+- Si `type='club'` y `visibility='hierarchy'`: sección "Competencias del club" listando hijos (`parent_space_id = :id`), cada uno con CTA según §5.
+- Si `space_admin(id)`: botón "Gestionar" (placeholder/disabled "Próximamente").
+
+**`/descubrir`** — Lista `space` con `visibility='public'` y `type in ('tournament','escalerilla','liga')` + hijos por herencia (los retorna RLS automáticamente al `select * from space`, basta con un filtro amplio). Search por código: input → `select where slug ilike ? or settings->>'code' = ?`. Botón Unirme por card:
+- `open` → insert directo `status='active'`.
+- club-hijo con membership activa en padre → insert directo.
+- `request`/`invite` → insert `status='pending'`, toast "Solicitud enviada".
+- `code` → exige código.
+- `socios_only` → verificar membership activa en padre; si no, error "Solo para socios del club".
+Tras join active → invalidar query de Compite.
+
+**`/perfil`** — display_name/avatar editables. Sección Privacidad con toggles `analytics` y `brand_targeting` que hacen update a `data_consent`. Botón Cerrar sesión.
+
+### 5. Reglas que respeto
+- Sin tablas nuevas. Sin tocar motor (`matches`, `player_ratings`, `ladder_state`, ledgers).
+- Sin mostrar rating/Glicko/puntos/XP/Fichas en ningún lugar.
+- Sin filtrar por `tenant_id`/club en el cliente — RLS gobierna.
+- Español de Chile en toda la microcopy.
+- Mobile-first, shadcn, sin animaciones hero.
+
+### Archivos a crear (resumen)
+- 1 migración SQL (sm_read policy).
+- `src/index.css` (tokens Clay + serif), `tailwind.config.ts` (font-display Georgia).
+- `src/App.tsx` (providers + router).
+- `src/lib/auth.tsx` (AuthProvider, hooks).
+- `src/components/AppShell.tsx`, `BottomNav.tsx`, `RequireAuth.tsx`, `RequireOnboarded.tsx`, `SpaceCard.tsx`, `JoinButton.tsx`.
+- `src/pages/{Login,Onboarding,Compite,Descubrir,Space,Perfil,NotFound}.tsx`.
+- shadcn components vía CLI.
+
+### Criterios de aceptación que validaré
+Los 7 del prompt (login, onboarding gating, multi-pertenencia visible, 403, hierarchy, join open, sin rating).

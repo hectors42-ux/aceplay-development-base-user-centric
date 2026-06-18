@@ -142,25 +142,32 @@ export default function SpacePage() {
 
   return (
     <div className="space-y-6">
-      <header className="space-y-2">
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Badge variant="secondary" className="rounded-md text-[10px]">
+      <header className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/15 via-card to-card p-5 shadow-sm">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <Badge variant="clay" className="rounded-md text-[10px] uppercase tracking-wide">
             {space.type}
           </Badge>
-          {space.sport && <span className="capitalize">{space.sport}</span>}
-          {visibilityIcon(space.visibility)}
+          {space.sport && (
+            <Badge variant="outline-clay" className="rounded-md text-[10px] uppercase tracking-wide">
+              {space.sport}
+            </Badge>
+          )}
+          <span className="inline-flex items-center text-muted-foreground/70">
+            {visibilityIcon(space.visibility)}
+          </span>
         </div>
-        <div className="flex items-start justify-between gap-3">
+        <div className="mt-3 flex items-start justify-between gap-3">
           <h1 className="font-display text-3xl leading-tight">{space.name}</h1>
           {!iAmMember && <JoinButton space={space} />}
         </div>
         {standingQ.data?.local_rank != null && (
-          <p className="text-sm text-muted-foreground">
-            Tu posición: <span className="font-medium text-foreground">#{standingQ.data.local_rank}</span>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Tu posición:{" "}
+            <span className="font-display text-base text-primary">#{standingQ.data.local_rank}</span>
           </p>
         )}
         {adminQ.data && (
-          <Button variant="outline" size="sm" disabled>
+          <Button variant="outline" size="sm" disabled className="mt-3 rounded-full">
             Gestionar · Próximamente
           </Button>
         )}

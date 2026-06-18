@@ -1,9 +1,12 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { Compass } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { SpaceCard, type SpaceLike } from "@/components/SpaceCard";
+import { SectionHeader } from "@/components/SectionHeader";
+import { EmptyState } from "@/components/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 
@@ -59,8 +62,8 @@ export default function Compite() {
   if (isLoading) {
     return (
       <div className="space-y-3">
-        <Skeleton className="h-20 w-full" />
-        <Skeleton className="h-20 w-full" />
+        <Skeleton className="h-24 w-full rounded-2xl" />
+        <Skeleton className="h-24 w-full rounded-2xl" />
       </div>
     );
   }
@@ -68,28 +71,34 @@ export default function Compite() {
   const rows = data?.rows ?? [];
   if (!rows.length) {
     return (
-      <div className="rounded-2xl border border-dashed border-border bg-card p-8 text-center">
-        <p className="font-display text-xl">Aún no participas en ninguna competencia</p>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Explora en Descubrir o únete con un código.
-        </p>
-        <Button asChild className="mt-4">
-          <Link to="/descubrir">Ir a Descubrir</Link>
-        </Button>
-      </div>
+      <EmptyState
+        icon={Compass}
+        title="Aún no participas en ninguna competencia"
+        description="Explora torneos abiertos o únete con un código."
+        action={
+          <Button asChild>
+            <Link to="/descubrir">Ir a Descubrir</Link>
+          </Button>
+        }
+      />
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-7">
+      <div>
+        <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-primary">Player</p>
+        <h1 className="mt-1 font-display text-3xl leading-tight">Compite</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Tus espacios activos, organizados por tipo.
+        </p>
+      </div>
       {sectionOrder.map(({ key, label }) => {
         const items = rows.filter((r) => r.space.type === key);
         if (!items.length) return null;
         return (
           <section key={key}>
-            <h2 className="mb-2 px-1 text-xs font-medium uppercase tracking-widest text-muted-foreground">
-              {label}
-            </h2>
+            <SectionHeader eyebrow={`${items.length}`} title={label} />
             <div className="space-y-2">
               {items.map((r) => (
                 <SpaceCard

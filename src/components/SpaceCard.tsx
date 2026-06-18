@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Globe, Lock, Network } from "lucide-react";
+import { Globe, Lock, Network, ChevronRight } from "lucide-react";
 
 export type SpaceLike = {
   id: string;
@@ -18,6 +18,11 @@ const typeLabel: Record<string, string> = {
   escalerilla: "Escalerilla",
   liga: "Liga",
   hierarchy: "Jerarquía",
+};
+
+const sportLabel: Record<string, string> = {
+  tennis: "Tenis",
+  padel: "Pádel",
 };
 
 function VisibilityIcon({ v }: { v: string }) {
@@ -40,25 +45,41 @@ export function SpaceCard({
   rightSlot?: React.ReactNode;
 }) {
   const body = (
-    <Card className="flex items-center justify-between gap-3 p-4 transition-colors hover:bg-muted/40">
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Badge variant="secondary" className="rounded-md px-1.5 py-0 text-[10px]">
-            {typeLabel[space.type] ?? space.type}
-          </Badge>
-          {space.sport && <span className="capitalize">{space.sport}</span>}
-          <VisibilityIcon v={space.visibility} />
+    <Card className="group relative overflow-hidden border-border/70 bg-gradient-to-br from-card via-card to-primary/5 p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Badge variant="clay" className="rounded-md px-1.5 py-0 text-[10px] font-semibold uppercase tracking-wide">
+              {typeLabel[space.type] ?? space.type}
+            </Badge>
+            {role && role !== "player" && (
+              <Badge variant="olive" className="rounded-md px-1.5 py-0 text-[10px] font-semibold uppercase tracking-wide">
+                {role}
+              </Badge>
+            )}
+            <span className="inline-flex items-center text-muted-foreground/70">
+              <VisibilityIcon v={space.visibility} />
+            </span>
+          </div>
+          <p className="mt-2 truncate font-display text-lg leading-tight text-foreground">
+            {space.name}
+          </p>
+          <div className="mt-1 flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+            {space.sport && <span>{sportLabel[space.sport] ?? space.sport}</span>}
+            {parentName && (
+              <>
+                <span className="opacity-50">·</span>
+                <span className="normal-case tracking-normal">en {parentName}</span>
+              </>
+            )}
+          </div>
         </div>
-        <p className="mt-1 truncate font-display text-base">{space.name}</p>
-        {parentName && (
-          <p className="truncate text-xs text-muted-foreground">en {parentName}</p>
-        )}
-      </div>
-      <div className="flex items-center gap-2">
-        {role && role !== "player" && (
-          <Badge className="rounded-md text-[10px]">{role}</Badge>
-        )}
-        {rightSlot}
+        <div className="flex shrink-0 items-center gap-2">
+          {rightSlot}
+          {to && !rightSlot && (
+            <ChevronRight className="h-4 w-4 text-muted-foreground/60 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+          )}
+        </div>
       </div>
     </Card>
   );

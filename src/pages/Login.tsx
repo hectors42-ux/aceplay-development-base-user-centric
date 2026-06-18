@@ -50,22 +50,41 @@ export default function Login() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-background px-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle className="font-display text-2xl">Entra a AcePlay</CardTitle>
-          <p className="text-sm text-muted-foreground">Tu identidad de juego, en cualquier club.</p>
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4 py-10">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-70"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 60% at 50% 0%, hsl(var(--primary)/0.18), transparent 60%), radial-gradient(ellipse 60% 50% at 80% 100%, hsl(var(--accent)/0.12), transparent 60%)",
+        }}
+      />
+      <Card className="relative w-full max-w-sm border-border/70 bg-card/95 shadow-xl backdrop-blur">
+        <CardHeader className="text-center">
+          <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-primary">
+            Tennis, gamified
+          </p>
+          <CardTitle className="mt-2 font-display text-4xl leading-none">
+            Ace<span className="italic text-primary">Play</span>
+          </CardTitle>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Tu identidad de juego, en cualquier club.
+          </p>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <Button onClick={onGoogle} disabled={google} className="w-full" variant="outline">
+        <CardContent className="space-y-5">
+          <Button onClick={onGoogle} disabled={google} className="w-full rounded-full" variant="outline">
             {google ? "Redirigiendo…" : "Continuar con Google"}
           </Button>
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
-            <span className="h-px flex-1 bg-border" />o<span className="h-px flex-1 bg-border" />
+            <span className="h-px flex-1 bg-border" />
+            <span className="font-mono uppercase tracking-[0.3em]">o</span>
+            <span className="h-px flex-1 bg-border" />
           </div>
           <form onSubmit={onMagic} className="space-y-3">
             <div className="space-y-1.5">
-              <Label htmlFor="email">Tu correo</Label>
+              <Label htmlFor="email" className="font-mono text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
+                Tu correo
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -73,9 +92,10 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="tu@correo.cl"
+                className="h-11 rounded-xl bg-background"
               />
             </div>
-            <Button type="submit" className="w-full" disabled={sending}>
+            <Button type="submit" className="w-full rounded-full" disabled={sending}>
               {sending ? "Enviando…" : "Enviar enlace mágico"}
             </Button>
           </form>

@@ -1,77 +1,56 @@
-## UI Fase 1 — Player-first (AcePlay)
+## Restaurar look & feel Clay sobre player-first
 
-Construyo el esqueleto de navegación centrado en el jugador sobre el schema existente. Sin motor de torneos, sin rating/puntos, sin tablas nuevas.
+100% presentación. No toco backend, schema, RLS, motor ni queries existentes (`space`/`space_membership`/`profiles`). Solo recableo de UI.
 
-### 0. Pre-requisito SQL (1 migración)
-Ampliar policy de lectura de `space_membership` para que un miembro/admin/usuario-con-acceso pueda ver a los demás:
-```sql
-drop policy if exists sm_read on public.space_membership;
-create policy sm_read on public.space_membership for select
-  using (player_id = auth.uid() or public.space_admin(space_id) or public.can_access_space(space_id));
-```
+### 1. Design system (verificar, no rehacer)
+- `src/index.css` ya tiene la paleta Clay V3 completa (clay/cream/ink/olive, gradientes, sombras, `--font-display` Cormorant). Verifico que `tailwind.config.ts` expone los tokens necesarios; si faltan utilidades (`shadow-clay`, `bg-gradient-clay`, colores `cream/ink/clay/olive` semánticos), las agrego en `tailwind.config.ts` mapeadas a las vars CSS ya definidas.
+- `index.html`: agregar `<link>` a Google Fonts para Cormorant Garamond (display) + DM Sans (sans) si no están cargadas.
 
-### 1. Setup base
-- Instalar shadcn/ui (button, card, input, tabs, badge, avatar, dialog, checkbox, label, sonner, skeleton).
-- Tailwind tokens Clay: primary `#C85C2D`, background `#FDF9F4`, foreground `#2A1F17` mapeados en `index.css` como HSL semantic tokens. Serif (Georgia) para titulares, sans system para cuerpo.
-- React Router + TanStack Query providers en `App.tsx`.
-- Provider `AuthProvider` con `supabase.auth.onAuthStateChange` + sesión inicial.
-- Configurar Google OAuth en backend (provider) y URL redirect a `${origin}/`.
+### 2. AppShell rico
+Reemplazo `src/components/AppShell.tsx` por una versión con:
+- Fondo `bg-background` (crema) en toda la app.
+- Header sticky crema con sombra suave, wordmark "AcePlay" en `font-display` clay + arc-mark simple (SVG inline).
+- Bottom nav con 5 items: **Inicio** (`/`), **Compite** (`/compite`), **Descubrir** (`/descubrir`), **Reserva** (`/reserva`, placeholder), **Perfil** (`/perfil`). Activo en clay con pill de fondo `bg-primary/10`, íconos lucide.
+- Layout mobile-first; en `md+` ancho ampliado.
 
-### 2. Rutas
-```
-/login          público
-/onboarding     auth obligatorio, sin onboarded
-/               Compite (home, mis espacios)
-/descubrir      Descubrir + unirse
-/space/:id      Vista de espacio
-/perfil         Perfil + privacidad + logout
-```
-- `<RequireAuth>` redirige a `/login` si no hay sesión.
-- `<RequireOnboarded>` redirige a `/onboarding` si `profiles.data_consent->>'onboarded'` es null.
-- Tras login completo: redirect a `/`.
+Ajusto `src/App.tsx`: ruta `/` ahora es **Inicio**, Compite se mueve a `/compite`. Agrego rutas placeholder `/reserva` y `/torneos` (componente "Próximamente" estilizado).
 
-### 3. Layout
-- `AppShell` con `<Outlet/>` + `BottomNav` mobile-first con 3 items: **Compite** (/) · **Descubrir** (/descubrir) · **Perfil** (/perfil). Reservar slots Reserva/Ranking/Torneos para fases futuras (no renderizar).
+### 3. Componentes de presentación
+- **`SpaceCard`** (rehago `src/components/SpaceCard.tsx`): tarjeta con `rounded-2xl`, borde clay sutil, gradiente crema→clay/5 en hover, `name` en `font-display text-lg`, badge `type` (Club/Torneo/Escalerilla/Liga/Categoría) en clay, badge `role` (owner/admin/organizer) en olive, ícono de deporte (tennis/padel) lucide, sport en `text-mono uppercase tracking-wider`.
+- **`Badge` variants Clay** (ya existe shadcn badge; añado variantes `clay`, `olive`, `outline-clay` vía `cva`).
+- **`EmptyState`** (`src/components/EmptyState.tsx`): ícono grande en círculo clay/10, título display, copy cálido es-CL, CTA opcional. Reemplaza los "Aún no participas…" pelados.
+- **`SectionHeader`** (`src/components/SectionHeader.tsx`): eyebrow mono uppercase + título display, opcional acción a la derecha.
 
-### 4. Pantallas
+### 4. Pantallas fase 1 (solo piel)
+Sin tocar la lógica de datos ni los hooks/queries:
+- **`Login`**: fondo con gradiente clay sutil, card cream con sombra, wordmark grande en display, tagline "Tennis, gamified.", botón Google con ícono, separador "o", input + botón magic link estilizados.
+- **`Onboarding`**: layout con eyebrow + título display por sección, inputs cream, bloque de consentimiento Ley 21.719 en card destacada con borde clay y copy cálido.
+- **`Compite`** (`/compite`): header con saludo `Hola, {display_name}` + subtítulo, secciones agrupadas con `SectionHeader` por tipo, grid de `SpaceCard`. `EmptyState` cuando no hay membresías.
+- **`Space`**: header con gradiente clay, nombre en display XL, badges type/visibility/sport, tabs estilizados (Participantes/Info), lista de participantes con avatares h-10 + fila propia con anillo clay.
+- **`Descubrir`**: buscador con ícono lupa, grid de `SpaceCard` con `JoinButton` integrado, `EmptyState` cuando no hay resultados.
+- **`Perfil`**: header con avatar grande (h-20) + display_name en font-display + handle muted, secciones cards (Datos, Privacidad, Sesión), toggles tematizados, botón "Cerrar sesión" destructive outline.
 
-**`/login`** — Card centrada. Botón "Continuar con Google" (`signInWithOAuth`) + input email → "Enviar magic link" (`signInWithOtp`). Toast de confirmación.
+### 5. Pantalla Inicio nueva (`/`)
+`src/pages/Inicio.tsx` cableada al core nuevo:
+- Hero: saludo "Buen día, {display_name}" en display + avatar a la derecha.
+- Card resumen: count de `space_membership` activas (query existente reutilizada), CTA "Ver mis competencias" → `/compite`.
+- Sección "Tus competencias" (top 3 SpaceCards desde la misma query, `slice(0,3)`), link "Ver todas".
+- Card "Tu nivel" (placeholder elegante con skeleton-teaser, copy "Pronto verás tu rating cuando juegues tu primer partido oficial." — sin datos inventados).
+- Card "Próximos partidos" (placeholder vacío con ícono calendar, copy "Aún no tienes partidos agendados.").
 
-**`/onboarding`** — Form: `handle` (validación en blur con `select id from profiles where handle = ?` excluyendo propio; slugify minúsculas, sin espacios, `[a-z0-9_]`), `display_name`, avatar opcional (upload a bucket `avatars`, guardar `avatar_url`), checkboxes Ley 21.719: `terms` (requerido), `analytics` (opt-in), `brand_targeting` (opt-in). Submit → `update profiles set handle, display_name, avatar_url, data_consent = { onboarded:true, analytics, brand_targeting, accepted_at: ISO } where id = auth.uid()` → navigate `/`.
+### 6. Rutas placeholder
+`src/pages/ComingSoon.tsx` reutilizable para `/reserva` y `/torneos`: ícono grande, título display, copy "Estamos trabajando en esto. Vuelve pronto.", link a Inicio.
 
-**`/` Compite** — Query `space_membership` con `status='active'` join `space`. Agrupar por `space.type` en secciones: Clubes, Torneos, Escalerillas, Ligas. Card: nombre + badge type + badge role (si owner/admin/organizer) + sport. Para `type='category'` resolver nombre del torneo padre (`parent_space_id`). Vacío → CTA Descubrir. Tap → `/space/:id`.
+### Reglas que respeto
+- Cero referencias a `tenant_id`/`tournaments`/`tournament_registrations` o tablas viejas.
+- No restauro pantallas admin viejas.
+- No invento rating/puntos/Fichas — solo teasers.
+- No toco RLS, helpers, schema, edge functions.
+- Mobile-first; QA visual en 375/768/1280 antes de cerrar.
 
-**`/space/:id`** — Fetch single space (RLS gobierna; error → 403 amable "No tienes acceso a este espacio"). Header: nombre, badge type, ícono candado/globo según visibility, sport. Tabs:
-- **Participantes**: lista `space_membership` del espacio con `profiles` (handle, display_name, avatar, role). Fila propia destacada (`ring-2 ring-primary`). Si existe `space_standing` propia, mostrar `local_rank` como "Posición #N" (sin rating).
-- **Info**: `settings.description` si hay, `join_policy`, organizador resuelto.
-- Si `type='club'` y `visibility='hierarchy'`: sección "Competencias del club" listando hijos (`parent_space_id = :id`), cada uno con CTA según §5.
-- Si `space_admin(id)`: botón "Gestionar" (placeholder/disabled "Próximamente").
+### Archivos
+- Editar: `tailwind.config.ts`, `index.html`, `src/App.tsx`, `src/components/AppShell.tsx`, `src/components/SpaceCard.tsx`, `src/components/ui/badge.tsx`, `src/pages/{Login,Onboarding,Compite,Descubrir,Space,Perfil}.tsx`.
+- Crear: `src/pages/Inicio.tsx`, `src/pages/ComingSoon.tsx`, `src/components/EmptyState.tsx`, `src/components/SectionHeader.tsx`.
 
-**`/descubrir`** — Lista `space` con `visibility='public'` y `type in ('tournament','escalerilla','liga')` + hijos por herencia (los retorna RLS automáticamente al `select * from space`, basta con un filtro amplio). Search por código: input → `select where slug ilike ? or settings->>'code' = ?`. Botón Unirme por card:
-- `open` → insert directo `status='active'`.
-- club-hijo con membership activa en padre → insert directo.
-- `request`/`invite` → insert `status='pending'`, toast "Solicitud enviada".
-- `code` → exige código.
-- `socios_only` → verificar membership activa en padre; si no, error "Solo para socios del club".
-Tras join active → invalidar query de Compite.
-
-**`/perfil`** — display_name/avatar editables. Sección Privacidad con toggles `analytics` y `brand_targeting` que hacen update a `data_consent`. Botón Cerrar sesión.
-
-### 5. Reglas que respeto
-- Sin tablas nuevas. Sin tocar motor (`matches`, `player_ratings`, `ladder_state`, ledgers).
-- Sin mostrar rating/Glicko/puntos/XP/Fichas en ningún lugar.
-- Sin filtrar por `tenant_id`/club en el cliente — RLS gobierna.
-- Español de Chile en toda la microcopy.
-- Mobile-first, shadcn, sin animaciones hero.
-
-### Archivos a crear (resumen)
-- 1 migración SQL (sm_read policy).
-- `src/index.css` (tokens Clay + serif), `tailwind.config.ts` (font-display Georgia).
-- `src/App.tsx` (providers + router).
-- `src/lib/auth.tsx` (AuthProvider, hooks).
-- `src/components/AppShell.tsx`, `BottomNav.tsx`, `RequireAuth.tsx`, `RequireOnboarded.tsx`, `SpaceCard.tsx`, `JoinButton.tsx`.
-- `src/pages/{Login,Onboarding,Compite,Descubrir,Space,Perfil,NotFound}.tsx`.
-- shadcn components vía CLI.
-
-### Criterios de aceptación que validaré
-Los 7 del prompt (login, onboarding gating, multi-pertenencia visible, 403, hierarchy, join open, sin rating).
+### Criterios de aceptación
+Los 7 del prompt: app se ve Clay, nav y header estilizados, SpaceCard rica, Login/Onboarding cuidados, Inicio dashboard del jugador, modelo player-first intacto, app compila.

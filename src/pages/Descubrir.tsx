@@ -4,9 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { SpaceCard } from "@/components/SpaceCard";
 import { JoinButton } from "@/components/JoinButton";
+import { EmptyState } from "@/components/EmptyState";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search } from "lucide-react";
+import { Search, SearchX } from "lucide-react";
 
 type SpaceRow = {
   id: string;
@@ -64,32 +65,35 @@ export default function Descubrir() {
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <div>
-        <h1 className="font-display text-2xl">Descubrir</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-primary">Explorar</p>
+        <h1 className="mt-1 font-display text-3xl leading-tight">Descubrir</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           Únete a torneos, escalerillas y ligas. Busca por nombre o código.
         </p>
       </div>
       <div className="relative">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary/60" />
         <Input
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Nombre o código…"
-          className="pl-9"
+          className="h-11 rounded-full border-border/70 bg-card pl-10 shadow-sm"
         />
       </div>
 
       {isLoading ? (
         <div className="space-y-2">
-          <Skeleton className="h-20 w-full" />
-          <Skeleton className="h-20 w-full" />
+          <Skeleton className="h-24 w-full rounded-2xl" />
+          <Skeleton className="h-24 w-full rounded-2xl" />
         </div>
       ) : filtered.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-          Sin resultados.
-        </p>
+        <EmptyState
+          icon={SearchX}
+          title="Sin resultados"
+          description="Prueba con otro nombre o pídele un código al organizador."
+        />
       ) : (
         <div className="space-y-2">
           {filtered.map((s) => {

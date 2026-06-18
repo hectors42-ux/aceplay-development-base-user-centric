@@ -14,6 +14,67 @@ export type Database = {
   }
   public: {
     Tables: {
+      club_profile: {
+        Row: {
+          branding: Json
+          legal_name: string | null
+          padron_source: string | null
+          space_id: string
+          tax_id: string | null
+        }
+        Insert: {
+          branding?: Json
+          legal_name?: string | null
+          padron_source?: string | null
+          space_id: string
+          tax_id?: string | null
+        }
+        Update: {
+          branding?: Json
+          legal_name?: string | null
+          padron_source?: string | null
+          space_id?: string
+          tax_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "club_profile_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: true
+            referencedRelation: "space"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      escalerilla_config: {
+        Row: {
+          challenge_rules: Json
+          pyramid: Json
+          season_label: string | null
+          space_id: string
+        }
+        Insert: {
+          challenge_rules?: Json
+          pyramid?: Json
+          season_label?: string | null
+          space_id: string
+        }
+        Update: {
+          challenge_rules?: Json
+          pyramid?: Json
+          season_label?: string | null
+          space_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "escalerilla_config_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: true
+            referencedRelation: "space"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -196,6 +257,44 @@ export type Database = {
             foreignKeyName: "space_standing_space_id_fkey"
             columns: ["space_id"]
             isOneToOne: false
+            referencedRelation: "space"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tournament_config: {
+        Row: {
+          agendamiento: string | null
+          ciclo: string | null
+          disciplina: string
+          motor: string
+          prestige_mult: number
+          scoring: string | null
+          space_id: string
+        }
+        Insert: {
+          agendamiento?: string | null
+          ciclo?: string | null
+          disciplina: string
+          motor: string
+          prestige_mult?: number
+          scoring?: string | null
+          space_id: string
+        }
+        Update: {
+          agendamiento?: string | null
+          ciclo?: string | null
+          disciplina?: string
+          motor?: string
+          prestige_mult?: number
+          scoring?: string | null
+          space_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournament_config_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: true
             referencedRelation: "space"
             referencedColumns: ["id"]
           },

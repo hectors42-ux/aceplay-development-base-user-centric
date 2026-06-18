@@ -1,23 +1,19 @@
+// TODO: cablear fase 2
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 
 export interface AnalyticsAlert {
-  kind: "critical" | "opportunity";
-  severity: "high" | "medium" | "low";
+  id: string;
+  level: string;
   title: string;
-  body: string;
-  action_url: string | null;
-  metric_value: number | null;
+  description: string | null;
+  created_at: string;
 }
 
 export function useAnalyticsAlerts() {
-  return useQuery({
-    queryKey: ["analytics", "alerts"],
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc("analytics_alerts");
-      if (error) throw error;
-      return (data ?? []) as unknown as AnalyticsAlert[];
-    },
-    staleTime: 5 * 60 * 1000,
+  // TODO: cablear fase 2
+  return useQuery<AnalyticsAlert[]>({
+    queryKey: ["stub-analytics-alerts"],
+    queryFn: async () => [],
+    enabled: false,
   });
 }

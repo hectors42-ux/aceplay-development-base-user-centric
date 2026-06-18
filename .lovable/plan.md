@@ -1,81 +1,27 @@
-## Objetivo
+## Schema base: identidad global + espacios recursivos
 
-Crear un torneo **Pádel Americano · Stade Français** según el documento adjunto y sembrar **5 escenarios** distintos (uno por estado del ciclo de vida) para validar visualmente todos los flujos del motor `grupos_playoff` en la app, con `demouser@aceplay.cl` participando como jugador.
+Crear una sola migración Supabase con el schema solicitado, sin UI, sin `tenant_id`, raíz = jugador.
 
-## Especificación del torneo (según docx)
+### Contenido de la migración
 
-- **Formato**: fase de grupos + eliminación directa estilo Mundial
-- **Modalidad**: pádel dobles (20 parejas / 40 jugadores)
-- **Grupos**: 4 grupos x 5 parejas (round-robin interno)
-- **Clasificación**: top 2 de cada grupo → cuartos → semis → final
-- **Scoring**: set único con punto de oro (40-40 sin ventaja)
-- **Calendario**: 4 días (D1 grupos parte 1 · D2 grupos parte 2 · D3 cuartos+semis · D4 final)
-- **Sede**: Stade Français (se guarda en `description` + `default_config`)
-- **demouser@aceplay.cl** + **hectors42@gmail.com** entran como pareja en el Grupo A para que `/mis-torneos` y `/perfil` muestren contenido real
+1. **Extensión** `ltree`.
+2. **Tabla `profiles`** (1:1 con `auth.users`): `handle` único, `display_name`, `avatar_url`, `rut`, `birthdate`, `is_minor` (columna generada), `data_consent` jsonb, `created_at`.
+3. **Enums**: `space_type`, `space_visibility`, `join_policy`, `membership_role`, `membership_status`.
+4. **Tabla `space`** (recursiva con `parent_space_id` + `path ltree`), índices GIST sobre `path`, btree sobre `parent_space_id` y `type`, unique `(parent_space_id, slug)`.
+5. **Trigger `space_set_path()`** que computa `path` desde el padre y valida que `category` solo cuelgue de `tournament` y nunca sea raíz.
+6. **Tabla `space_membership`** (N:M jugador↔espacio) con unique `(player_id, space_id)` e índices.
+7. **Tabla `space_standing`** (PK compuesta `space_id, player_id`), sin rating.
+8. **RLS habilitada** en las 4 tablas (sin políticas todavía — se definen en una iteración posterior cuando definamos quién ve qué).
+9. **GRANTs obligatorios** en cada tabla pública: `GRANT SELECT, INSERT, UPDATE, DELETE ... TO authenticated` y `GRANT ALL ... TO service_role` (sin `anon`, ya que todo es auth-only). Esto NO viene en el SQL que enviaste pero es requisito de la plataforma — sin GRANTs, PostgREST devuelve permission denied aunque RLS lo permita.
 
-## Escenarios a sembrar
+### Notas / preguntas implícitas resueltas por defecto
 
-Se crean 5 torneos paralelos, cada uno fija el estado del ciclo en un punto distinto para que el QA recorra todas las pantallas:
+- **Sin políticas RLS** en esta migración: con RLS habilitada y sin policies, ninguna fila será accesible desde el cliente hasta que definamos políticas. Asumo que es lo deseado para esta fase (schema puro). Si quieres una policy mínima de "owner ve su profile" la agrego.
+- **`space.organizer_id`** queda como `not null references profiles(id)` tal como pediste — implica que el organizador debe existir antes de crear el space (correcto para flujo "jugador crea club").
+- **Memoria del proyecto desactualizada**: el repo actual (AcePlay multi-tenant con `tenants`, `ladders`, etc.) queda intacto. Esta migración suma tablas nuevas que coexisten; no toca ni borra nada existente. Si la intención es reset total del schema, dímelo y lo incluyo.
 
-| # | Torneo | Estado UI | Qué se valida |
-|---|--------|-----------|---------------|
-| 1 | `[Demo] Americano · Inscripciones` | `inscripciones_abiertas` | listado público, registro, dialog inscripción |
-| 2 | `[Demo] Americano · Día 1` | `en_curso`, grupos 50% jugados | tarjetas de grupo en progreso, standings parciales, partidos pendientes |
-| 3 | `[Demo] Americano · Día 2` | `en_curso`, grupos 100%, playoff sin generar | botón "generar playoff", standings finales por grupo, top 2 destacados |
-| 4 | `[Demo] Americano · Día 3` | `en_curso`, cuartos jugados, semis 50% | bracket en vivo, OperatorLiveBoard, RoundProgressCard |
-| 5 | `[Demo] Americano · Finalizado` | `finalizado`, campeón decidido | resultado final, share-cards, informe post-torneo, badges |
+### Fuera de alcance
 
-## Implementación técnica
-
-### 1. Migración SQL nueva
-
-`_demo_seed_padel_grupos_playoff(_label text, _state text) RETURNS uuid` (SECURITY DEFINER, copia el patrón de `_demo_seed_tournament` pero hardcodeando):
-
-- `sport='padel'`, `modality='dobles'`, `discipline='padel_dobles'`, `motor='grupos_playoff'`, `surface='arcilla'`
-- 40 jugadores (demouser + hector + 38 bots `demo-bot-%`) → 20 inscripciones doubles
-- `INSERT INTO tournament_rules`: `scoring_profile='set_unico_punto_oro'`, `notes` con calendario 4 días
-- `INSERT INTO tournament_sessions` con 4 sesiones (D1..D4) fechadas en `[hoy-3, hoy+1]`
-- `default_config = {demo_protocol:'v1', protocol_label, venue:'Stade Français', spec:'americano-grupos-playoff'}`
-- Llama `generate_groups(cat_id, 4, seeds)` (snake seeding, demouser+hector como cabeza de grupo A)
-- Avanza la simulación según `_state`:
-  - `dia1`: marca jugados ~50% de los partidos de grupos (random scores con `_demo_random_score`)
-  - `dia2`: 100% grupos jugados, NO genera bracket de playoff
-  - `dia3`: genera bracket (RPC existente del motor `grupos_playoff`), juega cuartos completos, ~50% semis
-  - `finalizado`: juega todo + `tournaments.status='finalizado'`, `closed_at=now()`
-
-### 2. Wrapper público
-
-`demo_seed_padel_americano_protocolo() RETURNS jsonb` (SECURITY DEFINER, gated a `club_admin`/`super_admin` como el resto del protocolo demo):
-
-- Borra torneos previos cuyo `default_config->>'spec' = 'americano-grupos-playoff'`
-- Llama 5 veces al helper con los labels y estados de la tabla
-- Devuelve resumen `{tournaments:[{label,state,id,...}], errors:[]}`
-
-### 3. UI · `src/pages/admin/AdminDemoProtocol.tsx`
-
-Añadir una nueva Card **"Pádel Americano · 5 escenarios"** con un botón `Sembrar` que llama al wrapper. Lista los 5 torneos sembrados con link a `/admin/torneos/:id` y `/torneos/:id`. Sin tocar el botón `Ejecutar protocolo` existente (queda intacto).
-
-### 4. QA visual (responsive 375/768/1280)
-
-Tras sembrar:
-1. Login como `demouser@aceplay.cl` → `/torneos` (debe ver los 5), `/mis-torneos` (debe verse inscrito), `/perfil` (badges/historial poblado en el finalizado)
-2. Login admin → `/admin/torneos/:id` para cada uno → verificar grupos, standings, bracket, OperatorLiveBoard
-3. Captura Playwright de cada escenario en mobile + desktop antes de cerrar
-
-## Archivos a tocar
-
-- `supabase/migrations/<ts>_demo_padel_americano_protocolo.sql` (nuevo) — helper + wrapper RPC
-- `src/pages/admin/AdminDemoProtocol.tsx` — nueva Card + botón
-- `mem/features/roadmap.md` — registrar la feature de QA seed
-
-## Riesgos / notas
-
-- Si la RPC de generación de playoff de `grupos_playoff` requiere flujo distinto al del seed actual, lo verifico antes de escribir la migración (no se llama hoy desde `_demo_seed_tournament`, solo `generate_groups`).
-- `tournament_sessions` puede tener triggers que validen ventana → si falla, se omiten y se documenta.
-- No se modifica el motor ni el scoring real, solo se siembra.
-
-## Entregables
-
-- 5 torneos visibles en preview con `demouser` inscrito
-- Documentación inline del calendario y la sede en cada torneo
-- Botón reproducible en `/admin/protocolo-pruebas` para resembrar cuando se necesite
+- Políticas RLS detalladas.
+- UI / hooks / tipos cliente (se regeneran tras aprobar).
+- Tablas de matches, invitaciones, rating global, etc. (futuras iteraciones).

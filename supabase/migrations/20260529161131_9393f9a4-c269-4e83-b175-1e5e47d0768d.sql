@@ -1,0 +1,1 @@
+GRANT EXECUTE ON FUNCTION public._e2e_reset_padel_ladder() TO PUBLIC;

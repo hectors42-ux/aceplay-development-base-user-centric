@@ -1,0 +1,1 @@
+UPDATE profiles SET dues_status = 'pendiente' WHERE id = '6dce93e0-e215-4824-a1ef-41f6fd9e8275';

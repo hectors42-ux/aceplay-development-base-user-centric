@@ -1,0 +1,791 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   AcePlay Design System
+   Paleta arcilla AcePlay V3: clay #b6502b, cream #f8f6f2,
+   ink #2b1b12, olive #5d6a39, gold #c0a042.
+   Todos los colores en HSL.
+   ============================================ */
+
+@layer base {
+  /* ============================================================
+     ARCILLA ACEPLAY — light (default AcePlay V3)
+     Clay #b6502b · Cream #f8f6f2 · Ink #2b1b12 · Olive #5d6a39
+     ============================================================ */
+  :root,
+  :root.theme-terre-battue {
+    --background: 40 33% 96%;
+    --foreground: 19 41% 12%;
+
+    --card: 40 35% 98%;
+    --card-foreground: 19 41% 12%;
+
+    --popover: 40 35% 98%;
+    --popover-foreground: 19 41% 12%;
+
+    --brand-primary: 16 62% 44%;
+    --brand-primary-glow: 22 73% 57%;
+    --brand-primary-deep: 13 71% 26%;
+
+    --primary: 16 62% 44%;
+    --primary-foreground: 40 33% 96%;
+    --primary-glow: 22 73% 57%;
+    --primary-deep: 13 71% 26%;
+
+    --secondary: 76 22% 90%;
+    --secondary-foreground: 76 30% 22%;
+
+    --muted: 38 35% 91%;
+    --muted-foreground: 25 19% 30%;
+
+    --accent: 76 30% 32%;
+    --accent-foreground: 40 33% 96%;
+
+    --destructive: 0 70% 48%;
+    --destructive-foreground: 38 32% 96%;
+
+    --success: 92 38% 36%;
+    --success-foreground: 38 32% 96%;
+
+    --warning: 38 88% 50%;
+    --warning-foreground: 22 40% 12%;
+
+    --court-hard: 210 60% 52%;
+    --court-clay: 16 62% 48%;
+
+    --cream-0: 38 32% 96%;
+    --cream-1: 36 24% 93%;
+    --cream-2: 34 20% 87%;
+    --cream-3: 30 18% 80%;
+    --ink-dark: 22 40% 12%;
+    --ink-muted: 28 16% 38%;
+    --ink-soft: 28 12% 56%;
+    --gold: 42 50% 50%;
+    --clay-deep-2: 14 55% 36%;
+
+    --olive: 82 30% 32%;
+    --olive-deep: 82 32% 22%;
+    --olive-soft: 78 22% 90%;
+
+    --border: 36 18% 84%;
+    --input: 36 18% 84%;
+    --ring: 82 28% 38%;
+
+    --radius: 0.625rem;
+
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+
+    --gradient-clay: linear-gradient(135deg, hsl(16 62% 44%), hsl(18 70% 54%));
+    --gradient-clay-deep: linear-gradient(160deg, hsl(82 32% 22%) 0%, hsl(16 62% 44%) 100%);
+    --gradient-court: linear-gradient(135deg, hsl(82 30% 32%) 0%, hsl(82 32% 22%) 100%);
+    --gradient-warm: linear-gradient(180deg, hsl(38 32% 96%) 0%, hsl(36 24% 93%) 100%);
+    --gradient-overlay: linear-gradient(180deg, hsl(22 40% 12% / 0) 0%, hsl(22 40% 12% / 0.85) 100%);
+
+    --shadow-clay: 0 14px 40px -14px hsl(16 62% 44% / 0.32);
+    --shadow-soft: 0 4px 20px -8px hsl(22 40% 12% / 0.14);
+    --shadow-card: 0 2px 12px -4px hsl(22 40% 12% / 0.08), 0 1px 3px hsl(22 40% 12% / 0.04);
+    --shadow-elevated: 0 24px 70px -20px hsl(22 40% 12% / 0.22);
+
+    --transition-smooth: cubic-bezier(0.32, 0.72, 0, 1);
+    --transition-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --sidebar-background: 38 28% 96%;
+    --sidebar-foreground: 18 35% 14%;
+    --sidebar-primary: 16 62% 44%;
+    --sidebar-primary-foreground: 38 32% 96%;
+    --sidebar-accent: 78 18% 92%;
+    --sidebar-accent-foreground: 82 32% 22%;
+    --sidebar-border: 36 16% 86%;
+    --sidebar-ring: 82 28% 38%;
+  }
+
+  /* ============================================================
+     TERRE BATTUE — dark
+     ============================================================ */
+  :root.dark,
+  :root.theme-terre-battue.dark {
+    --background: 18 28% 8%;
+    --foreground: 36 38% 95%;
+
+    --card: 18 25% 12%;
+    --card-foreground: 36 38% 95%;
+
+    --popover: 18 25% 12%;
+    --popover-foreground: 36 38% 95%;
+
+    --primary: 22 78% 56%;
+    --primary-foreground: 18 35% 6%;
+    --primary-glow: 26 82% 62%;
+    --primary-deep: 14 60% 30%;
+
+    --secondary: 82 22% 22%;
+    --secondary-foreground: 78 30% 88%;
+
+    --muted: 18 20% 16%;
+    --muted-foreground: 36 18% 72%;
+
+    --accent: 82 32% 42%;
+    --accent-foreground: 18 28% 8%;
+
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 36 38% 95%;
+
+    --success: 92 38% 46%;
+    --success-foreground: 18 28% 8%;
+
+    --warning: 38 88% 55%;
+    --warning-foreground: 18 28% 8%;
+
+    --court-hard: 210 65% 60%;
+    --court-clay: 22 78% 56%;
+
+    --olive: 82 32% 42%;
+    --olive-deep: 82 30% 22%;
+    --olive-soft: 82 22% 22%;
+
+    --border: 18 20% 26%;
+    --input: 18 20% 26%;
+    --ring: 82 32% 48%;
+
+    --gradient-clay: linear-gradient(135deg, hsl(22 78% 56%), hsl(26 82% 62%));
+    --gradient-clay-deep: linear-gradient(160deg, hsl(82 30% 22%), hsl(22 78% 56%));
+    --gradient-court: linear-gradient(135deg, hsl(82 32% 28%), hsl(82 30% 16%));
+    --gradient-warm: linear-gradient(180deg, hsl(18 28% 8%), hsl(18 25% 12%));
+    --gradient-overlay: linear-gradient(180deg, hsl(0 0% 0% / 0) 0%, hsl(0 0% 0% / 0.9) 100%);
+
+    --shadow-clay: 0 12px 36px -14px hsl(22 78% 56% / 0.36);
+    --shadow-soft: 0 4px 20px -8px hsl(0 0% 0% / 0.5);
+    --shadow-card: 0 2px 12px -4px hsl(0 0% 0% / 0.4);
+    --shadow-elevated: 0 20px 60px -20px hsl(0 0% 0% / 0.6);
+
+    --sidebar-background: 18 25% 12%;
+    --sidebar-foreground: 36 38% 95%;
+    --sidebar-primary: 22 78% 56%;
+    --sidebar-primary-foreground: 18 28% 8%;
+    --sidebar-accent: 82 22% 18%;
+    --sidebar-accent-foreground: 78 30% 88%;
+    --sidebar-border: 18 20% 20%;
+    --sidebar-ring: 82 32% 48%;
+  }
+
+  /* ============================================================
+     US OPEN — light (Flushing blue · noche en NY)
+     Primario: azul Flushing #0058A8 · acento: amarillo pelota #D7E80B
+     · magenta luces estadio #7A2E8E
+     ============================================================ */
+  :root.theme-us-open {
+    --background: 220 33% 97%;
+    --foreground: 214 53% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 214 53% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 214 53% 11%;
+
+    --brand-primary: 209 100% 33%;
+    --brand-primary-glow: 209 88% 48%;
+    --brand-primary-deep: 214 90% 22%;
+
+    --primary: 209 100% 33%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 209 88% 48%;
+    --primary-deep: 214 90% 22%;
+
+    --secondary: 65 86% 48%;
+    --secondary-foreground: 214 53% 11%;
+
+    --muted: 220 20% 94%;
+    --muted-foreground: 215 18% 38%;
+
+    --accent: 289 51% 37%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 354 78% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 145 60% 36%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 42 92% 50%;
+    --warning-foreground: 214 53% 11%;
+
+    --court-hard: 209 100% 33%;
+    --court-clay: 16 62% 48%;
+
+    --cream-0: 220 33% 97%;
+    --cream-1: 220 24% 94%;
+    --cream-2: 220 18% 88%;
+    --cream-3: 220 14% 80%;
+    --ink-dark: 214 53% 11%;
+    --ink-muted: 215 18% 38%;
+    --ink-soft: 215 12% 54%;
+    --gold: 65 86% 48%;
+    --clay-deep-2: 214 90% 22%;
+
+    --border: 220 16% 86%;
+    --input: 220 16% 86%;
+    --ring: 209 100% 33%;
+
+    --radius: 0.375rem;
+
+    --font-display: 'Archivo', system-ui, -apple-system, sans-serif;
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+    --gradient-clay: linear-gradient(135deg, hsl(209 100% 33%), hsl(289 51% 37%));
+    --gradient-clay-deep: linear-gradient(160deg, hsl(214 90% 22%) 0%, hsl(209 100% 33%) 100%);
+    --gradient-court: linear-gradient(135deg, hsl(209 100% 33%) 0%, hsl(214 90% 22%) 100%);
+    --gradient-warm: linear-gradient(180deg, hsl(220 33% 97%) 0%, hsl(220 24% 94%) 100%);
+    --gradient-overlay: linear-gradient(180deg, hsl(214 53% 11% / 0) 0%, hsl(214 53% 11% / 0.88) 100%);
+
+    --shadow-clay: 0 16px 48px -12px hsl(209 100% 33% / 0.35);
+    --shadow-soft: 0 4px 20px -8px hsl(214 53% 11% / 0.14);
+    --shadow-card: 0 2px 12px -4px hsl(214 53% 11% / 0.08), 0 1px 3px hsl(214 53% 11% / 0.04);
+    --shadow-elevated: 0 24px 70px -20px hsl(214 53% 11% / 0.22);
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 214 53% 11%;
+    --sidebar-primary: 209 100% 33%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 209 88% 94%;
+    --sidebar-accent-foreground: 209 100% 28%;
+    --sidebar-border: 220 16% 86%;
+    --sidebar-ring: 209 100% 33%;
+  }
+
+  /* ============================================================
+     US OPEN — dark
+     ============================================================ */
+  :root.theme-us-open.dark {
+    --background: 214 53% 8%;
+    --foreground: 220 33% 96%;
+
+    --card: 214 45% 13%;
+    --card-foreground: 220 33% 96%;
+
+    --popover: 214 45% 13%;
+    --popover-foreground: 220 33% 96%;
+
+    --primary: 209 88% 58%;
+    --primary-foreground: 214 53% 8%;
+    --primary-glow: 209 92% 68%;
+    --primary-deep: 214 80% 30%;
+
+    --secondary: 65 80% 55%;
+    --secondary-foreground: 214 53% 8%;
+
+    --muted: 214 38% 18%;
+    --muted-foreground: 220 18% 72%;
+
+    --accent: 289 60% 60%;
+    --accent-foreground: 214 53% 8%;
+
+    --destructive: 354 78% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 145 55% 50%;
+    --success-foreground: 214 53% 8%;
+
+    --warning: 42 92% 60%;
+    --warning-foreground: 214 53% 8%;
+
+    --court-hard: 209 88% 58%;
+    --court-clay: 65 80% 55%;
+
+    --cream-0: 214 53% 8%;
+    --cream-1: 214 45% 13%;
+    --cream-2: 214 38% 18%;
+    --cream-3: 214 30% 26%;
+    --ink-dark: 220 33% 96%;
+    --ink-muted: 220 18% 72%;
+    --ink-soft: 220 12% 56%;
+
+    --border: 214 30% 24%;
+    --input: 214 30% 24%;
+    --ring: 209 88% 58%;
+
+    --gradient-clay: linear-gradient(135deg, hsl(209 88% 58%), hsl(289 60% 60%));
+    --gradient-clay-deep: linear-gradient(160deg, hsl(214 80% 30%), hsl(209 88% 58%));
+    --gradient-court: linear-gradient(135deg, hsl(214 45% 18%), hsl(214 50% 10%));
+    --gradient-warm: linear-gradient(180deg, hsl(214 53% 8%), hsl(214 45% 13%));
+    --gradient-overlay: linear-gradient(180deg, hsl(0 0% 0% / 0) 0%, hsl(0 0% 0% / 0.92) 100%);
+
+    --shadow-clay: 0 12px 40px -12px hsl(209 88% 58% / 0.45);
+    --shadow-soft: 0 4px 20px -8px hsl(0 0% 0% / 0.5);
+    --shadow-card: 0 2px 12px -4px hsl(0 0% 0% / 0.4);
+    --shadow-elevated: 0 20px 60px -20px hsl(0 0% 0% / 0.6);
+
+    --sidebar-background: 214 45% 13%;
+    --sidebar-foreground: 220 33% 96%;
+    --sidebar-primary: 209 88% 58%;
+    --sidebar-primary-foreground: 214 53% 8%;
+    --sidebar-accent: 214 38% 20%;
+    --sidebar-accent-foreground: 220 33% 96%;
+    --sidebar-border: 214 30% 22%;
+    --sidebar-ring: 209 88% 58%;
+  }
+
+  /* ============================================================
+     WIMBLEDON — light (verde césped + púrpura real)
+     Primario: verde césped #15553B · acento púrpura AELTC #4B2E83
+     · dorado trofeo #C9A24B · crema línea de cancha #F4EFE6
+     ============================================================ */
+  :root.theme-wimbledon {
+    --background: 36 39% 93%;
+    --foreground: 154 40% 12%;
+
+    --card: 36 50% 97%;
+    --card-foreground: 154 40% 12%;
+
+    --popover: 36 50% 97%;
+    --popover-foreground: 154 40% 12%;
+
+    --brand-primary: 154 60% 21%;
+    --brand-primary-glow: 154 50% 32%;
+    --brand-primary-deep: 154 65% 14%;
+
+    --primary: 154 60% 21%;
+    --primary-foreground: 36 39% 95%;
+    --primary-glow: 154 50% 32%;
+    --primary-deep: 154 65% 14%;
+
+    --secondary: 259 48% 35%;
+    --secondary-foreground: 36 39% 95%;
+
+    --muted: 36 24% 88%;
+    --muted-foreground: 154 18% 30%;
+
+    --accent: 259 48% 35%;
+    --accent-foreground: 36 39% 95%;
+
+    --destructive: 0 65% 42%;
+    --destructive-foreground: 36 39% 95%;
+
+    --success: 154 60% 28%;
+    --success-foreground: 36 39% 95%;
+
+    --warning: 41 53% 54%;
+    --warning-foreground: 154 40% 12%;
+
+    --court-hard: 154 60% 21%;
+    --court-clay: 259 48% 35%;
+
+    --cream-0: 36 39% 93%;
+    --cream-1: 36 32% 90%;
+    --cream-2: 36 24% 84%;
+    --cream-3: 36 18% 76%;
+    --ink-dark: 154 40% 12%;
+    --ink-muted: 154 18% 30%;
+    --ink-soft: 154 12% 48%;
+    --gold: 41 53% 54%;
+    --clay-deep-2: 154 65% 14%;
+
+    --border: 36 20% 82%;
+    --input: 36 20% 82%;
+    --ring: 154 60% 28%;
+
+    --radius: 0.5rem;
+
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+    --gradient-clay: linear-gradient(135deg, hsl(154 60% 21%), hsl(259 48% 35%));
+    --gradient-clay-deep: linear-gradient(160deg, hsl(154 65% 14%) 0%, hsl(154 60% 21%) 100%);
+    --gradient-court: linear-gradient(135deg, hsl(154 60% 21%) 0%, hsl(154 65% 14%) 100%);
+    --gradient-warm: linear-gradient(180deg, hsl(36 39% 93%) 0%, hsl(36 32% 90%) 100%);
+    --gradient-overlay: linear-gradient(180deg, hsl(154 40% 12% / 0) 0%, hsl(154 40% 12% / 0.85) 100%);
+
+    --shadow-clay: 0 14px 44px -14px hsl(154 60% 21% / 0.32);
+    --shadow-soft: 0 4px 20px -8px hsl(154 40% 12% / 0.14);
+    --shadow-card: 0 2px 12px -4px hsl(154 40% 12% / 0.08), 0 1px 3px hsl(154 40% 12% / 0.04);
+    --shadow-elevated: 0 24px 70px -20px hsl(154 40% 12% / 0.22);
+
+    --sidebar-background: 36 39% 93%;
+    --sidebar-foreground: 154 40% 12%;
+    --sidebar-primary: 154 60% 21%;
+    --sidebar-primary-foreground: 36 39% 95%;
+    --sidebar-accent: 259 35% 92%;
+    --sidebar-accent-foreground: 259 48% 28%;
+    --sidebar-border: 36 20% 82%;
+    --sidebar-ring: 154 60% 28%;
+  }
+
+  /* ============================================================
+     WIMBLEDON — dark (verde botella + púrpura encendido)
+     ============================================================ */
+  :root.theme-wimbledon.dark {
+    --background: 154 40% 7%;
+    --foreground: 36 30% 94%;
+
+    --card: 154 35% 11%;
+    --card-foreground: 36 30% 94%;
+
+    --popover: 154 35% 11%;
+    --popover-foreground: 36 30% 94%;
+
+    --primary: 154 55% 42%;
+    --primary-foreground: 154 40% 7%;
+    --primary-glow: 154 60% 52%;
+    --primary-deep: 154 65% 18%;
+
+    --secondary: 259 65% 62%;
+    --secondary-foreground: 154 40% 7%;
+
+    --muted: 154 25% 16%;
+    --muted-foreground: 36 22% 74%;
+
+    --accent: 259 65% 62%;
+    --accent-foreground: 154 40% 7%;
+
+    --destructive: 0 68% 55%;
+    --destructive-foreground: 36 30% 94%;
+
+    --success: 154 55% 48%;
+    --success-foreground: 154 40% 7%;
+
+    --warning: 41 60% 60%;
+    --warning-foreground: 154 40% 7%;
+
+    --court-hard: 154 55% 42%;
+    --court-clay: 259 65% 62%;
+
+    --cream-0: 154 40% 7%;
+    --cream-1: 154 35% 11%;
+    --cream-2: 154 28% 18%;
+    --cream-3: 154 22% 26%;
+    --ink-dark: 36 30% 94%;
+    --ink-muted: 36 22% 74%;
+    --ink-soft: 36 14% 56%;
+
+    --border: 154 22% 22%;
+    --input: 154 22% 22%;
+    --ring: 154 55% 42%;
+
+    --gradient-clay: linear-gradient(135deg, hsl(154 55% 42%), hsl(259 65% 62%));
+    --gradient-clay-deep: linear-gradient(160deg, hsl(154 65% 18%), hsl(154 55% 42%));
+    --gradient-court: linear-gradient(135deg, hsl(154 35% 18%), hsl(154 40% 10%));
+    --gradient-warm: linear-gradient(180deg, hsl(154 40% 7%), hsl(154 35% 11%));
+    --gradient-overlay: linear-gradient(180deg, hsl(0 0% 0% / 0) 0%, hsl(0 0% 0% / 0.9) 100%);
+
+    --shadow-clay: 0 12px 40px -12px hsl(154 55% 42% / 0.4);
+    --shadow-soft: 0 4px 20px -8px hsl(0 0% 0% / 0.5);
+    --shadow-card: 0 2px 12px -4px hsl(0 0% 0% / 0.4);
+    --shadow-elevated: 0 20px 60px -20px hsl(0 0% 0% / 0.6);
+
+    --sidebar-background: 154 35% 11%;
+    --sidebar-foreground: 36 30% 94%;
+    --sidebar-primary: 154 55% 42%;
+    --sidebar-primary-foreground: 154 40% 7%;
+    --sidebar-accent: 154 25% 18%;
+    --sidebar-accent-foreground: 36 30% 94%;
+    --sidebar-border: 154 22% 20%;
+    --sidebar-ring: 154 55% 42%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { transition: none !important; opacity: 1 !important; transform: none !important; }
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  h1, h2, h3, h4, h5 {
+    font-family: var(--font-display);
+    font-feature-settings: "ss01";
+    letter-spacing: -0.015em;
+  }
+}
+
+@layer utilities {
+  .bg-gradient-clay {
+    background: var(--gradient-clay);
+  }
+  .bg-gradient-clay-deep {
+    background: var(--gradient-clay-deep);
+  }
+  .bg-gradient-court {
+    background: var(--gradient-court);
+  }
+  .bg-gradient-warm {
+    background: var(--gradient-warm);
+  }
+  .bg-gradient-overlay {
+    background: var(--gradient-overlay);
+  }
+  .shadow-clay {
+    box-shadow: var(--shadow-clay);
+  }
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  .shadow-elevated {
+    box-shadow: var(--shadow-elevated);
+  }
+  .transition-smooth {
+    transition: all 0.3s var(--transition-smooth);
+  }
+  .transition-bounce {
+    transition: all 0.4s var(--transition-bounce);
+  }
+  .safe-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  .safe-top {
+    padding-top: max(0.5rem, env(safe-area-inset-top));
+  }
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  /* Contenedor estándar de la app: centrado en mobile, ancho aprovechado en desktop */
+  .app-container {
+    @apply mx-auto w-full px-4 sm:px-5 md:px-6 lg:px-8;
+    max-width: 72rem; /* 1152px */
+  }
+  .app-container-narrow {
+    @apply mx-auto w-full px-4 sm:px-5;
+    max-width: 28rem; /* mantiene el look móvil cuando se desea */
+  }
+
+  /* En desktop, dentro del AppShell, ampliar los contenedores móviles
+     históricos (max-w-md) para que el contenido aproveche el ancho
+     sin tener que reescribir cada página individualmente. */
+  @media (min-width: 1024px) {
+    [data-app-shell="desktop"] main .max-w-md {
+      max-width: 56rem; /* 896px */
+    }
+    [data-app-shell="desktop"] main header .max-w-md,
+    [data-app-shell="desktop"] main .sticky .max-w-md {
+      max-width: 56rem;
+    }
+  }
+  .bg-cream-0 { background-color: hsl(var(--cream-0)); }
+  .bg-cream-1 { background-color: hsl(var(--cream-1)); }
+  .bg-cream-2 { background-color: hsl(var(--cream-2)); }
+  .bg-ink-dark { background-color: hsl(var(--ink-dark)); }
+  .text-cream-0 { color: hsl(var(--cream-0)); }
+  .text-cream-1 { color: hsl(var(--cream-1)); }
+  .text-ink-dark { color: hsl(var(--ink-dark)); }
+  .text-ink-muted { color: hsl(var(--ink-muted)); }
+  .text-ink-soft { color: hsl(var(--ink-soft)); }
+  .text-gold { color: hsl(var(--gold)); }
+  .bg-gold { background-color: hsl(var(--gold)); }
+  .text-clay-deep { color: hsl(var(--primary-deep)); }
+  .border-cream-2 { border-color: hsl(var(--cream-2)); }
+  .border-cream-3 { border-color: hsl(var(--cream-3)); }
+  .font-display { font-family: var(--font-display); }
+
+  /* Editorial label uppercase con letterspacing */
+  .label-eyebrow {
+    @apply text-[11px] font-medium uppercase tracking-[0.2em] text-clay-deep;
+  }
+
+  /* Línea de cancha decorativa */
+  .court-line {
+    @apply h-px w-full bg-[hsl(var(--primary)/0.35)];
+  }
+
+  /* Story link underline animado */
+  .story-link {
+    position: relative;
+    display: inline-block;
+  }
+  .story-link::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 1.5px;
+    bottom: -2px;
+    left: 0;
+    background-color: hsl(var(--primary));
+    transform-origin: bottom right;
+    transition: transform 0.3s ease-out;
+  }
+  .story-link:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+  }
+
+  /* Reveal on scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s cubic-bezier(0.32, 0.72, 0, 1), transform 0.8s cubic-bezier(0.32, 0.72, 0, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Marquee infinito horizontal: la pista contiene los items duplicados, animamos -50% */
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* Línea de cancha que se "pinta" al cargar (SVG stroke-dashoffset) */
+  @keyframes paint-line {
+    from { stroke-dashoffset: 1000; }
+    to { stroke-dashoffset: 0; }
+  }
+  .animate-paint-line {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: paint-line 2.4s cubic-bezier(0.32, 0.72, 0, 1) 0.4s forwards;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-paint-line { animation: none; stroke-dashoffset: 0; }
+  }
+
+  /* Eyebrow rotativo: fade vertical sutil */
+  @keyframes eyebrow-cycle {
+    0%, 22% { opacity: 1; transform: translateY(0); }
+    28%, 100% { opacity: 0; transform: translateY(-6px); }
+  }
+
+  /* Oculta cursor del SO sólo cuando el cursor custom está activo */
+  body.cursor-none-md,
+  body.cursor-none-md * {
+    cursor: none !important;
+  }
+
+  /* Landing-only: forzar paleta light incluso si <html class="dark"> está activo */
+  .landing-light {
+    color-scheme: light;
+  }
+  .landing-light, .landing-light * {
+    --background: 33 70% 97%;
+    --foreground: 22 40% 12%;
+    --card: 35 65% 98.5%;
+    --card-foreground: 22 40% 12%;
+    --primary: 16 78% 46%;
+    --primary-foreground: 33 70% 97%;
+    --primary-glow: 20 90% 58%;
+    --primary-deep: 14 72% 30%;
+    --muted: 33 28% 92%;
+    --muted-foreground: 22 18% 40%;
+    --border: 22 24% 86%;
+    --ring: 16 78% 46%;
+    --radius: 0.625rem;
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+ * PRD 0 · Motion + Haptic Base
+ * Keyframes + utilidades de feedback. Consumido por celebraciones,
+ * standings, bracket, organizador. Respetan prefers-reduced-motion.
+ * ────────────────────────────────────────────────────────────── */
+@layer utilities {
+  @keyframes shimmer-sweep {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(180%); }
+  }
+  @keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / .55); }
+    50%      { box-shadow: 0 0 0 9px hsl(var(--primary) / 0); }
+  }
+  @keyframes badge-pop {
+    0%   { transform: scale(.3); opacity: 0; }
+    60%  { transform: scale(1.16); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+  @keyframes rise-in {
+    0%   { transform: translateY(14px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes streak-flicker {
+    0%, 100% { transform: scale(1) rotate(0deg); filter: hue-rotate(0); }
+    50%      { transform: scale(1.18) rotate(-5deg); filter: hue-rotate(-10deg); }
+  }
+  @keyframes count-pop {
+    0%   { transform: scale(.94); opacity: .4; }
+    60%  { transform: scale(1.06); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+  @keyframes trophy-bob {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50%      { transform: translateY(-4px) rotate(2deg); }
+  }
+  @keyframes float-bob {
+    0%, 100% { transform: translateY(-2px); }
+    50%      { transform: translateY(2px); }
+  }
+
+  .pop-in     { animation: badge-pop .55s cubic-bezier(.34, 1.56, .64, 1) both; }
+  .rise-in    { animation: rise-in .5s cubic-bezier(.32, .72, 0, 1) both; }
+  .glow       { animation: glow-pulse 1.9s ease-out infinite; }
+  .streak     { animation: streak-flicker 1.4s ease-in-out infinite; transform-origin: 50% 70%; }
+  .count-pop  { animation: count-pop .45s cubic-bezier(.34, 1.56, .64, 1) both; }
+  .trophy-bob { animation: trophy-bob 2.6s ease-in-out infinite; }
+  .float      { animation: float-bob 2.4s ease-in-out infinite; }
+
+  .shimmer-host { position: relative; overflow: hidden; }
+  .shimmer-host::after {
+    content: '';
+    position: absolute; top: 0; bottom: 0; left: 0; width: 38%;
+    background: linear-gradient(120deg, transparent, hsl(var(--background) / .35), transparent);
+    animation: shimmer-sweep 2.8s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .stagger > * { opacity: 0; animation: rise-in .45s cubic-bezier(.32, .72, 0, 1) forwards; }
+  .stagger > *:nth-child(1) { animation-delay: .05s; }
+  .stagger > *:nth-child(2) { animation-delay: .15s; }
+  .stagger > *:nth-child(3) { animation-delay: .25s; }
+  .stagger > *:nth-child(4) { animation-delay: .35s; }
+  .stagger > *:nth-child(5) { animation-delay: .45s; }
+  .stagger > *:nth-child(6) { animation-delay: .55s; }
+  .stagger > *:nth-child(7) { animation-delay: .65s; }
+  .stagger > *:nth-child(8) { animation-delay: .75s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .shimmer-host::after,
+    .pop-in, .rise-in, .glow, .streak, .count-pop, .trophy-bob, .float,
+    .stagger > * {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+  }
+}
+
+@layer utilities {
+  .tnum {
+    font-feature-settings: "tnum" 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .flip-flash {
+    background-color: hsl(var(--primary) / 0.12) !important;
+    transition: background-color 600ms ease-out;
+  }
+}

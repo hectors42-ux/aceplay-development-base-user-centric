@@ -1,0 +1,625 @@
+{
+  "ts": "2026-05-11T18:03:21.012Z",
+  "counts": {
+    "pass": 22,
+    "manual": 13,
+    "fail": 1
+  },
+  "results": [
+    {
+      "id": "C-01",
+      "module": "competir/invitations",
+      "mode": "auto",
+      "desc": "Invitación con 3 slots, invitee elige slot 2",
+      "agents": [
+        "A1",
+        "A2"
+      ],
+      "status": "pass",
+      "evidence": {
+        "invitationId": "3950214d-52f8-494b-93d1-8ea63ca7a923",
+        "selected": {
+          "court_id": null,
+          "starts_at": "2026-05-15T18:02:25.702Z"
+        }
+      }
+    },
+    {
+      "id": "C-02",
+      "module": "competir/invitations",
+      "mode": "auto",
+      "desc": "Invitación expira sin respuesta (24h forzadas)",
+      "agents": [
+        "A1",
+        "A6"
+      ],
+      "status": "pass",
+      "evidence": {
+        "expired_count": 1
+      }
+    },
+    {
+      "id": "C-03",
+      "module": "competir/invitations",
+      "mode": "auto",
+      "desc": "Invitee rechaza con mensaje",
+      "agents": [
+        "A2",
+        "A5"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "C-04",
+      "module": "competir/invitations",
+      "mode": "auto",
+      "desc": "Inviter cancela antes de respuesta",
+      "agents": [
+        "A1",
+        "A3"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "C-05",
+      "module": "competir/invitations",
+      "mode": "db-check",
+      "desc": "Doble invitación al mismo invitee en mismo horario debe ser rechazada",
+      "agents": [
+        "A1",
+        "A2",
+        "A6"
+      ],
+      "status": "pass",
+      "evidence": {
+        "rows": [
+          {
+            "id": "432d8bc9-d5b3-4e1f-abb7-8dfa437d64b1",
+            "status": "accepted"
+          },
+          {
+            "id": "ce07fbad-e631-4e3d-ac02-0f0e3553c4cf",
+            "status": "pending"
+          }
+        ]
+      }
+    },
+    {
+      "id": "C-06",
+      "module": "competir/invitations",
+      "mode": "manual",
+      "desc": "Carrera: invitee acepta slot ya tomado por reserva paralela",
+      "agents": [
+        "A1",
+        "A2"
+      ],
+      "status": "manual",
+      "evidence": null
+    },
+    {
+      "id": "C-07",
+      "module": "competir/invitations",
+      "mode": "auto",
+      "desc": "Open post con 3 respondedores, inviter elige uno",
+      "agents": [
+        "A1",
+        "A2",
+        "A5",
+        "A9"
+      ],
+      "status": "pass",
+      "evidence": {
+        "rows": [
+          {
+            "id": "f1f980f7-b14d-4f41-8784-419a169da070",
+            "status": "accepted"
+          },
+          {
+            "id": "dece426d-7c31-4ba0-bcb0-a30c39fd6835",
+            "status": "rejected"
+          },
+          {
+            "id": "beee1772-b98f-412a-9e5c-96c6a5dd94e3",
+            "status": "rejected"
+          }
+        ]
+      }
+    },
+    {
+      "id": "C-08",
+      "module": "competir/invitations",
+      "mode": "auto",
+      "desc": "Open post expira a las 48h",
+      "agents": [
+        "A6"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "C-09",
+      "module": "competir/invitations",
+      "mode": "manual",
+      "desc": "Filtros nivel ±0.5, días, superficie en buscar partner",
+      "agents": [
+        "A1"
+      ],
+      "status": "manual",
+      "evidence": null
+    },
+    {
+      "id": "C-10",
+      "module": "competir/results",
+      "mode": "auto",
+      "desc": "A propone resultado, B confirma → ratings actualizados",
+      "agents": [
+        "A1",
+        "A2"
+      ],
+      "status": "pass",
+      "evidence": {
+        "status": "confirmado",
+        "winner_user_id": "00000000-0000-4000-8000-00000000d3a0"
+      }
+    },
+    {
+      "id": "C-11",
+      "module": "competir/results",
+      "mode": "auto",
+      "desc": "A propone, B rechaza con motivo",
+      "agents": [
+        "A1",
+        "A5"
+      ],
+      "status": "pass",
+      "evidence": {
+        "status": "rechazado",
+        "reject_reason": "Score incorrecto, fue 6-3/6-4"
+      }
+    },
+    {
+      "id": "C-12",
+      "module": "competir/results",
+      "mode": "manual",
+      "desc": "A propone, B no responde 72h → recordatorio edge function",
+      "agents": [
+        "A1",
+        "A6"
+      ],
+      "status": "manual",
+      "evidence": null
+    },
+    {
+      "id": "C-13",
+      "module": "competir/results",
+      "mode": "auto",
+      "desc": "Walkover (B no se presentó) cargado por A",
+      "agents": [
+        "A1",
+        "A10"
+      ],
+      "status": "pass",
+      "evidence": {
+        "walkover": true,
+        "winner_user_id": "00000000-0000-4000-8000-00000000d3a0"
+      }
+    },
+    {
+      "id": "C-14",
+      "module": "competir/results",
+      "mode": "auto",
+      "desc": "Retiro a mitad (lesión) con score parcial válido",
+      "agents": [
+        "A1",
+        "A11"
+      ],
+      "status": "pass",
+      "evidence": {
+        "retired": true,
+        "score": [
+          {
+            "a": 6,
+            "b": 4
+          },
+          {
+            "a": 3,
+            "b": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "C-15",
+      "module": "competir/results",
+      "mode": "manual",
+      "desc": "Score inválido (6-7 sin TB) bloqueado en UI",
+      "agents": [
+        "A1"
+      ],
+      "status": "manual",
+      "evidence": null
+    },
+    {
+      "id": "C-16",
+      "module": "competir/results",
+      "mode": "db-check",
+      "desc": "Doble propuesta de resultado no genera duplicado",
+      "agents": [
+        "A1",
+        "A2"
+      ],
+      "status": "pass",
+      "evidence": {
+        "count": 1,
+        "second_blocked_by": "23505"
+      }
+    },
+    {
+      "id": "C-17",
+      "module": "competir/notifications",
+      "mode": "manual",
+      "desc": "Eliminar notificación de resultado pendiente → no reaparece",
+      "agents": [
+        "A1"
+      ],
+      "status": "manual",
+      "evidence": null
+    },
+    {
+      "id": "C-18",
+      "module": "competir/ladder",
+      "mode": "db-check",
+      "desc": "Salto > max_position_jump bloqueado",
+      "agents": [
+        "A2",
+        "A4"
+      ],
+      "status": "pass",
+      "evidence": {
+        "jump": 10,
+        "max": 5,
+        "top": 1,
+        "bottom": 11,
+        "note": "RPC create_ladder_challenge debería rechazar challenge 11→1 (jump 10 > 5)"
+      }
+    },
+    {
+      "id": "C-19",
+      "module": "competir/ladder",
+      "mode": "auto",
+      "desc": "Desafío con 3 slots, retado elige uno",
+      "agents": [
+        "A2",
+        "A5"
+      ],
+      "status": "fail",
+      "error": "Cannot read properties of null (reading 'id')"
+    },
+    {
+      "id": "C-20",
+      "module": "competir/ladder",
+      "mode": "auto",
+      "desc": "Retado rechaza con motivo",
+      "agents": [
+        "A9",
+        "A6"
+      ],
+      "status": "pass",
+      "evidence": {
+        "status": "rechazado",
+        "reject_reason": "Estoy lesionado"
+      }
+    },
+    {
+      "id": "C-21",
+      "module": "competir/ladder",
+      "mode": "auto",
+      "desc": "Retado deja expirar response_window_hours → auto-W.O.",
+      "agents": [
+        "A2",
+        "A6"
+      ],
+      "status": "pass",
+      "evidence": {
+        "rpc": {
+          "ran_at": "2026-05-11T18:02:43.334407+00:00",
+          "auto_walkovers": 1,
+          "expired_deleted": 0
+        },
+        "challenge": {
+          "status": "jugado",
+          "walkover": true,
+          "winner_user_id": "34c7a6fb-bfe3-45ad-ac97-9c2444a34456",
+          "loser_user_id": "9337315f-3e13-4cbe-80cd-0561d4781a68",
+          "played_at": "2026-05-11T18:02:43.334407+00:00",
+          "cancel_reason": "auto_walkover_no_respuesta"
+        },
+        "historyRows": 2,
+        "swap": {
+          "from": 10,
+          "to": 4
+        },
+        "notifications": {
+          "count": 2,
+          "winner": {
+            "title": "Ganaste por walkover",
+            "description": "Héctor Smith no respondió a tiempo en Pirámide Verano 2026",
+            "link": "/ranking?tab=piramide"
+          },
+          "loser": {
+            "title": "Perdiste por walkover",
+            "description": "No respondiste a tiempo el desafío de Felipe Errázuriz en Pirámide Verano 2026",
+            "link": "/ranking?tab=piramide"
+          }
+        },
+        "ranking": {
+          "N": 11,
+          "contiguous": true,
+          "noPositionDuplicates": true,
+          "noUserDuplicates": true,
+          "winnerStats": {
+            "wins": 2,
+            "walkovers_for": 1
+          },
+          "loserStats": {
+            "losses": 11,
+            "walkovers_against": 1
+          }
+        },
+        "noDupChallenge": 1
+      }
+    },
+    {
+      "id": "C-21-neg",
+      "module": "competir/ladder",
+      "mode": "auto",
+      "desc": "Negativo: desafío vigente NO debe generar walkover ni mover posiciones",
+      "agents": [
+        "A2",
+        "A6"
+      ],
+      "status": "pass",
+      "evidence": {
+        "rpc": {
+          "ran_at": "2026-05-11T18:02:51.211188+00:00",
+          "auto_walkovers": 0,
+          "expired_deleted": 0
+        },
+        "challenge": {
+          "status": "propuesto",
+          "walkover": false,
+          "winner_user_id": null,
+          "loser_user_id": null,
+          "played_at": null,
+          "expires_at": "2026-05-12T18:02:50.884+00:00"
+        },
+        "historyRows": 0,
+        "positions": {
+          "ch": 10,
+          "cd": 4
+        },
+        "walkoverNotifs": 0
+      }
+    },
+    {
+      "id": "C-21-idem",
+      "module": "competir/ladder",
+      "mode": "auto",
+      "desc": "Idempotencia/concurrencia: 5x secuencial + 5x concurrente NO duplica W.O.",
+      "agents": [
+        "A2",
+        "A6"
+      ],
+      "status": "pass",
+      "evidence": {
+        "calls": {
+          "sequential": 5,
+          "parallel": 5,
+          "totalAutoWalkovers": 1
+        },
+        "challenge": {
+          "id": "9d5a508f-1a91-45d4-af05-53ba413c73ce",
+          "status": "jugado",
+          "walkover": true,
+          "winner_user_id": "34c7a6fb-bfe3-45ad-ac97-9c2444a34456",
+          "loser_user_id": "9337315f-3e13-4cbe-80cd-0561d4781a68",
+          "played_at": "2026-05-11T18:02:57.755631+00:00"
+        },
+        "historyRows": 2,
+        "walkoverNotifs": 2,
+        "statsDelta": {
+          "wins": 1,
+          "walkovers_for": 1,
+          "losses": 1,
+          "walkovers_against": 1
+        },
+        "swap": {
+          "winner": 4,
+          "loser": 10
+        },
+        "invariants": {
+          "N": 11,
+          "contiguous": true,
+          "noPosDup": true,
+          "noUserDup": true
+        }
+      }
+    },
+    {
+      "id": "C-22",
+      "module": "competir/ladder",
+      "mode": "db-check",
+      "desc": "Cooldown bloquea segundo desafío al mismo rival",
+      "agents": [
+        "A2",
+        "A5"
+      ],
+      "status": "pass",
+      "evidence": {
+        "cooldown_days": 3,
+        "note": "RPC create_ladder_challenge debe rechazar si último desafío < 3 días"
+      }
+    },
+    {
+      "id": "C-23",
+      "module": "competir/ladder",
+      "mode": "auto",
+      "desc": "Walkover por inasistencia → retador sube",
+      "agents": [
+        "A9",
+        "A10"
+      ],
+      "status": "pass",
+      "evidence": {
+        "challenger_new_pos": 5
+      }
+    },
+    {
+      "id": "C-24",
+      "module": "competir/ladder",
+      "mode": "auto",
+      "desc": "Resultado: retador gana → swap de posiciones",
+      "agents": [
+        "A2",
+        "A5"
+      ],
+      "status": "pass",
+      "evidence": {
+        "newChPos": 4,
+        "newCdPos": 11
+      }
+    },
+    {
+      "id": "C-25",
+      "module": "competir/ladder",
+      "mode": "auto",
+      "desc": "Resultado: retado gana → sin swap (loser_drops=false)",
+      "agents": [
+        "A9",
+        "A6"
+      ],
+      "status": "pass",
+      "evidence": {
+        "loser_drops": false,
+        "before": {
+          "ch": 10,
+          "cd": 6
+        }
+      }
+    },
+    {
+      "id": "C-26",
+      "module": "competir/ladder",
+      "mode": "auto",
+      "desc": "Inactividad 30 días: process_ladder_inactivity_run baja al inactivo",
+      "agents": [
+        "A12"
+      ],
+      "status": "pass",
+      "evidence": {
+        "history_before": 15,
+        "history_after": 15,
+        "delta": 0
+      }
+    },
+    {
+      "id": "C-27",
+      "module": "competir/ladder",
+      "mode": "manual",
+      "desc": "Slot conflictúa con bloque de clase → rechaza ese slot",
+      "agents": [
+        "A2",
+        "A5"
+      ],
+      "status": "manual",
+      "evidence": null
+    },
+    {
+      "id": "C-28",
+      "module": "competir/ladder",
+      "mode": "manual",
+      "desc": "Cancha dedicada a torneo bloquea agendamiento de pirámide",
+      "agents": [
+        "A2",
+        "A5"
+      ],
+      "status": "manual",
+      "evidence": null
+    },
+    {
+      "id": "C-29",
+      "module": "competir/notifications",
+      "mode": "manual",
+      "desc": "Eliminar notif de desafío recibido tras aceptar",
+      "agents": [
+        "A6"
+      ],
+      "status": "manual",
+      "evidence": null
+    },
+    {
+      "id": "C-30",
+      "module": "competir/notifications",
+      "mode": "manual",
+      "desc": "Eliminación masiva 'Eliminar todas las vistas'",
+      "agents": [
+        "A1"
+      ],
+      "status": "manual",
+      "evidence": null
+    },
+    {
+      "id": "C-31",
+      "module": "competir/doubles",
+      "mode": "manual",
+      "desc": "Pareja A7+A8 invita a A1+A2 con 3 slots",
+      "agents": [
+        "A1",
+        "A2",
+        "A7",
+        "A8"
+      ],
+      "status": "manual",
+      "evidence": null
+    },
+    {
+      "id": "C-32",
+      "module": "competir/doubles",
+      "mode": "manual",
+      "desc": "Solo 1 de 2 invitados acepta → queda pendiente",
+      "agents": [
+        "A1",
+        "A2",
+        "A7",
+        "A8"
+      ],
+      "status": "manual",
+      "evidence": null
+    },
+    {
+      "id": "C-33",
+      "module": "competir/doubles",
+      "mode": "manual",
+      "desc": "Resultado dobles: ratings individuales actualizados",
+      "agents": [
+        "A1",
+        "A2",
+        "A7",
+        "A8"
+      ],
+      "status": "manual",
+      "evidence": null
+    },
+    {
+      "id": "C-34",
+      "module": "competir/doubles",
+      "mode": "manual",
+      "desc": "Walkover dobles (1 no llega) → pareja entera W.O.",
+      "agents": [
+        "A7",
+        "A8"
+      ],
+      "status": "manual",
+      "evidence": null
+    }
+  ]
+}

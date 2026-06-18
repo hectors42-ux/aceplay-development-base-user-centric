@@ -1,0 +1,1 @@
+ALTER FUNCTION public.format_score_summary(jsonb) SET search_path = public;

@@ -1,0 +1,1 @@
+UPDATE public.ladders SET surface='arcilla' WHERE id='ef5be00b-b833-4027-b2b3-eb8fdc9bb63c';

@@ -1,0 +1,1 @@
+CREATE POLICY "Users can update their own dismissals" ON public.notification_dismissals FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);

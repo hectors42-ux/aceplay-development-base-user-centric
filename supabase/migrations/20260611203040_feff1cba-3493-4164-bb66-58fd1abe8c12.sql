@@ -1,0 +1,1 @@
+ALTER TYPE public.competition_motor ADD VALUE IF NOT EXISTS 'americano_rotacion';

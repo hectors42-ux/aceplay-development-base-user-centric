@@ -1,0 +1,1 @@
+ALTER TYPE competition_motor ADD VALUE IF NOT EXISTS 'grupos_playoff';

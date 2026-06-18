@@ -1,0 +1,2 @@
+-- Bug 5 cleanup: drop overload obsoleto de 4 args. La app usa el de 5 (incluye _duration_minutes).
+DROP FUNCTION IF EXISTS public.create_booking(_court_id uuid, _starts_at timestamptz, _partner_user_id uuid, _notes text);

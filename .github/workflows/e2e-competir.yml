@@ -1,0 +1,113 @@
+name: E2E Competir Report
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/e2e-multiagent/**"
+      - "scripts/e2e-competir-report.mjs"
+      - "scripts/e2e-competir-publish-summary.mjs"
+      - "supabase/migrations/**"
+      - ".github/workflows/e2e-competir.yml"
+  pull_request:
+    paths:
+      - "scripts/e2e-multiagent/**"
+      - "scripts/e2e-competir-report.mjs"
+      - "scripts/e2e-competir-publish-summary.mjs"
+      - "supabase/migrations/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  competir-report:
+    name: Run Competir E2E suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      E2E_COMPETIR_OUT_DIR: ${{ github.workspace }}/e2e-competir-out
+      APP_QA_URL: https://aceplay-test-clubprovidencia.lovable.app/admin/qa/competir
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Validate required secrets
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "::error::Faltan secrets SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY"
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Competir E2E report
+        id: report
+        run: npm run e2e:competir:report
+
+      - name: Upload report artifacts
+        id: upload
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-competir-report
+          path: ${{ env.E2E_COMPETIR_OUT_DIR }}
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Build summary markdown
+        id: summary
+        if: always() && hashFiles(format('{0}/results.json', env.E2E_COMPETIR_OUT_DIR)) != ''
+        env:
+          ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          node scripts/e2e-competir-publish-summary.mjs \
+            "$E2E_COMPETIR_OUT_DIR/results.json" \
+            "$E2E_COMPETIR_OUT_DIR/summary.md"
+          cat "$E2E_COMPETIR_OUT_DIR/summary.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Comment summary on PR
+        if: always() && github.event_name == 'pull_request' && steps.summary.outcome == 'success'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: e2e-competir-summary
+          path: ${{ env.E2E_COMPETIR_OUT_DIR }}/summary.md
+
+      - name: Publish latest report to public/ (main only)
+        if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.summary.outcome == 'success'
+        run: |
+          mkdir -p public/e2e-competir
+          cp "$E2E_COMPETIR_OUT_DIR/report.md"    public/e2e-competir/report.md
+          cp "$E2E_COMPETIR_OUT_DIR/results.json" public/e2e-competir/results.json
+          cp "$E2E_COMPETIR_OUT_DIR/summary.md"   public/e2e-competir/summary.md
+          if [ -n "$(git status --porcelain public/e2e-competir)" ]; then
+            git config user.name  "lovable-ci[bot]"
+            git config user.email "lovable-ci[bot]@users.noreply.github.com"
+            git add public/e2e-competir
+            git commit -m "ci(e2e-competir): publish report ${GITHUB_SHA::7} [skip ci]"
+            git push
+          else
+            echo "Sin cambios en el reporte publicado."
+          fi
+
+      - name: Fail build if any scenario failed
+        if: steps.report.outcome != 'success'
+        run: |
+          echo "::error::Hay escenarios E2E Competir en estado fail. Ver artifact e2e-competir-report."
+          exit 1

@@ -1,0 +1,3 @@
+UPDATE auth.users SET email = 'hector.smith@aceplay.cl', email_confirmed_at = COALESCE(email_confirmed_at, now()), updated_at = now() WHERE id = '3b0d87ab-08b1-4521-9973-ca6869bc860f';
+UPDATE auth.identities SET identity_data = jsonb_set(identity_data, '{email}', '"hector.smith@aceplay.cl"'), updated_at = now() WHERE user_id = '3b0d87ab-08b1-4521-9973-ca6869bc860f' AND provider = 'email';
+UPDATE public.profiles SET email = 'hector.smith@aceplay.cl', updated_at = now() WHERE user_id = '3b0d87ab-08b1-4521-9973-ca6869bc860f';

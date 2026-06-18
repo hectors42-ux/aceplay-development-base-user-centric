@@ -1,0 +1,2 @@
+UPDATE public.tournaments SET status='en_curso' WHERE id='cd784016-b7cc-415f-8a87-d1d42902c59b';
+UPDATE public.tournament_categories SET status='en_curso' WHERE id='c4cfeb3b-86d7-4de5-9848-40c544b0bd37';

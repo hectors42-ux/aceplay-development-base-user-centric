@@ -1,27 +1,28 @@
-## Schema base: identidad global + espacios recursivos
+## Helpers de acceso + políticas RLS
 
-Crear una sola migración Supabase con el schema solicitado, sin UI, sin `tenant_id`, raíz = jugador.
+Migración única con los 3 helpers `SECURITY DEFINER` y las políticas RLS de las 4 tablas, tal cual enviaste.
 
-### Contenido de la migración
+### Contenido
 
-1. **Extensión** `ltree`.
-2. **Tabla `profiles`** (1:1 con `auth.users`): `handle` único, `display_name`, `avatar_url`, `rut`, `birthdate`, `is_minor` (columna generada), `data_consent` jsonb, `created_at`.
-3. **Enums**: `space_type`, `space_visibility`, `join_policy`, `membership_role`, `membership_status`.
-4. **Tabla `space`** (recursiva con `parent_space_id` + `path ltree`), índices GIST sobre `path`, btree sobre `parent_space_id` y `type`, unique `(parent_space_id, slug)`.
-5. **Trigger `space_set_path()`** que computa `path` desde el padre y valida que `category` solo cuelgue de `tournament` y nunca sea raíz.
-6. **Tabla `space_membership`** (N:M jugador↔espacio) con unique `(player_id, space_id)` e índices.
-7. **Tabla `space_standing`** (PK compuesta `space_id, player_id`), sin rating.
-8. **RLS habilitada** en las 4 tablas (sin políticas todavía — se definen en una iteración posterior cuando definamos quién ve qué).
-9. **GRANTs obligatorios** en cada tabla pública: `GRANT SELECT, INSERT, UPDATE, DELETE ... TO authenticated` y `GRANT ALL ... TO service_role` (sin `anon`, ya que todo es auth-only). Esto NO viene en el SQL que enviaste pero es requisito de la plataforma — sin GRANTs, PostgREST devuelve permission denied aunque RLS lo permita.
+1. **Helpers** (todos `language sql stable security definer set search_path = public`):
+   - `is_member_of_space(p_space uuid) → boolean`
+   - `can_access_space(p_space uuid) → boolean` — usa `path @>` (ltree), sin recursión.
+   - `space_admin(p_space uuid) → boolean`
 
-### Notas / preguntas implícitas resueltas por defecto
+   Agrego `set search_path = public` (no estaba en tu SQL) porque el linter lo exige y `SECURITY DEFINER` sin search_path fijo es un vector de ataque. No cambia el comportamiento.
 
-- **Sin políticas RLS** en esta migración: con RLS habilitada y sin policies, ninguna fila será accesible desde el cliente hasta que definamos políticas. Asumo que es lo deseado para esta fase (schema puro). Si quieres una policy mínima de "owner ve su profile" la agrego.
-- **`space.organizer_id`** queda como `not null references profiles(id)` tal como pediste — implica que el organizador debe existir antes de crear el space (correcto para flujo "jugador crea club").
-- **Memoria del proyecto desactualizada**: el repo actual (AcePlay multi-tenant con `tenants`, `ladders`, etc.) queda intacto. Esta migración suma tablas nuevas que coexisten; no toca ni borra nada existente. Si la intención es reset total del schema, dímelo y lo incluyo.
+2. **Políticas RLS**:
+   - `profiles`: `profiles_read` (SELECT a todos), `profiles_write` (FOR ALL solo dueño).
+   - `space`: `space_read` (vía `can_access_space`), `space_insert` (organizer = auth.uid), `space_update` (organizer o `space_admin`).
+   - `space_membership`: `sm_read`, `sm_join` (INSERT), `sm_manage` (UPDATE).
+   - `space_standing`: `ss_read` (sin policy de escritura → solo `service_role` escribe).
+
+### Notas
+
+- Los helpers son `SECURITY DEFINER` → bypassan RLS al consultar `space` y `space_membership` desde dentro de las policies. No hay recursión infinita.
+- **Sobre los errores TS pendientes**: son del código viejo de AcePlay (NotificationCenter, PartnerPicker, hooks de ladders/tournaments, etc.) que referencia tablas borradas. Esta migración no los toca. Siguen rotos hasta que decidas borrar `src/` o construir nueva UI. Si quieres, en el próximo turno limpio `src/` a un stub mínimo para destrabar la build — fuera del alcance de este prompt.
 
 ### Fuera de alcance
 
-- Políticas RLS detalladas.
-- UI / hooks / tipos cliente (se regeneran tras aprobar).
-- Tablas de matches, invitaciones, rating global, etc. (futuras iteraciones).
+- Limpieza de UI rota.
+- Más tablas / RPCs de dominio.

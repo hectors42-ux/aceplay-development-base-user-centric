@@ -1,56 +1,62 @@
-## Restaurar look & feel Clay sobre player-first
+## Objetivo
 
-100% presentación. No toco backend, schema, RLS, motor ni queries existentes (`space`/`space_membership`/`profiles`). Solo recableo de UI.
+Que el proyecto compile y todas las rutas rendericen sobre el nuevo backend player-first, dejando las features legacy (torneos, escalerillas, reservas, coaches, analítica) en estado vacío. Sin recablear datos reales todavía.
 
-### 1. Design system (verificar, no rehacer)
-- `src/index.css` ya tiene la paleta Clay V3 completa (clay/cream/ink/olive, gradientes, sombras, `--font-display` Cormorant). Verifico que `tailwind.config.ts` expone los tokens necesarios; si faltan utilidades (`shadow-clay`, `bg-gradient-clay`, colores `cream/ink/clay/olive` semánticos), las agrego en `tailwind.config.ts` mapeadas a las vars CSS ya definidas.
-- `index.html`: agregar `<link>` a Google Fonts para Cormorant Garamond (display) + DM Sans (sans) si no están cargadas.
+## Alcance
 
-### 2. AppShell rico
-Reemplazo `src/components/AppShell.tsx` por una versión con:
-- Fondo `bg-background` (crema) en toda la app.
-- Header sticky crema con sombra suave, wordmark "AcePlay" en `font-display` clay + arc-mark simple (SVG inline).
-- Bottom nav con 5 items: **Inicio** (`/`), **Compite** (`/compite`), **Descubrir** (`/descubrir`), **Reserva** (`/reserva`, placeholder), **Perfil** (`/perfil`). Activo en clay con pill de fondo `bg-primary/10`, íconos lucide.
-- Layout mobile-first; en `md+` ancho ampliado.
+### 1. Stubificar hooks listados
 
-Ajusto `src/App.tsx`: ruta `/` ahora es **Inicio**, Compite se mueve a `/compite`. Agrego rutas placeholder `/reserva` y `/torneos` (componente "Próximamente" estilizado).
+Para cada hook en la lista (~60 archivos en `src/hooks/` y `src/hooks/analytics/`):
 
-### 3. Componentes de presentación
-- **`SpaceCard`** (rehago `src/components/SpaceCard.tsx`): tarjeta con `rounded-2xl`, borde clay sutil, gradiente crema→clay/5 en hover, `name` en `font-display text-lg`, badge `type` (Club/Torneo/Escalerilla/Liga/Categoría) en clay, badge `role` (owner/admin/organizer) en olive, ícono de deporte (tennis/padel) lucide, sport en `text-mono uppercase tracking-wider`.
-- **`Badge` variants Clay** (ya existe shadcn badge; añado variantes `clay`, `olive`, `outline-clay` vía `cva`).
-- **`EmptyState`** (`src/components/EmptyState.tsx`): ícono grande en círculo clay/10, título display, copy cálido es-CL, CTA opcional. Reemplaza los "Aún no participas…" pelados.
-- **`SectionHeader`** (`src/components/SectionHeader.tsx`): eyebrow mono uppercase + título display, opcional acción a la derecha.
+- Mantener intactos: nombre del hook, firma de parámetros, y la **forma exacta del objeto/valor retornado** (mismas keys/propiedades que hoy devuelve, incluyendo `loading`, `error`, `refetch`, etc.).
+- Reemplazar el cuerpo por valores neutros:
+  - arrays → `[]`
+  - objetos → `null` (o `{}` si la firma exige propiedades concretas)
+  - booleanos → `false`
+  - `loading` → `false`, `error` → `null`
+  - funciones (mutate/refetch/submit) → `async () => {}` o `() => {}` no-op
+- Eliminar imports a `supabase`, a tablas inexistentes y a `@/integrations/supabase/types` que rompan TS; sustituir tipos referenciados por `any` con `// TODO: cablear fase 2 - tipar contra nuevo esquema`.
+- Añadir en la primera línea del cuerpo: `// TODO: cablear fase 2`.
+- No borrar archivos. No modificar componentes consumidores.
 
-### 4. Pantallas fase 1 (solo piel)
-Sin tocar la lógica de datos ni los hooks/queries:
-- **`Login`**: fondo con gradiente clay sutil, card cream con sombra, wordmark grande en display, tagline "Tennis, gamified.", botón Google con ícono, separador "o", input + botón magic link estilizados.
-- **`Onboarding`**: layout con eyebrow + título display por sección, inputs cream, bloque de consentimiento Ley 21.719 en card destacada con borde clay y copy cálido.
-- **`Compite`** (`/compite`): header con saludo `Hola, {display_name}` + subtítulo, secciones agrupadas con `SectionHeader` por tipo, grid de `SpaceCard`. `EmptyState` cuando no hay membresías.
-- **`Space`**: header con gradiente clay, nombre en display XL, badges type/visibility/sport, tabs estilizados (Participantes/Info), lista de participantes con avatares h-10 + fila propia con anillo clay.
-- **`Descubrir`**: buscador con ícono lupa, grid de `SpaceCard` con `JoinButton` integrado, `EmptyState` cuando no hay resultados.
-- **`Perfil`**: header con avatar grande (h-20) + display_name en font-display + handle muted, secciones cards (Datos, Privacidad, Sesión), toggles tematizados, botón "Cerrar sesión" destructive outline.
+Para preservar la firma exacta, en cada hook se leerá el `return` actual y se reproducirá literal con valores vacíos (sin inventar propiedades nuevas ni quitar las existentes).
 
-### 5. Pantalla Inicio nueva (`/`)
-`src/pages/Inicio.tsx` cableada al core nuevo:
-- Hero: saludo "Buen día, {display_name}" en display + avatar a la derecha.
-- Card resumen: count de `space_membership` activas (query existente reutilizada), CTA "Ver mis competencias" → `/compite`.
-- Sección "Tus competencias" (top 3 SpaceCards desde la misma query, `slice(0,3)`), link "Ver todas".
-- Card "Tu nivel" (placeholder elegante con skeleton-teaser, copy "Pronto verás tu rating cuando juegues tu primer partido oficial." — sin datos inventados).
-- Card "Próximos partidos" (placeholder vacío con ícono calendar, copy "Aún no tienes partidos agendados.").
+### 2. Hooks fuera de la lista que rompen build
 
-### 6. Rutas placeholder
-`src/pages/ComingSoon.tsx` reutilizable para `/reserva` y `/torneos`: ícono grande, título display, copy "Estamos trabajando en esto. Vuelve pronto.", link a Inicio.
+Algunos hooks NO listados también consultan tablas eliminadas y/o son consumidos por los listados. Se inspeccionarán y, si su tipado o queries impiden compilar, se aplicará el mismo tratamiento mínimo (stub) con TODO. Candidatos probables:
 
-### Reglas que respeto
-- Cero referencias a `tenant_id`/`tournaments`/`tournament_registrations` o tablas viejas.
-- No restauro pantallas admin viejas.
-- No invento rating/puntos/Fichas — solo teasers.
-- No toco RLS, helpers, schema, edge functions.
-- Mobile-first; QA visual en 375/768/1280 antes de cerrar.
+- `useMatchHistory`, `useRatingHistory`, `useMyRating`, `useMyRatingWithCategory`, `useLadderNotifications`, `useUserProfileSummary`, `useViewerMembership`, `useInviteRowStates`, `useShareCardData`, `useTournamentReport`, `useLiveOverlay`, `useActiveMoment`.
 
-### Archivos
-- Editar: `tailwind.config.ts`, `index.html`, `src/App.tsx`, `src/components/AppShell.tsx`, `src/components/SpaceCard.tsx`, `src/components/ui/badge.tsx`, `src/pages/{Login,Onboarding,Compite,Descubrir,Space,Perfil}.tsx`.
-- Crear: `src/pages/Inicio.tsx`, `src/pages/ComingSoon.tsx`, `src/components/EmptyState.tsx`, `src/components/SectionHeader.tsx`.
+Criterio: solo se tocan si bloquean `tsc`. Si compilan, se dejan tal cual.
 
-### Criterios de aceptación
-Los 7 del prompt: app se ve Clay, nav y header estilizados, SpaceCard rica, Login/Onboarding cuidados, Inicio dashboard del jugador, modelo player-first intacto, app compila.
+### 3. Tipos compartidos y utilidades
+
+Archivos como `src/lib/tournament-utils.ts`, `src/lib/ladder-utils.ts`, `src/lib/rating-utils.ts`, `src/lib/tournament-presets.ts` importan tipos de tablas que ya no existen. Se reemplazarán los tipos rotos por `any` con TODO, **manteniendo las firmas exportadas**, para no obligar a cambiar componentes.
+
+### 4. Verificación
+
+- `tsc --noEmit` debe pasar limpio (el agente lo corre automáticamente al guardar).
+- Navegar mentalmente las rutas principales (`/`, `/compite`, `/descubrir`, `/perfil`, `/reserva`, `/torneos`, `/onboarding/*`) y confirmar que renderizan estado vacío sin throw.
+- QA responsive no aplica (este paso no toca UI).
+
+## Fuera de alcance
+
+- No se tocan: `supabase/` (migrations, edge functions), componentes/páginas consumidores, AppShell, design tokens, motor de juego, RLS, edge functions.
+- No se recablean hooks a las nuevas tablas (`space`, `space_membership`, `space_standing`, `matches`, `player_ratings`, `ladder_state`, etc.). Eso es fase 2.
+- No se eliminan rutas ni features de la UI; solo se vacían sus datos.
+
+## Detalle técnico
+
+- Por hook se mantiene la importación de `useState`/`useEffect` solo si la firma incluye estado mutable; en la mayoría se elimina todo import salvo lo estrictamente necesario.
+- Hooks que devuelven `{ data, loading, error, refetch }` quedan como:
+  ```ts
+  // TODO: cablear fase 2
+  return { data: [] as any[], loading: false, error: null as any, refetch: async () => {} };
+  ```
+- Hooks que devuelven un objeto rico (p.ej. `useTournamentDetailEnriched`) reproducen la forma anterior con campos en `null`/`[]`.
+- Hooks de mutación (p.ej. `useJoinOpenMatch`) devuelven `{ mutate: async () => {}, isPending: false, error: null }` o equivalente a su firma actual.
+- Si un hook exporta tipos auxiliares (`export type X = ...`), se conservan pero, si dependen de `Database['public']['Tables']['xxx']`, se reemplazan por `any` con TODO.
+
+## Resultado esperado
+
+Compilación verde, rutas renderizando, secciones legacy mostrando estados vacíos. Base limpia para empezar fase 2 (recablear hook por hook a las nuevas tablas player-first).

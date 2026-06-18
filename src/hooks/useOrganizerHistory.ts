@@ -1,52 +1,37 @@
+// TODO: cablear fase 2
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 
 export interface PodiumPlayer {
-  registration_id: string;
+  user_id: string;
+  name: string;
 }
 export interface PodiumCategory {
-  id: string;
-  name: string;
+  category_id: string;
+  category_name: string;
   champion: PodiumPlayer | null;
   runner_up: PodiumPlayer | null;
-  semis: PodiumPlayer[];
-  matches_played: number;
-  has_bracket: boolean;
+  third_place: PodiumPlayer | null;
 }
 export interface ClosingSummary {
-  categories: PodiumCategory[];
-  totals: { participants: number; matches_played: number };
-  closed_at: string;
+  total_matches: number;
+  walkovers: number;
+  reschedules: number;
+  satisfaction_avg: number | null;
 }
-
 export interface OrganizerHistoryRow {
   tournament_id: string;
-  organizer_user_id: string;
-  tenant_id: string;
-  name: string;
-  slug: string;
-  status: string;
-  starts_at: string;
-  ends_at: string;
-  closed_at: string | null;
-  closing_summary: ClosingSummary | null;
-  participants_count: number;
-  matches_played: number;
-  sports: string[] | null;
+  tournament_name: string;
+  tournament_slug: string;
+  closed_at: string;
+  categories: PodiumCategory[];
+  summary: ClosingSummary;
 }
 
-export function useOrganizerHistory(userId: string | null | undefined) {
-  return useQuery({
-    queryKey: ["organizer-history", userId],
-    enabled: !!userId,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("organizer_history")
-        .select("*")
-        .eq("organizer_user_id", userId!)
-        .order("starts_at", { ascending: false });
-      if (error) throw error;
-      return (data ?? []) as unknown as OrganizerHistoryRow[];
-    },
+export function useOrganizerHistory(_userId: string | null | undefined) {
+  // TODO: cablear fase 2
+  return useQuery<OrganizerHistoryRow[]>({
+    queryKey: ["stub-organizer-history"],
+    queryFn: async () => [],
+    enabled: false,
   });
 }

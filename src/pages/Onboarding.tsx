@@ -85,10 +85,23 @@ export default function Onboarding() {
   };
 
   return (
-    <main className="flex min-h-screen items-start justify-center bg-background px-4 py-10">
-      <Card className="w-full max-w-md">
+    <main className="relative flex min-h-screen items-start justify-center overflow-hidden bg-background px-4 py-10">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-60"
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 50% at 50% 0%, hsl(var(--primary)/0.15), transparent 60%)",
+        }}
+      />
+      <Card className="relative w-full max-w-md border-border/70 bg-card/95 shadow-xl backdrop-blur">
         <CardHeader>
-          <CardTitle className="font-display text-2xl">Crea tu identidad</CardTitle>
+          <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-primary">
+            Paso final
+          </p>
+          <CardTitle className="mt-1 font-display text-3xl leading-tight">
+            Crea tu identidad
+          </CardTitle>
           <p className="text-sm text-muted-foreground">
             Te acompañará en cada club, torneo y escalerilla.
           </p>

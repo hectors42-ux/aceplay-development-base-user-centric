@@ -1,7 +1,6 @@
-import type { Database } from "@/integrations/supabase/types";
 
 export type LadderChallengeStatus =
-  Database["public"]["Enums"]["ladder_challenge_status"];
+  string /* TODO: cablear fase 2 */;
 
 export const LADDER_CHALLENGE_STATUS_LABEL: Record<LadderChallengeStatus, string> = {
   propuesto: "Propuesto",

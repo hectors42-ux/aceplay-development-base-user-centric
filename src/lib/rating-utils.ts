@@ -1,4 +1,3 @@
-import type { Database } from "@/integrations/supabase/types";
 
 export type RatingSport = "tenis_singles" | "tenis_dobles" | "padel" | "pickleball";
 
@@ -226,7 +225,7 @@ export type RatingHistoryRow = {
   delta: number;
   reliability_before: number;
   reliability_after: number;
-  source: Database["public"]["Enums"]["rating_change_source"];
+  source: string /* TODO: cablear fase 2 */;
   source_ref_id: string | null;
   notes: string | null;
   recorded_at: string;

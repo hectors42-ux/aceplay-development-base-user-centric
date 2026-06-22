@@ -1,4 +1,4 @@
-import { Home, Trophy, Swords, User } from "lucide-react";
+import { Home, Trophy, Swords, User, Compass } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useTournamentNotifications } from "@/hooks/useTournamentNotifications";
@@ -11,6 +11,7 @@ import { useMyOperatorTournaments } from "@/hooks/useMyOperatorTournaments";
 const baseItems = [
   { id: "home", label: "Inicio", icon: Home, to: "/" },
   { id: "competir", label: "Competir", icon: Swords, to: "/ranking" },
+  { id: "descubrir", label: "Descubrir", icon: Compass, to: "/descubrir" },
   { id: "torneos", label: "Torneos", icon: Trophy, to: "/torneos" },
   { id: "perfil", label: "Perfil", icon: User, to: "/perfil" },
 ];

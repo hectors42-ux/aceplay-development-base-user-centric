@@ -3,6 +3,7 @@ import {
   Trophy,
   Swords,
   User,
+  Compass,
   Users,
   Megaphone,
   FileText,
@@ -32,6 +33,7 @@ import { cn } from "@/lib/utils";
 const memberItems = [
   { title: "Inicio", url: "/", icon: Home, id: "home" },
   { title: "Competir", url: "/ranking", icon: Swords, id: "competir" },
+  { title: "Descubrir", url: "/descubrir", icon: Compass, id: "descubrir" },
   { title: "Torneos", url: "/torneos", icon: Trophy, id: "torneos" },
   { title: "Perfil", url: "/perfil", icon: User, id: "perfil" },
 ];

@@ -36,6 +36,7 @@ const TournamentCategoryDetail = lazy(() => import("./pages/TournamentCategoryDe
 const OperatorLiveBoard = lazy(() => import("./pages/OperatorLiveBoard.tsx"));
 const ResultadoPendiente = lazy(() => import("./pages/ResultadoPendiente.tsx"));
 const Ranking = lazy(() => import("./pages/Ranking.tsx"));
+const CargarResultado = lazy(() => import("./pages/CargarResultado.tsx"));
 const AdminLadder = lazy(() => import("./pages/AdminLadder.tsx"));
 const AdminLadderDetail = lazy(() => import("./pages/AdminLadderDetail.tsx"));
 const Onboarding = lazy(() => import("./pages/Onboarding.tsx"));
@@ -211,6 +212,14 @@ const App = () => (
                     element={
                       <ProtectedRoute>
                         <Ranking />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/cargar"
+                    element={
+                      <ProtectedRoute>
+                        <CargarResultado />
                       </ProtectedRoute>
                     }
                   />

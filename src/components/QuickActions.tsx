@@ -1,4 +1,4 @@
-import { CalendarPlus, Swords, Trophy, GraduationCap, ArrowRight, ExternalLink } from "lucide-react";
+import { CalendarPlus, Swords, Trophy, GraduationCap, ArrowRight, ExternalLink, ClipboardCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useBookingsProvider, openExternalBooking } from "@/hooks/useBookingsProvider";
 import { EXTERNAL_BOOKING_COPY } from "@/lib/external-bookings-copy";
@@ -6,12 +6,18 @@ import { EXTERNAL_BOOKING_COPY } from "@/lib/external-bookings-copy";
 const primaryAction = {
   id: "competir",
   label: "Competir",
-  description: "Desafíos, Pirámide y partners",
+  description: "Desafíos, Escalerilla y partners",
   icon: Swords,
   to: "/ranking",
 };
 
 const secondaryActions = [
+  {
+    id: "resultado",
+    label: "Resultado",
+    icon: ClipboardCheck,
+    to: "/cargar",
+  },
   {
     id: "reservar",
     label: "Reservar",

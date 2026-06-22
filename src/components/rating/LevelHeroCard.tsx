@@ -57,12 +57,6 @@ interface Props {
   className?: string;
 }
 
-const CATEGORY_STYLES: Record<ClubCategory, { bg: string; text: string; label: string }> = {
-  A: { bg: "bg-success/15", text: "text-success", label: "Categoría A" },
-  B: { bg: "bg-primary/15", text: "text-primary", label: "Categoría B" },
-  C: { bg: "bg-accent/20", text: "text-accent-foreground", label: "Categoría C" },
-};
-
 export const LevelHeroCard = ({
   level,
   category,
@@ -111,8 +105,7 @@ export const LevelHeroCard = ({
   }
 
   const band = getLevelBand(level);
-  const cat = category ?? "C";
-  const catStyle = CATEGORY_STYLES[cat];
+  const cat = category;
   const DeltaIcon = delta > 0 ? TrendingUp : delta < 0 ? TrendingDown : Minus;
   const showPositions = rankingPosition !== null || ladderPosition !== null || ladderStatus !== null;
 
@@ -147,20 +140,19 @@ export const LevelHeroCard = ({
               <span className="hidden sm:inline">{formatStreakLabel(streak)}</span>
             </span>
           )}
-          <div
-            className={cn(
-              "flex flex-col items-center gap-0.5 rounded-2xl px-3 py-2",
-              catStyle.bg,
-            )}
-            aria-label={catStyle.label}
-          >
-            <span className={cn("font-display text-2xl font-bold leading-none", catStyle.text)}>
-              {cat}
-            </span>
-            <span className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground">
-              Cat.
-            </span>
-          </div>
+          {cat && (
+            <div
+              className="flex flex-col items-center gap-0.5 rounded-2xl bg-primary/15 px-3 py-2"
+              aria-label={`Categoría ${cat}`}
+            >
+              <span className="font-display text-base font-bold leading-none text-primary text-center">
+                {cat}
+              </span>
+              <span className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground">
+                Cat.
+              </span>
+            </div>
+          )}
         </div>
       </div>
 

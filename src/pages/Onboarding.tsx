@@ -244,7 +244,7 @@ const Onboarding = () => {
         profileUpdate.padel_position = padelPosition;
       }
       if (Object.keys(profileUpdate).length > 0) {
-        await supabase.from("profiles").update(profileUpdate).eq("user_id", user.id);
+        await supabase.from("profiles").update(profileUpdate).eq("id", user.id);
       }
 
       // Dejamos como deporte activo el que acaba de completar el cuestionario.

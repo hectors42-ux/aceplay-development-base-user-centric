@@ -58,7 +58,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchProfileAndRoles = async (userId: string) => {
     const [profileRes, rolesRes, coachRes] = await Promise.all([
-      supabase.from("profiles").select("*").eq("user_id", userId).maybeSingle(),
+      // profiles del core player-first: PK es `id` (= auth.users.id), no `user_id`.
+      supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
+      // user_roles / coach_profiles aún no portados al core: fallan silenciosamente (data null).
       supabase.from("user_roles").select("role").eq("user_id", userId),
       supabase
         .from("coach_profiles")
@@ -67,7 +69,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .eq("is_active", true)
         .maybeSingle(),
     ]);
-    setProfile((profileRes.data as UserProfile | null) ?? null);
+
+    // El profile del core trae `display_name`/`handle`; lo adaptamos al shape UserProfile
+    // (first_name/last_name) que consume la app, sin restaurar el modelo viejo (tenant_id, etc.).
+    const row = profileRes.data as Record<string, unknown> | null;
+    setProfile(
+      row
+        ? ({
+            id: row.id as string,
+            user_id: row.id as string,
+            tenant_id: "",
+            email: "",
+            first_name:
+              ((row.display_name as string) || (row.handle as string) || "Socio").split(" ")[0],
+            last_name: ((row.display_name as string) || "").split(" ").slice(1).join(" "),
+            rut: (row.rut as string) ?? null,
+            phone: null,
+            avatar_url: (row.avatar_url as string) ?? null,
+            ntrp_level: null,
+            club_ranking: null,
+            dues_status: "al_dia",
+            member_since: row.created_at as string,
+          } as UserProfile)
+        : null,
+    );
     setRoles(((rolesRes.data ?? []) as { role: AppRole }[]).map((r) => r.role));
     setIsCoach(!!coachRes.data);
   };

@@ -74,7 +74,9 @@ export const PlayerRatingCard = ({
   const reliability = rating.reliability;
   const reliabilityLabel = getReliabilityLabel(reliability);
   const cat = category ?? "C";
-  const catStyle = CATEGORY_STYLES[cat];
+  // La categoría ahora puede ser el label real del escalafón (p. ej. "Cuarta"); si no
+  // coincide con A/B/C usamos un estilo neutro para no romper (Perfil/partner; pieza posterior).
+  const catStyle = CATEGORY_STYLES[cat] ?? CATEGORY_STYLES.C;
 
   const Wrapper = linkToProfile ? Link : "div";
   const wrapperProps = linkToProfile ? { to: "/perfil" } : {};

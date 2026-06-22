@@ -3,7 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/providers/AuthProvider";
 import type { PlayerRatingRow } from "@/lib/rating-utils";
 
-export type ClubCategory = "A" | "B" | "C";
+// Categoría real del club (label de category_config, p. ej. "Cuarta", "Honor", "OPEN").
+// Antes era un enum A/B/C del modelo viejo; ahora es el nombre de la categoría del escalafón.
+export type ClubCategory = string;
 
 interface State {
   rating: PlayerRatingRow | null;

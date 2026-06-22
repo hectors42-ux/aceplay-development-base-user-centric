@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Loader2, Trophy, Play } from "lucide-react";
+import { ArrowLeft, Loader2, Trophy, Play, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { useCanCreate } from "@/hooks/useCanCreate";
+import { CreateSpaceDialog } from "@/components/CreateSpaceDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,6 +43,8 @@ const STATUS_LABEL: Record<string, string> = {
 
 const TorneoBracket = () => {
   const { user } = useAuth();
+  const { canCreate } = useCanCreate();
+  const [createOpen, setCreateOpen] = useState(false);
   const [cats, setCats] = useState<CategoryRow[]>([]);
   const [catId, setCatId] = useState<string>("");
   const [slots, setSlots] = useState<SlotRow[]>([]);
@@ -244,7 +248,28 @@ const TorneoBracket = () => {
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Torneo</p>
           <h1 className="font-display text-xl font-semibold">{title}</h1>
         </div>
+        {canCreate && (
+          <Button size="sm" variant="clay" className="ml-auto" onClick={() => setCreateOpen(true)}>
+            <Plus className="h-4 w-4" /> Crear
+          </Button>
+        )}
       </div>
+
+      <CreateSpaceDialog
+        kind="tournament"
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        onCreated={() => {
+          void (async () => {
+            const prevIds = new Set(cats.map((c) => c.category_id));
+            const { data } = await supabase.rpc("list_tournament_categories");
+            const rows = (data as CategoryRow[] | null) ?? [];
+            setCats(rows);
+            const fresh = rows.find((r) => !prevIds.has(r.category_id));
+            if (fresh) setCatId(fresh.category_id);
+          })();
+        }}
+      />
 
       {cats.length > 1 && (
         <div className="mb-4">

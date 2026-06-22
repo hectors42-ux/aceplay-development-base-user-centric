@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Loader2, Swords, ChevronsUp } from "lucide-react";
+import { ArrowLeft, Loader2, Swords, ChevronsUp, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { useCanCreate } from "@/hooks/useCanCreate";
+import { CreateSpaceDialog } from "@/components/CreateSpaceDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,10 +23,12 @@ interface StandingRow { local_rank: number; user_id: string; name: string | null
 
 const Escalerilla = () => {
   const { user } = useAuth();
+  const { canCreate } = useCanCreate();
   const [escalerillas, setEscalerillas] = useState<EscalerillaRow[]>([]);
   const [escId, setEscId] = useState<string>("");
   const [standings, setStandings] = useState<StandingRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [createOpen, setCreateOpen] = useState(false);
   const [challengeTo, setChallengeTo] = useState<StandingRow | null>(null);
   const [result, setResult] = useState<"me" | "rival">("me");
   const [setsA, setSetsA] = useState("6");
@@ -82,6 +86,11 @@ const Escalerilla = () => {
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Competir</p>
           <h1 className="font-display text-xl font-semibold">Escalerilla</h1>
         </div>
+        {canCreate && (
+          <Button size="sm" variant="clay" className="ml-auto" onClick={() => setCreateOpen(true)}>
+            <Plus className="h-4 w-4" /> Crear
+          </Button>
+        )}
       </div>
 
       {escalerillas.length > 1 && (
@@ -141,6 +150,19 @@ const Escalerilla = () => {
       <p className="mt-4 text-center text-[11px] text-muted-foreground">
         Reta a alguien por encima tuyo. El resultado solo cuenta cuando el rival lo confirma; ahí suben/bajan el rating global y la posición local.
       </p>
+
+      <CreateSpaceDialog
+        kind="escalerilla"
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        onCreated={(id) => {
+          void (async () => {
+            const { data } = await supabase.rpc("list_escalerillas");
+            setEscalerillas((data as EscalerillaRow[] | null) ?? []);
+            setEscId(id);
+          })();
+        }}
+      />
 
       {/* Challenge dialog */}
       <Dialog open={!!challengeTo} onOpenChange={(o) => { if (!o) setChallengeTo(null); }}>

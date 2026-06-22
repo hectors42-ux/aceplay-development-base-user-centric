@@ -1,0 +1,127 @@
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+
+// Toggle de visibilidad con texto claro por opción (Part A).
+const VISIBILITY = [
+  { value: "members", label: "Solo socios", desc: "Cerrado: solo socios de tu club con acceso directo." },
+  { value: "hierarchy", label: "Mi club", desc: "Los socios de tu club lo descubren dentro del club." },
+  { value: "public", label: "Abierto · red AcePlay", desc: "Cualquier jugador de cualquier club lo encuentra en Descubrir." },
+];
+
+const MOTORES = [
+  { value: "single_elimination", label: "Eliminación simple" },
+  { value: "round_robin", label: "Round robin" },
+  { value: "consolation", label: "Consolación" },
+  { value: "groups_playoff", label: "Grupos → playoff" },
+  { value: "double_elimination", label: "Doble eliminación" },
+  { value: "americano", label: "Americano de rotación" },
+];
+
+interface Props {
+  kind: "escalerilla" | "tournament";
+  open: boolean;
+  onOpenChange: (o: boolean) => void;
+  onCreated: (id: string) => void;
+}
+
+export const CreateSpaceDialog = ({ kind, open, onOpenChange, onCreated }: Props) => {
+  const [name, setName] = useState("");
+  const [sport, setSport] = useState<"tennis" | "padel">("padel");
+  const [visibility, setVisibility] = useState("public");
+  const [motor, setMotor] = useState("round_robin");
+  const [categoryLabel, setCategoryLabel] = useState("Categoría OPEN");
+  const [busy, setBusy] = useState(false);
+
+  const submit = async () => {
+    if (!name.trim()) { toast.error("Ponle un nombre"); return; }
+    setBusy(true);
+    const { data, error } = kind === "escalerilla"
+      ? await supabase.rpc("create_escalerilla", { _name: name.trim(), _sport: sport, _visibility: visibility })
+      : await supabase.rpc("create_tournament", {
+          _name: name.trim(), _sport: sport, _visibility: visibility, _motor: motor, _category_label: categoryLabel.trim(),
+        });
+    setBusy(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success(kind === "escalerilla" ? "Escalerilla creada." : "Torneo creado.");
+    onOpenChange(false);
+    setName("");
+    onCreated(data as string);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{kind === "escalerilla" ? "Nueva escalerilla" : "Nuevo torneo"}</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-3">
+          <div className="space-y-1.5">
+            <Label>Nombre</Label>
+            <Input value={name} onChange={(e) => setName(e.target.value)}
+              placeholder={kind === "escalerilla" ? "Escalerilla de verano" : "Abierto de primavera"} />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Deporte</Label>
+            <Select value={sport} onValueChange={(v) => setSport(v as "tennis" | "padel")}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="tennis">Tenis</SelectItem>
+                <SelectItem value="padel">Pádel</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          {kind === "tournament" && (
+            <>
+              <div className="space-y-1.5">
+                <Label>Formato</Label>
+                <Select value={motor} onValueChange={setMotor}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {MOTORES.map((m) => <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label>Categoría</Label>
+                <Input value={categoryLabel} onChange={(e) => setCategoryLabel(e.target.value)} />
+              </div>
+            </>
+          )}
+          <div className="space-y-1.5">
+            <Label>Visibilidad</Label>
+            <div className="space-y-2">
+              {VISIBILITY.map((v) => (
+                <button key={v.value} type="button" onClick={() => setVisibility(v.value)}
+                  className={cn("w-full rounded-2xl border p-3 text-left transition-smooth",
+                    visibility === v.value ? "border-primary bg-primary/5 ring-1 ring-primary/30" : "border-border hover:bg-muted")}>
+                  <p className="text-sm font-semibold text-foreground">{v.label}</p>
+                  <p className="text-[11px] text-muted-foreground">{v.desc}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+          <Button variant="clay" disabled={busy} onClick={submit}>
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Crear"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default CreateSpaceDialog;

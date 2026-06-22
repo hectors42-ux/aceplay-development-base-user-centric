@@ -92,7 +92,47 @@ const Auth = () => {
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    toast.error("El registro está cerrado. Solicita acceso al administrador del club.");
+    setSubmitting(true);
+    const fd = new FormData(e.currentTarget);
+    const first = nameSchema.safeParse(fd.get("first_name"));
+    const last = nameSchema.safeParse(fd.get("last_name"));
+    const email = emailSchema.safeParse(fd.get("email"));
+    const password = passwordSchema.safeParse(fd.get("password"));
+    if (!first.success || !last.success || !email.success || !password.success) {
+      toast.error(
+        first.error?.errors[0]?.message ||
+          last.error?.errors[0]?.message ||
+          email.error?.errors[0]?.message ||
+          password.error?.errors[0]?.message ||
+          "Datos inválidos",
+      );
+      setSubmitting(false);
+      return;
+    }
+
+    const displayName = `${first.data} ${last.data}`.trim();
+    const { data, error } = await supabase.auth.signUp({
+      email: email.data,
+      password: password.data,
+      options: {
+        emailRedirectTo: `${window.location.origin}/`,
+        // handle_new_user() crea el profile a partir de estos metadatos.
+        data: { display_name: displayName, handle: email.data.split("@")[0] },
+      },
+    });
+    setSubmitting(false);
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    if (data.session) {
+      // Email auto-confirmado: ya hay sesión → ProtectedRoute lleva al onboarding.
+      toast.success("¡Cuenta creada! Vamos a tu nivel inicial.");
+    } else {
+      // Falta confirmar email.
+      toast.success("Cuenta creada. Revisa tu email para confirmar el acceso.");
+    }
   };
 
 

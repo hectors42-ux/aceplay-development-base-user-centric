@@ -150,7 +150,7 @@ describe("Realtime: nuevo desafío en Pirámide", () => {
       title: string;
       description: string;
     };
-    expect(toastArg.title).toBe("Nuevo desafío en la Pirámide");
+    expect(toastArg.title).toBe("Nuevo desafío en la Escalerilla");
 
     // 4) BottomNav muestra el badge actualizado sin refresh manual.
     await waitFor(() => {

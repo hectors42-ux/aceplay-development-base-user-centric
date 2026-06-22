@@ -162,7 +162,7 @@ describe("MatchHistorySheet — variables y estados", () => {
     toastOkSpy.mockClear();
   });
 
-  it("muestra los 3 estados Pirámide: Falta resultado, Esperando rival, Por confirmar", async () => {
+  it("muestra los 3 estados Escalerilla: Falta resultado, Esperando rival, Por confirmar", async () => {
     await renderSheet();
     await waitFor(() => screen.getByText(/Historial de partidos/i));
     expect((await screen.findAllByText(/Falta resultado/i)).length).toBeGreaterThanOrEqual(2);
@@ -176,11 +176,11 @@ describe("MatchHistorySheet — variables y estados", () => {
     expect(await screen.findByLabelText(/Partido vencido/i)).toBeInTheDocument();
   });
 
-  it("filtros: 'Pirámide' deja solo desafíos; 'Torneos' deja solo torneo; 'Amistosos' deja solo amistoso", async () => {
+  it("filtros: 'Escalerilla' deja solo desafíos; 'Torneos' deja solo torneo; 'Amistosos' deja solo amistoso", async () => {
     await renderSheet();
     await waitFor(() => screen.getByText(/Historial de partidos/i));
 
-    fireEvent.click(screen.getByRole("button", { name: /^Pirámide/ }));
+    fireEvent.click(screen.getByRole("button", { name: /^Escalerilla/ }));
     await waitFor(() => {
       expect(screen.queryByText(/Open Verano/i)).not.toBeInTheDocument();
     });

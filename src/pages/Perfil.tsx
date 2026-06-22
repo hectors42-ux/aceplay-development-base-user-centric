@@ -11,7 +11,6 @@ import {
   Trophy,
   ListOrdered,
   ChevronRight,
-  GraduationCap,
   Download,
   Sparkles,
   
@@ -30,12 +29,10 @@ import { LegalLinksList } from "@/components/legal/LegalLinksList";
 import { WelcomeTour, resetWelcomeTour } from "@/components/onboarding/WelcomeTour";
 import { NotificationPreferencesCard } from "@/components/profile/NotificationPreferencesCard";
 import { Button } from "@/components/ui/button";
-import { useMyCoachProfile } from "@/hooks/useCoaches";
 import { useClubBrand } from "@/components/providers/ClubBrandProvider";
 
 const Perfil = () => {
   const { profile, user, isAdmin, signOut } = useAuth();
-  const { data: coachProfile } = useMyCoachProfile();
   const { brand } = useClubBrand();
   const [editing, setEditing] = useState(false);
   const [tourOpen, setTourOpen] = useState(false);
@@ -103,36 +100,17 @@ const Perfil = () => {
           </div>
         </section>
 
-        {coachProfile && (
-          <section className="space-y-2 px-5">
-            <h2 className="flex items-center gap-2 font-display text-base font-semibold">
-              <GraduationCap className="h-4 w-4" /> Soy coach
-            </h2>
-            <Link
-              to="/coach"
-              className="flex items-center justify-between rounded-2xl border border-border bg-card px-4 py-3 text-sm font-medium text-foreground shadow-card transition-smooth hover:bg-muted"
-            >
-              <span className="flex items-center gap-2">
-                <GraduationCap className="h-4 w-4 text-primary" />
-                Mi panel de coach
-              </span>
-              <ChevronRight className="h-4 w-4 text-muted-foreground" />
-            </Link>
-          </section>
-        )}
-
         {isAdmin && (
           <section className="space-y-2 px-5">
             <h2 className="flex items-center gap-2 font-display text-base font-semibold">
               <Settings className="h-4 w-4" /> Administración del club
             </h2>
             <div className="space-y-2">
+              {/* "Canchas y reglas" y "Clases & coaches" se quitan: módulos dormidos. */}
               {[
-                { to: "/admin/canchas", icon: Settings, label: "Canchas y reglas" },
                 { to: "/admin/socios", icon: Users, label: "Administrar socios" },
                 { to: "/admin/torneos", icon: Trophy, label: "Administrar torneos" },
                 { to: "/admin/ladder", icon: ListOrdered, label: "Administrar Escalerilla" },
-                { to: "/admin/clases", icon: GraduationCap, label: "Clases & coaches" },
                 { to: "/admin/comunicaciones", icon: Megaphone, label: "Anuncios del club" },
                 { to: "/admin/documentos", icon: FileText, label: "Reglamentos y documentos" },
               ].map(({ to, icon: Icon, label }) => (

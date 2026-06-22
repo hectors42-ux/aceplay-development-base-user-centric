@@ -1,7 +1,5 @@
-import { CalendarPlus, Swords, Trophy, GraduationCap, ArrowRight, ExternalLink, ClipboardCheck } from "lucide-react";
+import { Swords, Trophy, ArrowRight, ClipboardCheck } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useBookingsProvider, openExternalBooking } from "@/hooks/useBookingsProvider";
-import { EXTERNAL_BOOKING_COPY } from "@/lib/external-bookings-copy";
 
 const primaryAction = {
   id: "competir",
@@ -11,6 +9,7 @@ const primaryAction = {
   to: "/ranking",
 };
 
+// "Reservar" y "Clase" se quitaron: módulos dormidos (ver src/config/modules.ts).
 const secondaryActions = [
   {
     id: "resultado",
@@ -19,28 +18,15 @@ const secondaryActions = [
     to: "/cargar",
   },
   {
-    id: "reservar",
-    label: "Reservar",
-    icon: CalendarPlus,
-    to: "/reservar",
-  },
-  {
     id: "torneo",
     label: "Torneos",
     icon: Trophy,
     to: "/torneos",
   },
-  {
-    id: "clase",
-    label: "Clase",
-    icon: GraduationCap,
-    to: "/clases",
-  },
 ] as const;
 
 export const QuickActions = () => {
   const PrimaryIcon = primaryAction.icon;
-  const { isExternal, externalUrl } = useBookingsProvider();
 
   return (
     <section aria-labelledby="acciones-titulo" className="px-5 space-y-3">
@@ -68,40 +54,20 @@ export const QuickActions = () => {
         />
       </Link>
 
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 gap-2">
         {secondaryActions.map((action, i) => {
-          const isReservar = action.id === "reservar";
-          const Icon = isReservar && isExternal ? ExternalLink : action.icon;
+          const Icon = action.icon;
           const className =
             "group flex flex-col items-center justify-center gap-2 rounded-xl border border-border bg-card p-3 text-foreground transition-smooth hover:border-primary/40 hover:bg-muted animate-fade-in-up";
           const style = { animationDelay: `${(i + 1) * 60}ms` };
-          const inner = (
-            <>
+          return (
+            <Link key={action.id} to={action.to} style={style} className={className}>
               <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-primary transition-smooth group-hover:bg-primary/10">
                 <Icon className="h-4 w-4" strokeWidth={2.2} />
               </span>
               <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                 {action.label}
               </p>
-            </>
-          );
-          if (isReservar && isExternal) {
-            return (
-              <button
-                key={action.id}
-                type="button"
-                onClick={() => openExternalBooking(externalUrl)}
-                style={style}
-                aria-label={EXTERNAL_BOOKING_COPY.ariaOpen}
-                className={className}
-              >
-                {inner}
-              </button>
-            );
-          }
-          return (
-            <Link key={action.id} to={action.to} style={style} className={className}>
-              {inner}
             </Link>
           );
         })}

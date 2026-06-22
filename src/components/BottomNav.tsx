@@ -1,16 +1,15 @@
-import { Home, CalendarDays, Trophy, Swords, User, ExternalLink } from "lucide-react";
+import { Home, Trophy, Swords, User } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useTournamentNotifications } from "@/hooks/useTournamentNotifications";
 import { useLadderNotifications } from "@/hooks/useLadderNotifications";
 import { useMatchInvitations } from "@/hooks/useMatchInvitations";
-import { useBookingsProvider, openExternalBooking } from "@/hooks/useBookingsProvider";
 import { useMyOperatorTournaments } from "@/hooks/useMyOperatorTournaments";
-import { EXTERNAL_BOOKING_COPY } from "@/lib/external-bookings-copy";
 
+// "Reservar" se quitó de la navegación: es un módulo dormido (ver
+// src/config/modules.ts). Al activar reservas, volver a añadir el item aquí.
 const baseItems = [
   { id: "home", label: "Inicio", icon: Home, to: "/" },
-  { id: "reservas", label: "Reservar", icon: CalendarDays, to: "/reservar" },
   { id: "competir", label: "Competir", icon: Swords, to: "/ranking" },
   { id: "torneos", label: "Torneos", icon: Trophy, to: "/torneos" },
   { id: "perfil", label: "Perfil", icon: User, to: "/perfil" },
@@ -21,19 +20,12 @@ export const BottomNav = () => {
   const { counts, loading: tournamentLoading } = useTournamentNotifications();
   const { counts: ladderCounts, loading: ladderLoading } = useLadderNotifications();
   const { received: partnerInvites, loading: partnerLoading } = useMatchInvitations();
-  const { isExternal, externalUrl } = useBookingsProvider();
   const { tournaments: operatorTournaments } = useMyOperatorTournaments();
   // Invitaciones de "Buscar partner" pendientes de respuesta (no expiradas).
   const partnerPendingCount = partnerInvites.filter(
     (i) => i.status === "pending" && new Date(i.expires_at) > new Date(),
   ).length;
-  // Cuando el club delega reservas a un proveedor externo, el ítem
-  // "Reservar" deja de navegar por la app y abre la URL externa.
-  const items = baseItems.map((it) =>
-    it.id === "reservas" && isExternal
-      ? { ...it, icon: ExternalLink, external: true as const }
-      : { ...it, external: false as const },
-  );
+  const items = baseItems.map((it) => ({ ...it, external: false as const }));
   return (
     <nav
       aria-label="Navegación principal"
@@ -130,16 +122,7 @@ export const BottomNav = () => {
           );
           return (
             <li key={item.id} className="flex-1">
-              {item.external ? (
-                <button
-                  type="button"
-                  onClick={() => openExternalBooking(externalUrl)}
-                  className={className}
-                  aria-label={EXTERNAL_BOOKING_COPY.ariaOpen}
-                >
-                  {inner}
-                </button>
-              ) : item.to ? (
+              {item.to ? (
                 <NavLink to={item.to} className={className} aria-current={active ? "page" : undefined}>
                   {inner}
                 </NavLink>

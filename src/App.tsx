@@ -12,6 +12,8 @@ import { SportProvider } from "@/components/providers/SportProvider";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import ScrollToTop from "@/components/ScrollToTop";
 import { CelebrateProvider } from "@/hooks/useCelebrate";
+import { ModuleDormant } from "@/components/ModuleDormant";
+import { isModuleEnabled } from "@/config/modules";
 
 // Rutas críticas: cargar de inmediato (mejor TTI tras abrir el PWA)
 import Index from "./pages/Index.tsx";
@@ -133,7 +135,7 @@ const App = () => (
                     path="/reservar"
                     element={
                       <ProtectedRoute>
-                        <Reservar />
+                        {isModuleEnabled("reservas") ? <Reservar /> : <ModuleDormant module="reservas" />}
                       </ProtectedRoute>
                     }
                   />
@@ -141,7 +143,7 @@ const App = () => (
                     path="/mis-reservas"
                     element={
                       <ProtectedRoute>
-                        <MisReservas />
+                        {isModuleEnabled("reservas") ? <MisReservas /> : <ModuleDormant module="reservas" />}
                       </ProtectedRoute>
                     }
                   />
@@ -261,7 +263,7 @@ const App = () => (
                     path="/clases"
                     element={
                       <ProtectedRoute>
-                        <Clases />
+                        {isModuleEnabled("clases") ? <Clases /> : <ModuleDormant module="clases" />}
                       </ProtectedRoute>
                     }
                   />
@@ -269,7 +271,7 @@ const App = () => (
                     path="/coach"
                     element={
                       <ProtectedRoute>
-                        <CoachPanel />
+                        {isModuleEnabled("clases") ? <CoachPanel /> : <ModuleDormant module="clases" />}
                       </ProtectedRoute>
                     }
                   />
@@ -286,7 +288,7 @@ const App = () => (
                     path="/admin/canchas"
                     element={
                       <ProtectedRoute requiredRole={["club_admin", "super_admin"]}>
-                        <AdminCourts />
+                        {isModuleEnabled("reservas") ? <AdminCourts /> : <ModuleDormant module="reservas" />}
                       </ProtectedRoute>
                     }
                   />
@@ -358,7 +360,7 @@ const App = () => (
                     path="/admin/clases"
                     element={
                       <ProtectedRoute requiredRole={["club_admin", "super_admin"]}>
-                        <AdminClases />
+                        {isModuleEnabled("clases") ? <AdminClases /> : <ModuleDormant module="clases" />}
                       </ProtectedRoute>
                     }
                   />

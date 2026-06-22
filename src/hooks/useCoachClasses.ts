@@ -10,7 +10,6 @@ export type CoachClassStatus =
 
 export interface CoachClassRow {
   id: string;
-  tenant_id: string;
   coach_id: string;
   student_user_id: string;
   court_id: string;

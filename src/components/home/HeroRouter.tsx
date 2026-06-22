@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useBookingsProvider } from "@/hooks/useBookingsProvider";
+import { isModuleEnabled } from "@/config/modules";
 import { useUserActiveTournament } from "@/hooks/useUserActiveTournament";
 import { useMatchOfTheWeek, type MotwRow } from "@/hooks/useMatchOfTheWeek";
 import { usePartnerSuggestions } from "@/hooks/usePartnerSuggestions";
@@ -44,7 +45,8 @@ export const HeroRouter = () => {
       setNextLoading(false);
       return;
     }
-    if (isExternal) {
+    // Reservas dormidas o externas: no consultamos el RPC (no existe en el core).
+    if (isExternal || !isModuleEnabled("reservas")) {
       setNext(null);
       setNextLoading(false);
       return;

@@ -3,7 +3,6 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 
 export interface AdminClassBlock {
   id: string;
-  tenant_id: string;
   court_id: string;
   coach_id: string | null;
   weekday: number;

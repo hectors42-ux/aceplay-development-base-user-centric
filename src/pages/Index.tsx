@@ -2,12 +2,10 @@ import { useEffect } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { HeroCard } from "@/components/HeroCard";
 import { QuickActions } from "@/components/QuickActions";
-import { UpcomingBookingsLink } from "@/components/UpcomingBookingsLink";
 import { BottomNav } from "@/components/BottomNav";
 import { LevelHeroCard } from "@/components/rating/LevelHeroCard";
 
 import { MatchOfTheWeekCard } from "@/components/home/MatchOfTheWeekCard";
-import { CoachUpcomingClassesCard } from "@/components/home/CoachUpcomingClassesCard";
 import { HomeRecentMatchesCard } from "@/components/home/HomeRecentMatchesCard";
 import { PendingConfirmationsCard } from "@/components/home/PendingConfirmationsCard";
 import { useAuth } from "@/components/providers/AuthProvider";
@@ -41,8 +39,6 @@ const Index = () => {
           <div className="xl:col-span-2 space-y-3">
             <HeroCard />
             <PendingConfirmationsCard />
-            <UpcomingBookingsLink />
-            <CoachUpcomingClassesCard />
             <HomeRecentMatchesCard />
             <section className="px-5" aria-label="Tu nivel actual">
               <LevelHeroCard

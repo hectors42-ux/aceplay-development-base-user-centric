@@ -294,7 +294,10 @@ describe("Home — enlaces y navegación", () => {
     vi.clearAllMocks();
   });
 
-  it("HeroCard 'Ver detalle' navega a /mis-reservas cuando hay próxima reserva", async () => {
+  // QUARANTINE: el hero de "próxima reserva" depende del módulo de reservas, hoy
+  // DORMIDO (src/config/modules.ts). HeroRouter ya no consulta my_upcoming_bookings.
+  // Re-activar al despertar reservas.
+  it.skip("HeroCard 'Ver detalle' navega a /mis-reservas cuando hay próxima reserva", async () => {
     await renderHome();
     // El aria-label vive en el <Button> dentro del <Link to="/mis-reservas">.
     // Buscamos por el botón y subimos al Link más cercano.
@@ -330,8 +333,10 @@ describe("Home — enlaces y navegación", () => {
     const within = await import("@testing-library/react").then((m) => m.within);
     const w = within(section);
     const hrefs = Array.from(section.querySelectorAll("a")).map((a) => a.getAttribute("href"));
-    expect(hrefs).toContain("/reservar");
-    expect(hrefs).toContain("/clases");
+    // Reservas y Clases son módulos dormidos → fuera de las acciones rápidas.
+    expect(hrefs).not.toContain("/reservar");
+    expect(hrefs).not.toContain("/clases");
+    expect(hrefs).toContain("/cargar");
     expect(hrefs).toContain("/torneos");
     expect(hrefs.some((h) => h?.startsWith("/ranking"))).toBe(true);
     // Sanity: la acción principal ahora es "Competir"
@@ -344,7 +349,8 @@ describe("Home — enlaces y navegación", () => {
     const links = nav.querySelectorAll("a");
     const hrefs = Array.from(links).map((a) => a.getAttribute("href"));
     expect(hrefs).toContain("/");
-    expect(hrefs).toContain("/reservar");
+    // "Reservar" es un módulo dormido → ya no está en el bottom-nav.
+    expect(hrefs).not.toContain("/reservar");
     expect(hrefs).toContain("/torneos");
     expect(hrefs).toContain("/ranking");
     expect(hrefs).toContain("/perfil");

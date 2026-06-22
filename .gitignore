@@ -12,6 +12,18 @@ dist
 dist-ssr
 *.local
 
+# Environment files (contain project keys)
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Claude Code local settings (may contain tokens/secrets)
+.claude/settings.local.json
+
+# Supabase CLI local metadata
+supabase/.temp/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

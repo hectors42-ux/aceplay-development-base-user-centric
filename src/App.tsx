@@ -37,6 +37,7 @@ const OperatorLiveBoard = lazy(() => import("./pages/OperatorLiveBoard.tsx"));
 const ResultadoPendiente = lazy(() => import("./pages/ResultadoPendiente.tsx"));
 const Ranking = lazy(() => import("./pages/Ranking.tsx"));
 const CargarResultado = lazy(() => import("./pages/CargarResultado.tsx"));
+const Escalerilla = lazy(() => import("./pages/Escalerilla.tsx"));
 const AdminLadder = lazy(() => import("./pages/AdminLadder.tsx"));
 const AdminLadderDetail = lazy(() => import("./pages/AdminLadderDetail.tsx"));
 const Onboarding = lazy(() => import("./pages/Onboarding.tsx"));
@@ -220,6 +221,14 @@ const App = () => (
                     element={
                       <ProtectedRoute>
                         <CargarResultado />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/escalerilla"
+                    element={
+                      <ProtectedRoute>
+                        <Escalerilla />
                       </ProtectedRoute>
                     }
                   />

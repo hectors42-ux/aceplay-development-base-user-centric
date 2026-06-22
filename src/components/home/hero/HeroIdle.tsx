@@ -18,7 +18,7 @@ export const HeroIdle = () => (
         Sube posiciones desafiando a un socio de tu nivel.
       </p>
     </div>
-    <Link to="/ranking?tab=piramide" className="w-fit">
+    <Link to="/escalerilla" className="w-fit">
       <Button variant="clay" size="lg" aria-label="Ver la Escalerilla del club">
         Ver Escalerilla
         <ArrowRight className="h-4 w-4" strokeWidth={2.5} />

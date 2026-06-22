@@ -23,7 +23,7 @@ interface Props {
  *  - Confirmar resultado propuesto por el rival
  *
  * Para torneos: link directo a la categoría con ?openResult=<matchId>
- * Para Pirámide: confirma directo desde la card (acción de 1 toque) o link a /ladder.
+ * Para Escalerilla: confirma directo desde la card (acción de 1 toque) o link a /ladder.
  */
 export const MatchesPendingResultCard = ({ userId, pendingTournaments, pendingLadder }: Props) => {
   const qc = useQueryClient();
@@ -166,7 +166,7 @@ export const MatchesPendingResultCard = ({ userId, pendingTournaments, pendingLa
               <div className="min-w-0 flex-1">
                 <p className="truncate text-xs font-semibold leading-tight">vs {l.opponent_name}</p>
                 <p className="truncate text-[10px] text-muted-foreground">
-                  Pirámide · {l.ladder_name}
+                  Escalerilla · {l.ladder_name}
                 </p>
                 <p className="text-[10px] text-muted-foreground">
                   {dateLabel}

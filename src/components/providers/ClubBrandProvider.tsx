@@ -23,7 +23,7 @@ const ACEPLAY_FALLBACK: ClubBrand = {
   primaryGlow: "22 73% 57%",
   primaryDeep: "13 71% 26%",
   logoUrl: null,
-  ladderLabel: "Pirámide",
+  ladderLabel: "Escalerilla",
 };
 
 import { createContext, useContext } from "react";
@@ -60,7 +60,7 @@ export const ClubBrandProvider = ({ children }: { children: React.ReactNode }) =
           primaryDeep: data.brand_primary_deep,
           logoUrl: data.logo_url,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ladderLabel: ((data as any).ladder_label as string) || "Pirámide",
+          ladderLabel: ((data as any).ladder_label as string) || "Escalerilla",
         });
       }
       setLoading(false);

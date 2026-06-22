@@ -55,7 +55,7 @@ export const HistoryList = ({ history, profilesById }: Props) => {
   if (history.length === 0) {
     return (
       <p className="rounded-2xl border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
-        Aún no hay movimientos en esta Pirámide.
+        Aún no hay movimientos en esta Escalerilla.
       </p>
     );
   }

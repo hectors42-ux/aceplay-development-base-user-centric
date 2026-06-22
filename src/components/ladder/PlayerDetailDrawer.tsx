@@ -54,7 +54,7 @@ export const PlayerDetailDrawer = ({
               <div className="min-w-0 flex-1">
                 <DrawerTitle className="truncate font-display text-base">{name}</DrawerTitle>
                 <DrawerDescription className="text-xs">
-                  Pirámide · Posición #{position.position}
+                  Escalerilla · Posición #{position.position}
                   {isMe && " · Tú"}
                   {position.status !== "activo" && ` · ${position.status}`}
                 </DrawerDescription>

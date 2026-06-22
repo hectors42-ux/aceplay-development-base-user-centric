@@ -37,7 +37,7 @@ const STEPS: TourStep[] = [
   },
   {
     icon: Swords,
-    title: "Pirámide & desafíos",
+    title: "Escalerilla & desafíos",
     description: "Reta socios, sube posiciones y defiende tu lugar en la escalerilla del club.",
     accent: "from-accent to-primary",
   },

@@ -51,7 +51,7 @@ const FILTER_LABEL: Record<Filter, string> = {
   all: "Todos",
   pending: "Pendientes",
   tournament: "Torneos",
-  ladder: "Pirámide",
+  ladder: "Escalerilla",
   friendly: "Amistosos",
 };
 
@@ -80,7 +80,7 @@ const sourceBadge = (source: string) => {
   if (cat === "tournament")
     return { label: "Torneo", icon: Trophy, classes: "bg-primary/15 text-primary" };
   if (cat === "ladder")
-    return { label: "Pirámide", icon: Swords, classes: "bg-accent/20 text-accent-foreground" };
+    return { label: "Escalerilla", icon: Swords, classes: "bg-accent/20 text-accent-foreground" };
   if (cat === "friendly")
     return { label: "Amistoso", icon: History, classes: "bg-muted text-muted-foreground" };
   return { label: "Otro", icon: History, classes: "bg-muted text-muted-foreground" };
@@ -404,7 +404,7 @@ const PendingTournamentRow = memo(({
   /** Cierra el sheet — solo se invoca cuando llevamos al usuario a otra pantalla a actuar. */
   onClose: () => void;
 }) => {
-  // Mismo mapeo que Pirámide para consistencia visual
+  // Mismo mapeo que Escalerilla para consistencia visual
   const status: MatchStatus["kind"] =
     match.needs_action === "confirm"
       ? "needs_confirm"
@@ -537,7 +537,7 @@ const PendingLadderRow = memo(({
   };
 
   // Deep-link al detalle del desafío en /ranking (la página acepta ?focus=challenges&open=<id>
-  // y, si no existe, simplemente abre la pestaña de Pirámide con foco en challenges).
+  // y, si no existe, simplemente abre la pestaña de Escalerilla con foco en challenges).
   const ladderHref = `/ranking?tab=piramide&focus=challenges&open=${match.challenge_id}`;
 
   return (
@@ -559,7 +559,7 @@ const PendingLadderRow = memo(({
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-1">
           <span className={cn("rounded-full px-1.5 py-0.5 text-[9px] font-medium", badge.classes)}>
-            Pirámide
+            Escalerilla
           </span>
           <StatusBadge status={status} />
           {isOverdue && !isWait && <OverdueBadge />}

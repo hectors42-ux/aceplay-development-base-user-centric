@@ -121,7 +121,7 @@ const AdminLadder = () => {
       toast({ title: "Error al crear", description: error.message, variant: "destructive" });
       return;
     }
-    toast({ title: "Pirámide creada" });
+    toast({ title: "Escalerilla creada" });
     setCreateOpen(false);
     resetForm();
     void load();
@@ -136,7 +136,7 @@ const AdminLadder = () => {
       toast({ title: "Error", description: error.message, variant: "destructive" });
       return;
     }
-    toast({ title: current ? "Pirámide pausada" : "Pirámide activada" });
+    toast({ title: current ? "Escalerilla pausada" : "Escalerilla activada" });
     void load();
   };
 
@@ -152,8 +152,8 @@ const AdminLadder = () => {
             <ArrowLeft className="h-4 w-4" />
           </Link>
           <div className="flex-1">
-            <h1 className="font-display text-xl font-semibold">Administrar Pirámides</h1>
-            <p className="text-xs text-muted-foreground">Crear, configurar y supervisar Pirámides del club</p>
+            <h1 className="font-display text-xl font-semibold">Administrar Escalerillas</h1>
+            <p className="text-xs text-muted-foreground">Crear, configurar y supervisar Escalerillas del club</p>
           </div>
           <Button size="sm" onClick={() => setCreateOpen(true)}>
             <Plus className="mr-1 h-4 w-4" /> Nueva
@@ -169,8 +169,8 @@ const AdminLadder = () => {
         ) : ladders.length === 0 ? (
           <EmptyState
             icon={Swords}
-            title="Sin Pirámides"
-            description="Crea la primera Pirámide para que los socios empiecen a desafiarse."
+            title="Sin Escalerillas"
+            description="Crea la primera Escalerilla para que los socios empiecen a desafiarse."
           />
         ) : (
           ladders.map((l) => {
@@ -225,7 +225,7 @@ const AdminLadder = () => {
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Nueva Pirámide</DialogTitle>
+            <DialogTitle>Nueva Escalerilla</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-2">
             <div>
@@ -234,7 +234,7 @@ const AdminLadder = () => {
                 id="l-name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Pirámide Singles 2026"
+                placeholder="Escalerilla Singles 2026"
               />
             </div>
             <div>
@@ -384,7 +384,7 @@ const AdminLadder = () => {
               Cancelar
             </Button>
             <Button onClick={handleCreate} disabled={submitting}>
-              {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Crear Pirámide"}
+              {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Crear Escalerilla"}
             </Button>
           </DialogFooter>
         </DialogContent>

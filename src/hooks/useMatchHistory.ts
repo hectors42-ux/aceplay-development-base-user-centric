@@ -26,7 +26,7 @@ export interface PendingTournamentMatch {
   /** Hay alguna propuesta de resultado en estado 'propuesto' (de cualquier jugador) */
   has_pending_proposal: boolean;
   /**
-   * Acción requerida del usuario actual, igual semántica que Pirámide:
+   * Acción requerida del usuario actual, igual semántica que Escalerilla:
    * - "submit"  → nadie cargó el resultado todavía
    * - "confirm" → el rival propuso, debes aceptar/rechazar
    * - "wait"    → tú propusiste, esperando al rival

@@ -193,7 +193,7 @@ export const BookingsProviderCard = () => {
             <AlertDialogDescription>
               A partir de ahora todos los botones "Reservar" abrirán la URL externa en una
               pestaña nueva. Se ocultarán "Mis reservas", la próxima reserva en el Home y los
-              indicadores de ocupación de cancha. Las clases, torneos y la Pirámide siguen
+              indicadores de ocupación de cancha. Las clases, torneos y la Escalerilla siguen
               funcionando con normalidad. Esta acción es reversible.
             </AlertDialogDescription>
           </AlertDialogHeader>

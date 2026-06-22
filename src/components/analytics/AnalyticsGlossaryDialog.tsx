@@ -20,7 +20,7 @@ const GLOSSARY: Array<{ section: string; items: Array<{ term: string; desc: stri
       { term: "Mora", desc: "Cantidad de socios con cuotas pendientes a la fecha." },
       { term: "Socios activos 30d", desc: "Socios con al menos una reserva, clase o partido en los últimos 30 días." },
       { term: "Inactivos 30d", desc: "Socios sin actividad registrada en los últimos 30 días." },
-      { term: "Torneos / Desafíos activos", desc: "Torneos en curso y desafíos de Pirámide aún no resueltos." },
+      { term: "Torneos / Desafíos activos", desc: "Torneos en curso y desafíos de Escalerilla aún no resueltos." },
       { term: "Partidos 7d", desc: "Partidos jugados (torneos + ladder) en los últimos 7 días." },
     ],
   },
@@ -60,7 +60,7 @@ const GLOSSARY: Array<{ section: string; items: Array<{ term: string; desc: stri
     items: [
       { term: "Tiempo aceptación / a jugar", desc: "Horas promedio entre desafío → aceptación, y aceptación → partido jugado." },
       { term: "Top progreso / caída", desc: "Mayores subidas y bajadas de rating en el período." },
-      { term: "Pirámides activas", desc: "Ladders ordenadas por partidos jugados." },
+      { term: "Escalerillas activas", desc: "Ladders ordenadas por partidos jugados." },
     ],
   },
   {

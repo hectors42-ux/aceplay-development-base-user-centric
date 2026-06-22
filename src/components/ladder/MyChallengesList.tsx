@@ -124,8 +124,8 @@ export const MyChallengesList = ({ challenges, profilesById, ladder, onChange }:
               {isScheduled && !matchInPast && (
                 <div className="mt-3 space-y-2">
                   <AddToCalendarButton
-                    title={`Pirámide vs ${fullName(opponent)}`}
-                    description={`Desafío ${ladder?.name ?? "Pirámide"} · #${myPos} vs #${oppPos}`}
+                    title={`Escalerilla vs ${fullName(opponent)}`}
+                    description={`Desafío ${ladder?.name ?? "Escalerilla"} · #${myPos} vs #${oppPos}`}
                     startsAt={c.scheduled_at!}
                     endsAt={new Date(parseISO(c.scheduled_at!).getTime() + 90 * 60 * 1000)}
                     filename={`piramide-${c.id}.ics`}

@@ -201,7 +201,7 @@ export const ChallengeWithSlotsDialog = ({
                     excludeUserId={target.user_id}
                   />
                   <p className="text-[11px] text-muted-foreground">
-                    Debe estar inscrito en esta Pirámide. {targetName} elegirá a su compañero al
+                    Debe estar inscrito en esta Escalerilla. {targetName} elegirá a su compañero al
                     aceptar el desafío.
                   </p>
                 </div>

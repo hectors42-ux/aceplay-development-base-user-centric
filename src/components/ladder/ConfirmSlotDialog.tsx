@@ -335,7 +335,7 @@ export const ConfirmSlotDialog = ({
                     </p>
                   )}
                   <p className="text-[11px] text-muted-foreground">
-                    Debe estar inscrito en esta Pirámide y no ser parte del lado contrario.
+                    Debe estar inscrito en esta Escalerilla y no ser parte del lado contrario.
                   </p>
                 </div>
               )}

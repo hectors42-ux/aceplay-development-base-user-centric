@@ -6,7 +6,7 @@ import type { RatingSport } from "@/lib/rating-utils";
 /**
  * Deporte activo seleccionado globalmente por el socio.
  * El switcher del header alterna entre estos dos valores; el resto de la app
- * (Home, Perfil, Ranking, La Pirámide, Torneos, Reservar) filtra por este valor.
+ * (Home, Perfil, Ranking, La Escalerilla, Torneos, Reservar) filtra por este valor.
  */
 export type ActiveSport = "tenis" | "padel";
 

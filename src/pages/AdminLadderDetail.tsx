@@ -305,7 +305,7 @@ const AdminLadderDetail = () => {
 
   const removePlayer = async (p: PositionRow) => {
     if (!ladder || !profile) return;
-    if (!confirm(`¿Quitar a este jugador de la Pirámide?`)) return;
+    if (!confirm(`¿Quitar a este jugador de la Escalerilla?`)) return;
     const { error } = await supabase.from("ladder_positions").delete().eq("id", p.id);
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
@@ -349,7 +349,7 @@ const AdminLadderDetail = () => {
   if (!ladder) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-3">
-        <p className="text-sm text-muted-foreground">Pirámide no encontrada</p>
+        <p className="text-sm text-muted-foreground">Escalerilla no encontrada</p>
         <Link to="/admin/ladder" className="text-primary underline-offset-4 hover:underline">
           Volver
         </Link>
@@ -697,7 +697,7 @@ const AdminLadderDetail = () => {
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
-              Se agregará al final de la Pirámide (posición #{positions.length + 1}).
+              Se agregará al final de la Escalerilla (posición #{positions.length + 1}).
             </p>
           </div>
           <DialogFooter>

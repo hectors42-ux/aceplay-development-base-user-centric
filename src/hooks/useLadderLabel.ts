@@ -1,18 +1,18 @@
 import { useClubBrand } from "@/components/providers/ClubBrandProvider";
 
 /**
- * Devuelve la etiqueta UI configurable de la pirámide del club.
- * Default: "Pirámide". Cada tenant puede personalizar vía `tenants.ladder_label`
+ * Devuelve la etiqueta UI configurable de la escalerilla del club.
+ * Default: "Escalerilla". Cada tenant puede personalizar vía `tenants.ladder_label`
  * (p.ej. "Escalera", "Top Liga", "La Cumbre", etc).
  *
  * Uso:
- *   const ladderLabel = useLadderLabel();           // "Pirámide"
- *   const lower       = useLadderLabelLower();      // "pirámide"
- *   const article     = useLadderLabelWithArticle(); // "la Pirámide"
+ *   const ladderLabel = useLadderLabel();           // "Escalerilla"
+ *   const lower       = useLadderLabelLower();      // "escalerilla"
+ *   const article     = useLadderLabelWithArticle(); // "la Escalerilla"
  */
 export const useLadderLabel = (): string => {
   const { brand } = useClubBrand();
-  return brand.ladderLabel || "Pirámide";
+  return brand.ladderLabel || "Escalerilla";
 };
 
 export const useLadderLabelLower = (): string => {
@@ -21,7 +21,7 @@ export const useLadderLabelLower = (): string => {
 };
 
 /**
- * "la Pirámide" / "la Escalera" / "el Top Liga".
+ * "la Escalerilla" / "la Escalera" / "el Top Liga".
  * Por defecto usa "la" (femenino, mayoría de labels). Pasa `article` para forzar.
  */
 export const useLadderLabelWithArticle = (article: "la" | "el" = "la"): string => {

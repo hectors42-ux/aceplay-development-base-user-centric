@@ -642,7 +642,7 @@ export default function PartnerMatchDetail() {
                   <p className="font-display text-sm font-semibold">Cargar resultado</p>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  El partido ya se jugó. Carga el resultado y {oppName} deberá confirmarlo. Los amistosos afectan el rating con un peso menor que torneos y Pirámide.
+                  El partido ya se jugó. Carga el resultado y {oppName} deberá confirmarlo. Los amistosos afectan el rating con un peso menor que torneos y Escalerilla.
                 </p>
                 {partnerResult?.status === "rechazado" && partnerResult.reject_reason && (
                   <p className="rounded-xl border border-destructive/30 bg-destructive/5 p-2 text-[11px] text-destructive">

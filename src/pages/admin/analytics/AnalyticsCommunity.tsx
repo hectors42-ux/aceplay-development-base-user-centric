@@ -6,11 +6,11 @@ import { useAnalyticsCommunity } from "@/hooks/analytics/useAnalyticsCommunity";
 export default function AnalyticsCommunity() {
   const { data, isLoading } = useAnalyticsCommunity();
   return (
-    <AnalyticsShell title="Competencia y comunidad" subtitle="Pirámides, desafíos y progresión deportiva.">
+    <AnalyticsShell title="Competencia y comunidad" subtitle="Escalerillas, desafíos y progresión deportiva.">
       <section className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
         <KpiCard label="Tiempo aceptación (h)" value={data?.avg_accept_hours ?? null} loading={isLoading} />
         <KpiCard label="Tiempo a jugar (h)" value={data?.avg_play_hours ?? null} loading={isLoading} />
-        <KpiCard label="Pirámides activas" value={data?.active_ladders.length ?? null} loading={isLoading} />
+        <KpiCard label="Escalerillas activas" value={data?.active_ladders.length ?? null} loading={isLoading} />
         <KpiCard label="Niveles distintos" value={data?.level_density.length ?? null} loading={isLoading} />
       </section>
 
@@ -36,11 +36,11 @@ export default function AnalyticsCommunity() {
       </section>
 
       <RankingTable
-        title="Pirámides más activas"
+        title="Escalerillas más activas"
         rows={data?.active_ladders as unknown as Record<string, unknown>[]}
         loading={isLoading}
         columns={[
-          { key: "name", label: "Pirámide" },
+          { key: "name", label: "Escalerilla" },
           { key: "matches", label: "Partidos", align: "right" },
         ]}
       />

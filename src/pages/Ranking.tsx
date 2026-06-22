@@ -162,7 +162,7 @@ const Ranking = () => {
   const { matchup } = useSuggestedMatchup();
   const { current_streak, longest_streak } = useChallengeStreak();
 
-  // Si llega ?focus=challenges en Pirámide, hace scroll a Mis desafíos
+  // Si llega ?focus=challenges en Escalerilla, hace scroll a Mis desafíos
   useEffect(() => {
     if (tab !== "piramide") return;
     if (searchParams.get("focus") !== "challenges") return;
@@ -213,7 +213,7 @@ const Ranking = () => {
       toast({ title: "No pudiste unirte", description: error.message, variant: "destructive" });
       return;
     }
-    toast({ title: "¡Te uniste a la Pirámide!" });
+    toast({ title: "¡Te uniste a la Escalerilla!" });
     void refresh();
   };
 
@@ -223,7 +223,7 @@ const Ranking = () => {
     try {
       const filename = `piramide-${selectedLadder.name.replace(/\s+/g, "-").toLowerCase()}.png`;
       await exportLadderToPng(pyramidRef.current, filename);
-      toast({ title: "Pirámide exportada", description: "Imagen descargada." });
+      toast({ title: "Escalerilla exportada", description: "Imagen descargada." });
     } catch (err) {
       console.error(err);
       toast({ title: "No se pudo exportar", description: "Inténtalo de nuevo.", variant: "destructive" });
@@ -292,7 +292,7 @@ const Ranking = () => {
             </TabsTrigger>
             <TabsTrigger value="piramide" className="text-xs">
               <span className="relative inline-flex items-center">
-                Pirámide
+                Escalerilla
                 {piramidePendingCount > 0 && (
                   <span
                     aria-label={`${piramidePendingCount} desafíos pendientes`}
@@ -451,7 +451,7 @@ const Ranking = () => {
             <div className="flex items-start gap-2 rounded-2xl border border-accent/30 bg-accent/5 p-3 text-[11px] text-muted-foreground">
               <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />
               <span>
-                La Pirámide es el modo social de retos. Los resultados también suman a tu rating del ranking.
+                La Escalerilla es el modo social de retos. Los resultados también suman a tu rating del ranking.
               </span>
             </div>
 
@@ -465,8 +465,8 @@ const Ranking = () => {
             ) : !selectedLadder ? (
               <EmptyState
                 icon={Trophy}
-                title="Sin Pirámides activas"
-                description="El club aún no ha creado una Pirámide. Vuelve pronto."
+                title="Sin Escalerillas activas"
+                description="El club aún no ha creado una Escalerilla. Vuelve pronto."
               />
             ) : (
               <>
@@ -474,7 +474,7 @@ const Ranking = () => {
                   <div className="flex items-center justify-between gap-3 rounded-3xl border border-primary/30 bg-primary/5 p-4">
                     <div>
                       <p className="font-display text-sm font-semibold">
-                        Aún no estás en la Pirámide
+                        Aún no estás en la Escalerilla
                       </p>
                       <p className="text-xs text-muted-foreground">Únete y empieza a desafiar.</p>
                     </div>
@@ -493,7 +493,7 @@ const Ranking = () => {
                 {positions.length === 0 ? (
                   <EmptyState
                     icon={Trophy}
-                    title="Pirámide vacía"
+                    title="Escalerilla vacía"
                     description="Sé el primero en unirte."
                   />
                 ) : (
@@ -548,7 +548,7 @@ const Ranking = () => {
                       </button>
                     )}
 
-                    {/* 3b) Rivales desafiables (lista de Pirámide) */}
+                    {/* 3b) Rivales desafiables (lista de Escalerilla) */}
                     <div className="space-y-2 pt-1">
 
                       {filteredPositions.length === 0 ? (

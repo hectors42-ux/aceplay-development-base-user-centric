@@ -18,7 +18,7 @@ import { toast } from "sonner";
 
 interface CategoryRow { category_id: string; category_name: string; tournament_name: string; sport: string | null; motor: string | null; enrolled: boolean; players: number; bracket_ready: boolean }
 interface SlotRow {
-  slot_id: string; round: number; slot: number;
+  slot_id: string; bracket: string; round: number; slot: number;
   player_a: string | null; name_a: string | null;
   player_b: string | null; name_b: string | null;
   winner: string | null; status: string; match_id: string | null;
@@ -80,14 +80,11 @@ const TorneoBracket = () => {
     if (catId) void loadData(catId, cats.find((c) => c.category_id === catId)?.motor ?? null);
   }, [catId, cats, loadData]);
 
-  const maxRound = useMemo(() => slots.reduce((mx, s) => Math.max(mx, s.round), 1), [slots]);
-  const rounds = useMemo(() => {
-    const by: Record<number, SlotRow[]> = {};
-    for (const s of slots) (by[s.round] ??= []).push(s);
-    return Object.keys(by).map(Number).sort((x, y) => x - y).map((r) => ({ round: r, slots: by[r].sort((p, q) => p.slot - q.slot) }));
-  }, [slots]);
+  const mainSlots = useMemo(() => slots.filter((s) => (s.bracket ?? "main") === "main"), [slots]);
+  const consoSlots = useMemo(() => slots.filter((s) => s.bracket === "consolation"), [slots]);
+  const maxRound = useMemo(() => mainSlots.reduce((mx, s) => Math.max(mx, s.round), 1), [mainSlots]);
 
-  const championSlot = slots.find((s) => s.round === maxRound);
+  const championSlot = mainSlots.find((s) => s.round === maxRound);
   const champion = !isRoundRobin && championSlot?.winner ? championSlot : null;
   const rrLeader = isRoundRobin && standings.length && standings[0].played > 0 ? standings[0] : null;
 
@@ -136,6 +133,18 @@ const TorneoBracket = () => {
         </div>
       </div>
     );
+  };
+
+  const renderRounds = (subset: SlotRow[]) => {
+    const mr = subset.reduce((mx, s) => Math.max(mx, s.round), 1);
+    const by: Record<number, SlotRow[]> = {};
+    for (const s of subset) (by[s.round] ??= []).push(s);
+    return Object.keys(by).map(Number).sort((x, y) => x - y).map((r) => (
+      <div key={r}>
+        <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{ROUND_LABEL(r, mr)}</p>
+        <div className="space-y-2">{by[r].sort((p, q) => p.slot - q.slot).map(matchCard)}</div>
+      </div>
+    ));
   };
 
   return (
@@ -207,13 +216,17 @@ const TorneoBracket = () => {
           <div className="space-y-2">{slots.map(matchCard)}</div>
         </>
       ) : (
-        <div className="space-y-5">
-          {rounds.map(({ round, slots: rs }) => (
-            <div key={round}>
-              <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{ROUND_LABEL(round, maxRound)}</p>
-              <div className="space-y-2">{rs.map(matchCard)}</div>
+        <div className="space-y-6">
+          {consoSlots.length > 0 && (
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Cuadro principal</p>
+          )}
+          <div className="space-y-5">{renderRounds(mainSlots)}</div>
+          {consoSlots.length > 0 && (
+            <div>
+              <p className="mb-3 mt-2 text-sm font-semibold text-foreground">Consolación · cuadro B</p>
+              <div className="space-y-5">{renderRounds(consoSlots)}</div>
             </div>
-          ))}
+          )}
         </div>
       )}
 

@@ -24,6 +24,8 @@ interface SlotRow {
   winner: string | null; status: string; match_id: string | null;
 }
 interface StandRow { grp?: string; pos: number | null; user_id: string; name: string | null; wins: number; played: number; set_diff: number; status: string }
+interface AmRow { slot_id: string; round: number; status: string; match_id: string | null; team_a: string[] | null; team_b: string[] | null; team_a_ids: string[] | null; team_b_ids: string[] | null; winner_side: string | null }
+interface AmStand { pos: number | null; user_id: string; name: string | null; points: number; played: number }
 
 const ROUND_LABEL = (round: number, maxRound: number) => {
   const fromEnd = maxRound - round;
@@ -44,6 +46,9 @@ const TorneoBracket = () => {
   const [slots, setSlots] = useState<SlotRow[]>([]);
   const [standings, setStandings] = useState<StandRow[]>([]);
   const [groupStands, setGroupStands] = useState<StandRow[]>([]);
+  const [amRounds, setAmRounds] = useState<AmRow[]>([]);
+  const [amStands, setAmStands] = useState<AmStand[]>([]);
+  const [amPlayId, setAmPlayId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [playSlot, setPlaySlot] = useState<SlotRow | null>(null);
   const [result, setResult] = useState<"me" | "rival">("me");
@@ -56,18 +61,23 @@ const TorneoBracket = () => {
   const isRoundRobin = motor === "round_robin";
   const isGroups = motor === "groups_playoff";
   const isDoubleElim = motor === "double_elimination";
+  const isAmericano = motor === "americano";
 
   const loadData = useCallback(async (id: string, m: string | null) => {
     if (!id) return;
     setLoading(true);
-    const [bk, st, gs] = await Promise.all([
+    const [bk, st, gs, av, asd] = await Promise.all([
       supabase.rpc("bracket_view", { _category_id: id }),
       m === "round_robin" ? supabase.rpc("tournament_standings", { _category_id: id }) : Promise.resolve({ data: [] }),
       m === "groups_playoff" ? supabase.rpc("group_standings", { _category_id: id }) : Promise.resolve({ data: [] }),
+      m === "americano" ? supabase.rpc("americano_view", { _category_id: id }) : Promise.resolve({ data: [] }),
+      m === "americano" ? supabase.rpc("americano_standings", { _category_id: id }) : Promise.resolve({ data: [] }),
     ]);
     setSlots((bk.data as SlotRow[] | null) ?? []);
     setStandings((st.data as StandRow[] | null) ?? []);
     setGroupStands((gs.data as StandRow[] | null) ?? []);
+    setAmRounds((av.data as AmRow[] | null) ?? []);
+    setAmStands((asd.data as AmStand[] | null) ?? []);
     setLoading(false);
   }, []);
 
@@ -99,12 +109,14 @@ const TorneoBracket = () => {
   const rrLeader = isRoundRobin && standings.length && standings[0].played > 0 ? standings[0] : null;
 
   const sendResult = async () => {
-    if (!playSlot) return;
+    const sid = playSlot?.slot_id ?? amPlayId;
+    if (!sid) return;
     setBusy(true);
     const sets = a !== "" && b !== "" ? [{ games_a: Number(a), games_b: Number(b) }] : [];
-    const { error } = await supabase.rpc("play_bracket_match", { _slot_id: playSlot.slot_id, _winner_is_me: result === "me", _sets: sets });
+    const { error } = await supabase.rpc("play_bracket_match", { _slot_id: sid, _winner_is_me: result === "me", _sets: sets });
     setBusy(false);
     setPlaySlot(null);
+    setAmPlayId(null);
     if (error) { toast.error(error.message); return; }
     toast.success("Resultado cargado. Cuando tu rival lo confirme, se actualiza la tabla/cuadro y se mueve el rating.");
     void loadData(catId, motor);
@@ -163,6 +175,49 @@ const TorneoBracket = () => {
     </div>
   );
 
+  const amStandTable = (
+    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-card">
+      <div className="grid grid-cols-[28px_1fr_44px_36px] items-center gap-1 border-b border-border px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+        <span>#</span><span>Jugador</span><span className="text-center">Pts</span><span className="text-center">PJ</span>
+      </div>
+      {amStands.map((r) => (
+        <div key={r.user_id} className={cn("grid grid-cols-[28px_1fr_44px_36px] items-center gap-1 px-3 py-2 text-sm", r.user_id === user?.id && "bg-primary/5 font-semibold")}>
+          <span className="text-muted-foreground">{r.pos ?? "—"}</span>
+          <span className="truncate">{r.name} {r.user_id === user?.id && <span className="text-[10px] text-primary">· TÚ</span>}</span>
+          <span className="text-center font-display font-bold tabular-nums">{r.points}</span>
+          <span className="text-center tabular-nums text-muted-foreground">{r.played}</span>
+        </div>
+      ))}
+    </div>
+  );
+
+  const amCard = (r: AmRow) => {
+    const iAmIn = !!(user?.id && (r.team_a_ids?.includes(user.id) || r.team_b_ids?.includes(user.id)));
+    const teamRow = (names: string[] | null, side: "a" | "b") => (
+      <div className={cn("flex items-center justify-between px-3 py-1.5",
+        r.winner_side === side && "font-semibold text-foreground",
+        r.winner_side && r.winner_side !== side && "text-muted-foreground line-through")}>
+        <span className="truncate text-sm">{names?.join(" + ") ?? <span className="text-muted-foreground/60">—</span>}</span>
+        {r.winner_side === side && <Trophy className="h-3.5 w-3.5 text-primary" />}
+      </div>
+    );
+    return (
+      <div key={r.slot_id} className={cn("rounded-2xl border bg-card shadow-card", iAmIn ? "border-primary/40" : "border-border")}>
+        {teamRow(r.team_a, "a")}
+        <div className="mx-3 border-t border-border" />
+        {teamRow(r.team_b, "b")}
+        <div className="flex items-center justify-between px-3 py-1.5">
+          <span className="text-[10px] uppercase tracking-wider text-muted-foreground">{STATUS_LABEL[r.status] ?? r.status}</span>
+          {r.status === "playable" && iAmIn && !r.match_id && (
+            <Button size="sm" variant="clay" className="h-7" onClick={() => { setAmPlayId(r.slot_id); setResult("me"); setA("6"); setB("3"); }}>
+              <Play className="h-3.5 w-3.5" /> Jugar
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   const renderRounds = (subset: SlotRow[]) => {
     const mr = subset.reduce((mx, s) => Math.max(mx, s.round), 1);
     const by: Record<number, SlotRow[]> = {};
@@ -175,8 +230,9 @@ const TorneoBracket = () => {
     ));
   };
 
-  const title = isRoundRobin ? "Tabla" : isGroups ? "Grupos" : "Cuadro";
-  const formatLabel = isRoundRobin ? "round robin" : isGroups ? "grupos → playoff" : isDoubleElim ? "doble eliminación" : consoSlots.length ? "consolación" : "eliminación simple";
+  const title = isRoundRobin ? "Tabla" : isGroups ? "Grupos" : isAmericano ? "Americano" : "Cuadro";
+  const formatLabel = isRoundRobin ? "round robin" : isGroups ? "grupos → playoff" : isDoubleElim ? "doble eliminación" : isAmericano ? "americano de rotación" : consoSlots.length ? "consolación" : "eliminación simple";
+  const amLeader = isAmericano && amStands.length && amStands[0].played > 0 ? amStands[0] : null;
 
   return (
     <div className="mx-auto max-w-md px-5 py-6">
@@ -216,6 +272,11 @@ const TorneoBracket = () => {
       {rrLeader && (
         <div className="mb-4 flex items-center gap-2 rounded-2xl border border-primary/40 bg-primary/10 p-4">
           <Trophy className="h-5 w-5 text-primary" /><p className="text-sm font-semibold">Líder: {rrLeader.name}</p>
+        </div>
+      )}
+      {amLeader && (
+        <div className="mb-4 flex items-center gap-2 rounded-2xl border border-primary/40 bg-primary/10 p-4">
+          <Trophy className="h-5 w-5 text-primary" /><p className="text-sm font-semibold">Líder: {amLeader.name} · {amLeader.points} pts</p>
         </div>
       )}
 
@@ -262,6 +323,21 @@ const TorneoBracket = () => {
               : <p className="rounded-2xl border border-dashed border-border bg-card p-4 text-center text-xs text-muted-foreground">Ganador del winners vs ganador del losers (con reset si hace falta).</p>}
           </div>
         </div>
+      ) : isAmericano ? (
+        <div className="space-y-5">
+          {amStandTable}
+          <div>
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Rondas</p>
+            <div className="space-y-3">
+              {amRounds.map((r) => (
+                <div key={r.slot_id}>
+                  <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Ronda {r.round}</p>
+                  {amCard(r)}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       ) : (
         <div className="space-y-6">
           {consoSlots.length > 0 && <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Cuadro principal</p>}
@@ -275,7 +351,7 @@ const TorneoBracket = () => {
         </div>
       )}
 
-      <Dialog open={!!playSlot} onOpenChange={(o) => { if (!o) setPlaySlot(null); }}>
+      <Dialog open={!!playSlot || !!amPlayId} onOpenChange={(o) => { if (!o) { setPlaySlot(null); setAmPlayId(null); } }}>
         <DialogContent>
           <DialogHeader><DialogTitle>Cargar resultado</DialogTitle></DialogHeader>
           <div className="space-y-3">

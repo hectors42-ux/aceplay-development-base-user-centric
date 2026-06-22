@@ -38,6 +38,7 @@ const ResultadoPendiente = lazy(() => import("./pages/ResultadoPendiente.tsx"));
 const Ranking = lazy(() => import("./pages/Ranking.tsx"));
 const CargarResultado = lazy(() => import("./pages/CargarResultado.tsx"));
 const Escalerilla = lazy(() => import("./pages/Escalerilla.tsx"));
+const TorneoBracket = lazy(() => import("./pages/TorneoBracket.tsx"));
 const AdminLadder = lazy(() => import("./pages/AdminLadder.tsx"));
 const AdminLadderDetail = lazy(() => import("./pages/AdminLadderDetail.tsx"));
 const Onboarding = lazy(() => import("./pages/Onboarding.tsx"));
@@ -229,6 +230,14 @@ const App = () => (
                     element={
                       <ProtectedRoute>
                         <Escalerilla />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/torneo"
+                    element={
+                      <ProtectedRoute>
+                        <TorneoBracket />
                       </ProtectedRoute>
                     }
                   />

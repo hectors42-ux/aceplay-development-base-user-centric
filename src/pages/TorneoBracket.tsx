@@ -55,6 +55,7 @@ const TorneoBracket = () => {
   const motor = current?.motor ?? "single_elimination";
   const isRoundRobin = motor === "round_robin";
   const isGroups = motor === "groups_playoff";
+  const isDoubleElim = motor === "double_elimination";
 
   const loadData = useCallback(async (id: string, m: string | null) => {
     if (!id) return;
@@ -88,10 +89,13 @@ const TorneoBracket = () => {
   const mainSlots = useMemo(() => slots.filter((s) => (s.bracket ?? "main") === "main"), [slots]);
   const consoSlots = useMemo(() => slots.filter((s) => s.bracket === "consolation"), [slots]);
   const playoffSlots = useMemo(() => slots.filter((s) => s.bracket === "playoff"), [slots]);
+  const winnersSlots = useMemo(() => slots.filter((s) => s.bracket === "winners"), [slots]);
+  const losersSlots = useMemo(() => slots.filter((s) => s.bracket === "losers"), [slots]);
+  const gfSlots = useMemo(() => slots.filter((s) => s.bracket === "grand_final"), [slots]);
   const maxRound = useMemo(() => mainSlots.reduce((mx, s) => Math.max(mx, s.round), 1), [mainSlots]);
 
   const championSlot = mainSlots.find((s) => s.round === maxRound);
-  const champion = !isRoundRobin && !isGroups && championSlot?.winner ? championSlot : null;
+  const champion = !isRoundRobin && !isGroups && !isDoubleElim && championSlot?.winner ? championSlot : null;
   const rrLeader = isRoundRobin && standings.length && standings[0].played > 0 ? standings[0] : null;
 
   const sendResult = async () => {
@@ -172,7 +176,7 @@ const TorneoBracket = () => {
   };
 
   const title = isRoundRobin ? "Tabla" : isGroups ? "Grupos" : "Cuadro";
-  const formatLabel = isRoundRobin ? "round robin" : isGroups ? "grupos → playoff" : consoSlots.length ? "consolación" : "eliminación simple";
+  const formatLabel = isRoundRobin ? "round robin" : isGroups ? "grupos → playoff" : isDoubleElim ? "doble eliminación" : consoSlots.length ? "consolación" : "eliminación simple";
 
   return (
     <div className="mx-auto max-w-md px-5 py-6">
@@ -237,6 +241,25 @@ const TorneoBracket = () => {
             {playoffSlots.some((s) => s.player_a || s.player_b)
               ? <div className="space-y-5">{renderRounds(playoffSlots)}</div>
               : <p className="rounded-2xl border border-dashed border-border bg-card p-4 text-center text-xs text-muted-foreground">Se define al terminar la fase de grupos (cruce 1A-2B / 1B-2A).</p>}
+          </div>
+        </div>
+      ) : isDoubleElim ? (
+        <div className="space-y-6">
+          <div>
+            <p className="mb-2 text-sm font-semibold text-foreground">Winners bracket</p>
+            <div className="space-y-5">{renderRounds(winnersSlots)}</div>
+          </div>
+          <div>
+            <p className="mb-2 text-sm font-semibold text-foreground">Losers bracket</p>
+            {losersSlots.some((s) => s.player_a || s.player_b)
+              ? <div className="space-y-2">{losersSlots.map(matchCard)}</div>
+              : <p className="rounded-2xl border border-dashed border-border bg-card p-4 text-center text-xs text-muted-foreground">Se llena con los que pierden en el winners.</p>}
+          </div>
+          <div>
+            <p className="mb-2 text-sm font-semibold text-foreground">Gran final</p>
+            {gfSlots.some((s) => s.player_a || s.player_b)
+              ? <div className="space-y-2">{gfSlots.filter((s) => s.player_a || s.player_b).map(matchCard)}</div>
+              : <p className="rounded-2xl border border-dashed border-border bg-card p-4 text-center text-xs text-muted-foreground">Ganador del winners vs ganador del losers (con reset si hace falta).</p>}
           </div>
         </div>
       ) : (

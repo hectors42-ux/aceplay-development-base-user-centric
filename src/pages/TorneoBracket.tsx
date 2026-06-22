@@ -23,7 +23,7 @@ interface SlotRow {
   player_b: string | null; name_b: string | null;
   winner: string | null; status: string; match_id: string | null;
 }
-interface StandRow { pos: number | null; user_id: string; name: string | null; wins: number; played: number; set_diff: number; status: string }
+interface StandRow { grp?: string; pos: number | null; user_id: string; name: string | null; wins: number; played: number; set_diff: number; status: string }
 
 const ROUND_LABEL = (round: number, maxRound: number) => {
   const fromEnd = maxRound - round;
@@ -43,6 +43,7 @@ const TorneoBracket = () => {
   const [catId, setCatId] = useState<string>("");
   const [slots, setSlots] = useState<SlotRow[]>([]);
   const [standings, setStandings] = useState<StandRow[]>([]);
+  const [groupStands, setGroupStands] = useState<StandRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [playSlot, setPlaySlot] = useState<SlotRow | null>(null);
   const [result, setResult] = useState<"me" | "rival">("me");
@@ -51,17 +52,21 @@ const TorneoBracket = () => {
   const [busy, setBusy] = useState(false);
 
   const current = cats.find((c) => c.category_id === catId);
-  const isRoundRobin = current?.motor === "round_robin";
+  const motor = current?.motor ?? "single_elimination";
+  const isRoundRobin = motor === "round_robin";
+  const isGroups = motor === "groups_playoff";
 
-  const loadData = useCallback(async (id: string, motor: string | null) => {
+  const loadData = useCallback(async (id: string, m: string | null) => {
     if (!id) return;
     setLoading(true);
-    const [bk, st] = await Promise.all([
+    const [bk, st, gs] = await Promise.all([
       supabase.rpc("bracket_view", { _category_id: id }),
-      motor === "round_robin" ? supabase.rpc("tournament_standings", { _category_id: id }) : Promise.resolve({ data: [] }),
+      m === "round_robin" ? supabase.rpc("tournament_standings", { _category_id: id }) : Promise.resolve({ data: [] }),
+      m === "groups_playoff" ? supabase.rpc("group_standings", { _category_id: id }) : Promise.resolve({ data: [] }),
     ]);
     setSlots((bk.data as SlotRow[] | null) ?? []);
     setStandings((st.data as StandRow[] | null) ?? []);
+    setGroupStands((gs.data as StandRow[] | null) ?? []);
     setLoading(false);
   }, []);
 
@@ -82,24 +87,23 @@ const TorneoBracket = () => {
 
   const mainSlots = useMemo(() => slots.filter((s) => (s.bracket ?? "main") === "main"), [slots]);
   const consoSlots = useMemo(() => slots.filter((s) => s.bracket === "consolation"), [slots]);
+  const playoffSlots = useMemo(() => slots.filter((s) => s.bracket === "playoff"), [slots]);
   const maxRound = useMemo(() => mainSlots.reduce((mx, s) => Math.max(mx, s.round), 1), [mainSlots]);
 
   const championSlot = mainSlots.find((s) => s.round === maxRound);
-  const champion = !isRoundRobin && championSlot?.winner ? championSlot : null;
+  const champion = !isRoundRobin && !isGroups && championSlot?.winner ? championSlot : null;
   const rrLeader = isRoundRobin && standings.length && standings[0].played > 0 ? standings[0] : null;
 
   const sendResult = async () => {
     if (!playSlot) return;
     setBusy(true);
     const sets = a !== "" && b !== "" ? [{ games_a: Number(a), games_b: Number(b) }] : [];
-    const { error } = await supabase.rpc("play_bracket_match", {
-      _slot_id: playSlot.slot_id, _winner_is_me: result === "me", _sets: sets,
-    });
+    const { error } = await supabase.rpc("play_bracket_match", { _slot_id: playSlot.slot_id, _winner_is_me: result === "me", _sets: sets });
     setBusy(false);
     setPlaySlot(null);
     if (error) { toast.error(error.message); return; }
     toast.success("Resultado cargado. Cuando tu rival lo confirme, se actualiza la tabla/cuadro y se mueve el rating.");
-    void loadData(catId, current?.motor ?? null);
+    void loadData(catId, motor);
   };
 
   const playButton = (s: SlotRow) => {
@@ -135,6 +139,26 @@ const TorneoBracket = () => {
     );
   };
 
+  const standTable = (rows: StandRow[]) => (
+    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-card">
+      <div className="grid grid-cols-[28px_1fr_36px_36px_40px] items-center gap-1 border-b border-border px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+        <span>#</span><span>Jugador</span><span className="text-center">PJ</span><span className="text-center">PG</span><span className="text-center">±Sets</span>
+      </div>
+      {rows.map((r) => (
+        <div key={r.user_id} className={cn("grid grid-cols-[28px_1fr_36px_36px_40px] items-center gap-1 px-3 py-2 text-sm",
+          r.user_id === user?.id && "bg-primary/5 font-semibold", r.status === "playoff" && "bg-success/5")}>
+          <span className="text-muted-foreground">{r.pos ?? "—"}</span>
+          <span className="truncate">{r.name} {r.user_id === user?.id && <span className="text-[10px] text-primary">· TÚ</span>}</span>
+          <span className="text-center tabular-nums text-muted-foreground">{r.played}</span>
+          <span className="text-center font-display font-bold tabular-nums">{r.wins}</span>
+          <span className={cn("text-center tabular-nums", r.set_diff > 0 ? "text-success" : r.set_diff < 0 ? "text-destructive" : "text-muted-foreground")}>
+            {r.set_diff > 0 ? `+${r.set_diff}` : r.set_diff}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+
   const renderRounds = (subset: SlotRow[]) => {
     const mr = subset.reduce((mx, s) => Math.max(mx, s.round), 1);
     const by: Record<number, SlotRow[]> = {};
@@ -147,6 +171,9 @@ const TorneoBracket = () => {
     ));
   };
 
+  const title = isRoundRobin ? "Tabla" : isGroups ? "Grupos" : "Cuadro";
+  const formatLabel = isRoundRobin ? "round robin" : isGroups ? "grupos → playoff" : consoSlots.length ? "consolación" : "eliminación simple";
+
   return (
     <div className="mx-auto max-w-md px-5 py-6">
       <div className="mb-5 flex items-center gap-3">
@@ -155,7 +182,7 @@ const TorneoBracket = () => {
         </Link>
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Torneo</p>
-          <h1 className="font-display text-xl font-semibold">{isRoundRobin ? "Tabla" : "Cuadro"}</h1>
+          <h1 className="font-display text-xl font-semibold">{title}</h1>
         </div>
       </div>
 
@@ -172,7 +199,7 @@ const TorneoBracket = () => {
 
       {current && (
         <p className="mb-4 text-xs text-muted-foreground">
-          {current.tournament_name} · {current.category_name} · {current.players} inscritos · {isRoundRobin ? "round robin" : "eliminación simple"}
+          {current.tournament_name} · {current.category_name} · {current.players} inscritos · {formatLabel}
         </p>
       )}
 
@@ -184,8 +211,7 @@ const TorneoBracket = () => {
       )}
       {rrLeader && (
         <div className="mb-4 flex items-center gap-2 rounded-2xl border border-primary/40 bg-primary/10 p-4">
-          <Trophy className="h-5 w-5 text-primary" />
-          <p className="text-sm font-semibold">Líder: {rrLeader.name}</p>
+          <Trophy className="h-5 w-5 text-primary" /><p className="text-sm font-semibold">Líder: {rrLeader.name}</p>
         </div>
       )}
 
@@ -193,33 +219,29 @@ const TorneoBracket = () => {
         <div className="space-y-2">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-14 w-full rounded-2xl" />)}</div>
       ) : isRoundRobin ? (
         <>
-          {/* Standings table */}
-          <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-card">
-            <div className="grid grid-cols-[28px_1fr_36px_36px_40px] items-center gap-1 border-b border-border px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-              <span>#</span><span>Jugador</span><span className="text-center">PJ</span><span className="text-center">PG</span><span className="text-center">±Sets</span>
-            </div>
-            {standings.map((r) => (
-              <div key={r.user_id} className={cn("grid grid-cols-[28px_1fr_36px_36px_40px] items-center gap-1 px-3 py-2 text-sm",
-                r.user_id === user?.id && "bg-primary/5 font-semibold")}>
-                <span className="text-muted-foreground">{r.pos ?? "—"}</span>
-                <span className="truncate">{r.name} {r.user_id === user?.id && <span className="text-[10px] text-primary">· TÚ</span>}</span>
-                <span className="text-center tabular-nums text-muted-foreground">{r.played}</span>
-                <span className="text-center font-display font-bold tabular-nums">{r.wins}</span>
-                <span className={cn("text-center tabular-nums", r.set_diff > 0 ? "text-success" : r.set_diff < 0 ? "text-destructive" : "text-muted-foreground")}>
-                  {r.set_diff > 0 ? `+${r.set_diff}` : r.set_diff}
-                </span>
-              </div>
-            ))}
-          </div>
-          {/* Fixtures */}
+          {standTable(standings)}
           <p className="mb-2 mt-5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Partidos</p>
           <div className="space-y-2">{slots.map(matchCard)}</div>
         </>
+      ) : isGroups ? (
+        <div className="space-y-6">
+          {["A", "B"].map((g) => (
+            <div key={g}>
+              <p className="mb-2 text-sm font-semibold text-foreground">Grupo {g}</p>
+              {standTable(groupStands.filter((r) => r.grp === g))}
+              <div className="mt-2 space-y-2">{slots.filter((s) => s.bracket === `group_${g.toLowerCase()}`).map(matchCard)}</div>
+            </div>
+          ))}
+          <div>
+            <p className="mb-3 text-sm font-semibold text-foreground">Playoff</p>
+            {playoffSlots.some((s) => s.player_a || s.player_b)
+              ? <div className="space-y-5">{renderRounds(playoffSlots)}</div>
+              : <p className="rounded-2xl border border-dashed border-border bg-card p-4 text-center text-xs text-muted-foreground">Se define al terminar la fase de grupos (cruce 1A-2B / 1B-2A).</p>}
+          </div>
+        </div>
       ) : (
         <div className="space-y-6">
-          {consoSlots.length > 0 && (
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Cuadro principal</p>
-          )}
+          {consoSlots.length > 0 && <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Cuadro principal</p>}
           <div className="space-y-5">{renderRounds(mainSlots)}</div>
           {consoSlots.length > 0 && (
             <div>

@@ -70,6 +70,10 @@ const AnalyticsCommunity = lazy(() => import("./pages/admin/analytics/AnalyticsC
 const AnalyticsAlerts = lazy(() => import("./pages/admin/analytics/AnalyticsAlerts.tsx"));
 const AnalyticsDirectory = lazy(() => import("./pages/admin/analytics/AnalyticsDirectory.tsx"));
 const AdminQACompetir = lazy(() => import("./pages/admin/AdminQACompetir.tsx"));
+const AdminBrands = lazy(() => import("./pages/admin/AdminBrands.tsx"));
+const AdminRewards = lazy(() => import("./pages/admin/AdminRewards.tsx"));
+const AdminPlacements = lazy(() => import("./pages/admin/AdminPlacements.tsx"));
+const AdminEconomy = lazy(() => import("./pages/admin/AdminEconomy.tsx"));
 const AdminDemoProtocol = lazy(() => import("./pages/admin/AdminDemoProtocol.tsx"));
 const AnalyticsLayout = lazy(() =>
   import("./components/analytics/AnalyticsLayout").then((m) => ({ default: m.AnalyticsLayout }))
@@ -326,6 +330,38 @@ const App = () => (
                     element={
                       <ProtectedRoute requiredRole={["club_admin", "super_admin"]}>
                         <AdminMembers />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/brands"
+                    element={
+                      <ProtectedRoute requiredRole={["club_admin", "super_admin"]}>
+                        <AdminBrands />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/rewards"
+                    element={
+                      <ProtectedRoute requiredRole={["club_admin", "super_admin"]}>
+                        <AdminRewards />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/placements"
+                    element={
+                      <ProtectedRoute requiredRole={["club_admin", "super_admin"]}>
+                        <AdminPlacements />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/economy"
+                    element={
+                      <ProtectedRoute requiredRole={["club_admin", "super_admin"]}>
+                        <AdminEconomy />
                       </ProtectedRoute>
                     }
                   />

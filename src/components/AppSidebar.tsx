@@ -11,6 +11,9 @@ import {
   ShieldCheck,
   LineChart,
   FlaskConical,
+  Building2,
+  Gift,
+  SlidersHorizontal,
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
@@ -44,6 +47,10 @@ const adminItems = [
   { title: "Torneos", url: "/admin/torneos", icon: Trophy },
   { title: "Mis torneos", url: "/mis-torneos", icon: ShieldCheck },
   { title: "Ladder", url: "/admin/ladder", icon: ListOrdered },
+  { title: "Marcas", url: "/admin/brands", icon: Building2 },
+  { title: "Catálogo Fichas", url: "/admin/rewards", icon: Gift },
+  { title: "Placements", url: "/admin/placements", icon: Megaphone },
+  { title: "Economía", url: "/admin/economy", icon: SlidersHorizontal },
   { title: "Anuncios", url: "/admin/comunicaciones", icon: Megaphone },
   { title: "Documentos", url: "/admin/documentos", icon: FileText },
   { title: "Analítica", url: "/admin/analytics", icon: LineChart },

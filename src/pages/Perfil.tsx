@@ -129,6 +129,10 @@ const Perfil = () => {
                 { to: "/admin/socios", icon: Users, label: "Administrar socios" },
                 { to: "/admin/torneos", icon: Trophy, label: "Administrar torneos" },
                 { to: "/admin/ladder", icon: ListOrdered, label: "Administrar Escalerilla" },
+                { to: "/admin/brands", icon: Building2, label: "Marcas" },
+                { to: "/admin/rewards", icon: Gift, label: "Catálogo de Fichas" },
+                { to: "/admin/placements", icon: Megaphone, label: "Placements de marca" },
+                { to: "/admin/economy", icon: SlidersHorizontal, label: "Economía (config)" },
                 { to: "/admin/comunicaciones", icon: Megaphone, label: "Anuncios del club" },
                 { to: "/admin/documentos", icon: FileText, label: "Reglamentos y documentos" },
               ].map(({ to, icon: Icon, label }) => (

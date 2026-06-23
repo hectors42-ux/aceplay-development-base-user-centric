@@ -57,12 +57,9 @@ export const RankingPodium = ({ top3, currentUserId, onSelect }: Props) => {
         className="flex flex-1 flex-col items-center gap-1.5 rounded-xl p-1 text-left transition-smooth hover:bg-muted/40"
       >
         <div className="relative">
-          <Avatar className={cn("h-14 w-14 ring-2 ring-offset-2 ring-offset-background", ringColor)}>
-            <AvatarImage src={row.avatar_url ?? undefined} />
-            <AvatarFallback className="text-sm font-semibold">
-              {initials(row.first_name, row.last_name)}
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar kind={row.avatar_kind} look={row.avatar_look} url={row.avatar_url}
+            name={`${row.first_name ?? ""} ${row.last_name ?? ""}`}
+            className={cn("h-14 w-14 ring-2 ring-offset-2 ring-offset-background", ringColor)} />
           <span
             className={cn(
               "absolute -bottom-1 left-1/2 flex h-5 w-5 -translate-x-1/2 items-center justify-center rounded-full font-display text-[10px] font-bold shadow-card",

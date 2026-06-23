@@ -1,5 +1,5 @@
 import { ArrowDown, ArrowUp, Flame, Minus, Snowflake } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/avatar/UserAvatar";
 import { cn, formatStreakLabel } from "@/lib/utils";
 import type { ClubRankingRow } from "@/hooks/useClubRanking";
 import { formatLevel } from "@/lib/rating-utils";
@@ -119,12 +119,8 @@ export const RankingList = ({ rows, currentUserId, startIndex = 0, onSelect, onI
                   </span>
                   <PositionDelta current={row.rank_position} prev={row.prev_rank_position} />
                 </div>
-                <Avatar className="h-9 w-9 shrink-0">
-                  <AvatarImage src={row.avatar_url ?? undefined} />
-                  <AvatarFallback className="text-[11px]">
-                    {initials(row.first_name, row.last_name)}
-                  </AvatarFallback>
-                </Avatar>
+                <UserAvatar kind={row.avatar_kind} look={row.avatar_look} url={row.avatar_url}
+                  name={`${row.first_name ?? ""} ${row.last_name ?? ""}`} className="h-9 w-9" />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
                     <p className="min-w-0 flex-1 truncate text-sm font-medium">

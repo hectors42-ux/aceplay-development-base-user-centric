@@ -12,6 +12,8 @@ import {
   History,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/avatar/UserAvatar";
+import { useAvatar } from "@/hooks/useAvatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUserProfileSummary } from "@/hooks/useUserProfileSummary";
@@ -103,6 +105,7 @@ export const PlayerProfileCard = ({
   const [historyFilter, setHistoryFilter] = useState<"all" | "pending">("all");
   const [evolutionOpen, setEvolutionOpen] = useState(false);
   const { data, loading } = useUserProfileSummary(userId, sport);
+  const av = useAvatar(userId);
   const { rows: ranking } = useClubRanking(sport as RankingSport);
   // Solo cargamos pendientes cuando es perfil propio. El sheet hace su propio fetch.
   const { data: ownHistory } = useMatchHistory(userId, { enabled: mode === "own", limit: 50 });
@@ -234,19 +237,24 @@ export const PlayerProfileCard = ({
       <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-elevated">
         <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-4">
           <div className="flex items-start gap-3">
-            <button
-              type="button"
-              onClick={() => setAvatarOpen(true)}
-              className="rounded-full transition-smooth hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              aria-label={`Ver foto de ${fullName}`}
-            >
-              <Avatar className="h-16 w-16 ring-2 ring-background">
-                <AvatarImage src={profile.avatar_url ?? undefined} />
-                <AvatarFallback className="text-base font-semibold">
-                  {initials(profile.first_name, profile.last_name)}
-                </AvatarFallback>
-              </Avatar>
-            </button>
+            {mode === "own" ? (
+              <Link
+                to="/perfil/avatar"
+                className="rounded-full transition-smooth hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label="Editar tu avatar"
+              >
+                <UserAvatar kind={av.kind} look={av.look} url={av.url} name={fullName} className="h-16 w-16 ring-2 ring-background" />
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={() => { if (av.kind === "photo" && av.url) setAvatarOpen(true); }}
+                className="rounded-full transition-smooth hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label={`Ver avatar de ${fullName}`}
+              >
+                <UserAvatar kind={av.kind} look={av.look} url={av.url} name={fullName} className="h-16 w-16 ring-2 ring-background" />
+              </button>
+            )}
             <div className="min-w-0 flex-1">
               <h3 className="truncate font-display text-lg font-semibold leading-tight">
                 {fullName}

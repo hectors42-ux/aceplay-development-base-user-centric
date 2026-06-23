@@ -23,6 +23,9 @@ export interface UserProfile {
   rut: string | null;
   phone: string | null;
   avatar_url: string | null;
+  avatar_kind: string;
+  avatar_look: string;
+  birthdate: string | null;
   ntrp_level: number | null;
   club_ranking: number | null;
   dues_status: "al_dia" | "pendiente" | "moroso" | "suspendido";
@@ -86,6 +89,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             rut: (row.rut as string) ?? null,
             phone: null,
             avatar_url: (row.avatar_url as string) ?? null,
+            avatar_kind: (row.avatar_kind as string) ?? "rally",
+            avatar_look: (row.avatar_look as string) ?? "classic",
+            birthdate: (row.birthdate as string) ?? null,
             ntrp_level: null,
             club_ranking: null,
             dues_status: "al_dia",

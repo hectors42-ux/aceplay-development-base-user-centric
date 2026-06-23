@@ -9,6 +9,8 @@ export interface ClubRankingRow {
   first_name: string | null;
   last_name: string | null;
   avatar_url: string | null;
+  avatar_kind: string | null;
+  avatar_look: string | null;
   level: number;
   reliability: number;
   matches_played: number;

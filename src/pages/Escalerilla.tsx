@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useCanCreate } from "@/hooks/useCanCreate";
 import { CreateSpaceDialog } from "@/components/CreateSpaceDialog";
+import { UserAvatar } from "@/components/avatar/UserAvatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,7 +20,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 interface EscalerillaRow { space_id: string; name: string; sport: string | null; enrolled: boolean; my_rank: number | null; players: number }
-interface StandingRow { local_rank: number; user_id: string; name: string | null; nivel: number | null; category: string | null; rating: number | null }
+interface StandingRow { local_rank: number; user_id: string; name: string | null; avatar_url: string | null; avatar_kind: string | null; avatar_look: string | null; nivel: number | null; category: string | null; rating: number | null }
 
 const Escalerilla = () => {
   const { user } = useAuth();
@@ -127,6 +128,7 @@ const Escalerilla = () => {
                 className={cn("flex items-center gap-3 rounded-2xl border bg-card p-3 shadow-card",
                   isMe ? "border-primary ring-1 ring-primary/30" : "border-border")}>
                 <span className="w-7 text-center font-display text-lg font-bold text-foreground">#{s.local_rank}</span>
+                <UserAvatar kind={s.avatar_kind} look={s.avatar_look} url={s.avatar_url} name={s.name} className="h-9 w-9" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold text-foreground">
                     {s.name} {isMe && <span className="text-[10px] font-bold text-primary">· TÚ</span>}

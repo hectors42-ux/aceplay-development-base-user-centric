@@ -21,16 +21,20 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { UserAvatar } from "@/components/avatar/UserAvatar";
 import { toast } from "sonner";
 
 interface SpaceRow { space_id: string; name: string; sport: string | null; type: string }
-interface RosterRow { user_id: string; name: string | null; avatar_url: string | null }
+interface RosterRow { user_id: string; name: string | null; avatar_url: string | null; avatar_kind: string | null; avatar_look: string | null }
 interface PendingRow {
   match_id: string;
   space_id: string;
   sport: string;
   format: string;
   recorder_name: string | null;
+  recorder_avatar_url: string | null;
+  recorder_avatar_kind: string | null;
+  recorder_avatar_look: string | null;
   i_won: boolean;
   played_at: string;
   score: { a: number; b: number }[];
@@ -177,8 +181,11 @@ const CargarResultado = () => {
             {pending.map((p) => (
               <div key={p.match_id} className="rounded-2xl border border-border bg-card p-4 shadow-card">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold">{p.recorder_name ?? "Rival"} cargó un partido</p>
-                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <UserAvatar kind={p.recorder_avatar_kind} look={p.recorder_avatar_look} url={p.recorder_avatar_url} name={p.recorder_name} className="h-8 w-8" />
+                    <p className="truncate text-sm font-semibold">{p.recorder_name ?? "Rival"} cargó un partido</p>
+                  </div>
+                  <span className="shrink-0 text-[10px] uppercase tracking-wider text-muted-foreground">
                     {p.sport === "padel" ? "Pádel" : "Tenis"}
                   </span>
                 </div>
@@ -234,7 +241,14 @@ const CargarResultado = () => {
             <Select value={opponentId} onValueChange={setOpponentId}>
               <SelectTrigger><SelectValue placeholder="Elige un rival" /></SelectTrigger>
               <SelectContent>
-                {roster.map((r) => <SelectItem key={r.user_id} value={r.user_id}>{r.name ?? "Jugador"}</SelectItem>)}
+                {roster.map((r) => (
+                  <SelectItem key={r.user_id} value={r.user_id}>
+                    <span className="flex items-center gap-2">
+                      <UserAvatar kind={r.avatar_kind} look={r.avatar_look} url={r.avatar_url} name={r.name} className="h-5 w-5" />
+                      {r.name ?? "Jugador"}
+                    </span>
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             {roster.length === 0 && spaceId && (

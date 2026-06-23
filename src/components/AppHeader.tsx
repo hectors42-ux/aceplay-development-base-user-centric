@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { NotificationCenter } from "@/components/NotificationCenter";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/avatar/UserAvatar";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { SportSwitcher } from "@/components/SportSwitcher";
 import { SportBadge } from "@/components/SportBadge";
@@ -18,9 +18,6 @@ interface AppHeaderProps {
 
 export const AppHeader = ({ memberName, greeting, interactive = true }: AppHeaderProps) => {
   const { profile } = useAuth();
-  const initials = profile
-    ? `${profile.first_name?.[0] ?? ""}${profile.last_name?.[0] ?? ""}`.toUpperCase()
-    : "··";
 
   return (
     <header className="safe-top sticky top-0 z-30 bg-background/85 backdrop-blur-xl">
@@ -31,12 +28,7 @@ export const AppHeader = ({ memberName, greeting, interactive = true }: AppHeade
             aria-label="Ir a mi perfil"
             className="relative block h-11 w-11 shrink-0 rounded-full ring-2 ring-primary/20 shadow-clay transition-smooth hover:ring-primary/40"
           >
-            <Avatar className="h-11 w-11">
-              <AvatarImage src={profile?.avatar_url ?? undefined} alt={memberName} />
-              <AvatarFallback className="bg-gradient-clay text-primary-foreground font-semibold">
-                {initials}
-              </AvatarFallback>
-            </Avatar>
+            <UserAvatar kind={profile?.avatar_kind} look={profile?.avatar_look} url={profile?.avatar_url} name={memberName} className="h-11 w-11" />
           </Link>
           <div className="leading-tight">
             <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">

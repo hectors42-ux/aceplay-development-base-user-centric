@@ -358,8 +358,10 @@ describe("Home — enlaces y navegación", () => {
     expect(hrefs).toContain("/");
     // "Reservar" es un módulo dormido → ya no está en el bottom-nav.
     expect(hrefs).not.toContain("/reservar");
-    expect(hrefs).toContain("/torneos");
+    // Nav unificada (Épica F): Inicio · Descubrir · Desafío(/ranking) · Espacios · Perfil.
+    expect(hrefs).toContain("/descubrir");
     expect(hrefs).toContain("/ranking");
+    expect(hrefs).toContain("/espacios");
     expect(hrefs).toContain("/perfil");
   });
 

@@ -101,8 +101,9 @@ describe("ThemeContext persistence", () => {
 
   it("PULL: al iniciar sesión sin cambios locales, adopta theme/theme_mode desde profiles", async () => {
     getUserMock.mockResolvedValue({ data: { user: { id: "u1" } } });
+    // El remoto difiere del DEFAULT (arena/dark): valida que PULL lo adopta.
     selectSingleMock.mockResolvedValue({
-      data: { theme: "wimbledon", theme_mode: "dark" },
+      data: { theme: "wimbledon", theme_mode: "light" },
       error: null,
     });
 
@@ -111,9 +112,9 @@ describe("ThemeContext persistence", () => {
 
     await waitFor(() => {
       expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe("wimbledon");
-      expect(localStorage.getItem(THEME_MODE_STORAGE_KEY)).toBe("dark");
+      expect(localStorage.getItem(THEME_MODE_STORAGE_KEY)).toBe("light");
       expect(document.documentElement.classList.contains("theme-wimbledon")).toBe(true);
-      expect(document.documentElement.classList.contains("dark")).toBe(true);
+      expect(document.documentElement.classList.contains("dark")).toBe(false);
     });
     expect(updateMock).not.toHaveBeenCalled();
   });

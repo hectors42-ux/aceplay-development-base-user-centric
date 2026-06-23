@@ -7,6 +7,7 @@ import { LevelHeroCard } from "@/components/rating/LevelHeroCard";
 
 import { MatchOfTheWeekCard } from "@/components/home/MatchOfTheWeekCard";
 import { EconomyStrip } from "@/components/home/EconomyStrip";
+import { SponsorLockup } from "@/components/SponsorLockup";
 import { HomeRecentMatchesCard } from "@/components/home/HomeRecentMatchesCard";
 import { PendingConfirmationsCard } from "@/components/home/PendingConfirmationsCard";
 import { useAuth } from "@/components/providers/AuthProvider";
@@ -41,6 +42,7 @@ const Index = () => {
             <HeroCard />
             <PendingConfirmationsCard />
             <EconomyStrip />
+            <SponsorLockup scope="home" />
             <HomeRecentMatchesCard />
             <section className="px-5" aria-label="Tu nivel actual">
               <LevelHeroCard

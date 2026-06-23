@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useCanCreate } from "@/hooks/useCanCreate";
 import { CreateSpaceDialog } from "@/components/CreateSpaceDialog";
+import { SponsorLockup } from "@/components/SponsorLockup";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -283,10 +284,11 @@ const TorneoBracket = () => {
       )}
 
       {current && (
-        <p className="mb-4 text-xs text-muted-foreground">
+        <p className="mb-3 text-xs text-muted-foreground">
           {current.tournament_name} · {current.category_name} · {current.players} inscritos · {formatLabel}
         </p>
       )}
+      <SponsorLockup scope="tournament" refId={catId || null} className="mx-0 mb-4" />
 
       {champion?.winner && (
         <div className="mb-4 flex items-center gap-2 rounded-2xl border border-primary/40 bg-primary/10 p-4">

@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BottomNav } from "@/components/BottomNav";
+import { SponsorLockup } from "@/components/SponsorLockup";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -90,9 +91,10 @@ const Descubrir = () => {
           </div>
         </div>
 
-        <p className="mb-4 text-xs text-muted-foreground">
+        <p className="mb-3 text-xs text-muted-foreground">
           Oportunidades abiertas de cualquier club de la red. Inscríbete y compite — cuenta para tu rating global.
         </p>
+        <SponsorLockup scope="discover" className="mx-0 mb-4" />
 
         {/* Filtros */}
         <div className="mb-4 grid grid-cols-3 gap-2">

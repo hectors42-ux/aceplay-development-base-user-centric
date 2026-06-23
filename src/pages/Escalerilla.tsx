@@ -126,23 +126,23 @@ const Escalerilla = () => {
             return (
               <div key={s.user_id}
                 className={cn("flex items-center gap-3 rounded-2xl border bg-card p-3 shadow-card",
-                  isMe ? "border-primary ring-1 ring-primary/30" : "border-border")}>
+                  isMe ? "border-skill ring-1 ring-skill/30" : "border-border")}>
                 <span className="w-7 text-center font-display text-lg font-bold text-foreground">#{s.local_rank}</span>
                 <UserAvatar kind={s.avatar_kind} look={s.avatar_look} url={s.avatar_url} name={s.name} className="h-9 w-9" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold text-foreground">
-                    {s.name} {isMe && <span className="text-[10px] font-bold text-primary">· TÚ</span>}
+                    {s.name} {isMe && <span className="text-[10px] font-bold text-skill">· TÚ</span>}
                   </p>
                   <p className="text-[11px] text-muted-foreground">
                     {s.category ?? "—"} · nivel {s.nivel != null ? Number(s.nivel).toFixed(2) : "—"}
                   </p>
                 </div>
                 {canChallenge && (
-                  <Button size="sm" variant="outline" onClick={() => { setChallengeTo(s); setResult("me"); setSetsA("6"); setSetsB("4"); }}>
+                  <Button size="sm" variant="outline" className="border-action/40 text-action hover:bg-action/10 hover:text-action" onClick={() => { setChallengeTo(s); setResult("me"); setSetsA("6"); setSetsB("4"); }}>
                     <Swords className="h-4 w-4" /> Retar
                   </Button>
                 )}
-                {isMe && myRank && myRank > 1 && <ChevronsUp className="h-4 w-4 text-primary" aria-label="Puedes retar hacia arriba" />}
+                {isMe && myRank && myRank > 1 && <ChevronsUp className="h-4 w-4 text-skill" aria-label="Puedes retar hacia arriba" />}
               </div>
             );
           })}

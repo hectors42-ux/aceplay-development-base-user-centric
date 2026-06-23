@@ -86,7 +86,7 @@ const Descubrir = () => {
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Red AcePlay</p>
             <h1 className="flex items-center gap-2 font-display text-xl font-semibold">
-              <Compass className="h-5 w-5 text-primary" /> Descubrir
+              <Compass className="h-5 w-5 text-info" /> Descubrir
             </h1>
           </div>
         </div>
@@ -137,7 +137,7 @@ const Descubrir = () => {
                 <div key={o.space_id} className="rounded-2xl border border-border bg-card p-4 shadow-card">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <span className="mb-1 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
+                      <span className="mb-1 inline-flex items-center gap-1 rounded-full bg-info/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-info">
                         <KindIcon className="h-3 w-3" /> {o.kind === "torneo" ? "Torneo" : "Escalerilla"}
                       </span>
                       <p className="truncate font-display text-base font-semibold text-foreground">{o.name}</p>

@@ -4,14 +4,11 @@ import { ArrowLeft, Coins, Store, Ticket, ChevronRight, Tag } from "lucide-react
 import { useRewards, useFichas, type RewardRow } from "@/hooks/useFichas";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BottomNav } from "@/components/BottomNav";
+import { CoinPill } from "@/components/arena";
 
 // IMPORTANTE: en toda la Tienda NUNCA se muestran precios en pesos. Un premio se
-// muestra como "beneficio en [Marca]" + su costo en FICHAS.
-const FichasCost = ({ n }: { n: number }) => (
-  <span className="inline-flex items-center gap-1 rounded-full bg-fichas/15 px-2 py-0.5 text-xs font-bold text-fichas">
-    <Coins className="h-3.5 w-3.5" /> {n} Fichas
-  </span>
-);
+// muestra como "beneficio en [Marca]" + su costo en FICHAS (primitiva CoinPill/oro).
+const FichasCost = ({ n }: { n: number }) => <CoinPill kind="fichas" value={`${n} Fichas`} />;
 
 const Tienda = () => {
   const { data: rewards = [], isLoading } = useRewards();

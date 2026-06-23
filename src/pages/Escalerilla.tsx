@@ -6,6 +6,7 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import { useCanCreate } from "@/hooks/useCanCreate";
 import { CreateSpaceDialog } from "@/components/CreateSpaceDialog";
 import { UserAvatar } from "@/components/avatar/UserAvatar";
+import { TierGem, type Tier } from "@/components/arena";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +19,12 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+
+// nivel (0-7) → gema de rango visual por fila (solo presentación).
+const gemForNivel = (n?: number | null): Tier => {
+  const v = n ?? 0;
+  return v < 1.5 ? "madera" : v < 3 ? "bronce" : v < 4.5 ? "plata" : v < 6 ? "oro" : "platino";
+};
 
 interface EscalerillaRow { space_id: string; name: string; sport: string | null; enrolled: boolean; my_rank: number | null; players: number }
 interface StandingRow { local_rank: number; user_id: string; name: string | null; avatar_url: string | null; avatar_kind: string | null; avatar_look: string | null; nivel: number | null; category: string | null; rating: number | null }
@@ -128,6 +135,7 @@ const Escalerilla = () => {
                 className={cn("flex items-center gap-3 rounded-2xl border bg-card p-3 shadow-card",
                   isMe ? "border-skill ring-1 ring-skill/30" : "border-border")}>
                 <span className="w-7 text-center font-display text-lg font-bold text-foreground">#{s.local_rank}</span>
+                <TierGem tier={gemForNivel(s.nivel)} size="sm" title={`Nivel ${s.nivel != null ? Number(s.nivel).toFixed(1) : "—"}`} />
                 <UserAvatar kind={s.avatar_kind} look={s.avatar_look} url={s.avatar_url} name={s.name} className="h-9 w-9" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold text-foreground">

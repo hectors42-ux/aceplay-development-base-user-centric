@@ -11,7 +11,7 @@ const MODES: { id: ThemeMode; label: string; Icon: typeof Sun }[] = [
 ];
 
 export const ThemePicker = () => {
-  const { theme, effectiveTheme, mode, setTheme, setMode } = useTheme();
+  const { theme, seasonalTheme, mode, setTheme, setMode } = useTheme();
 
   return (
     <div className="space-y-6">
@@ -57,7 +57,7 @@ export const ThemePicker = () => {
                   <p className="text-[11px] text-muted-foreground">{t.sublabel}</p>
                   {isSeasonal && (
                     <p className="mt-1 text-[11px] font-medium text-primary">
-                      Ahora: {THEMES[effectiveTheme]?.label ?? "Arena"} · {SEASONAL_BLURB[effectiveTheme as SurfaceTheme] ?? ""}
+                      Ahora: {THEMES[seasonalTheme]?.label ?? "Arena"} · {SEASONAL_BLURB[seasonalTheme as SurfaceTheme] ?? ""}
                     </p>
                   )}
                 </div>

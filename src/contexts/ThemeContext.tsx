@@ -38,6 +38,8 @@ interface ThemeCtx {
   theme: ThemeId;
   /** Superficie efectivamente aplicada (si theme='seasonal', la resuelta por mes). */
   effectiveTheme: ThemeId;
+  /** Superficie que resuelve el modo estacional HOY (independiente de la elección). */
+  seasonalTheme: ThemeId;
   mode: ThemeMode;
   resolvedDark: boolean;
   setTheme: (t: ThemeId) => void;
@@ -122,13 +124,15 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 
   const resolvedDark = mode === "dark" || (mode === "system" && systemDark);
 
-  // Si el usuario eligió 'seasonal', la superficie efectiva se resuelve por mes.
-  const effectiveTheme: ThemeId = useMemo(
-    () => (isSeasonalTheme(theme) ? (resolveSeasonalTheme(new Date(), seasonalCalendar) as ThemeId) : theme),
-    // seasonalTick fuerza re-resolución al cambiar de día / recuperar foco.
+  // Superficie que resuelve el modo estacional HOY (siempre calculada, para la
+  // vista previa del selector). seasonalTick fuerza re-resolución al cambiar de día.
+  const seasonalTheme = useMemo<ThemeId>(
+    () => resolveSeasonalTheme(new Date(), seasonalCalendar) as ThemeId,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [theme, seasonalCalendar, seasonalTick],
+    [seasonalCalendar, seasonalTick],
   );
+  // Si el usuario eligió 'seasonal', la superficie efectiva es la estacional.
+  const effectiveTheme: ThemeId = isSeasonalTheme(theme) ? seasonalTheme : theme;
 
   useEffect(() => {
     applyToHtml(effectiveTheme, resolvedDark);
@@ -302,8 +306,8 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   );
 
   const value = useMemo<ThemeCtx>(
-    () => ({ theme, effectiveTheme, mode, resolvedDark, setTheme, setMode, syncStatus, lastSyncedAt }),
-    [theme, effectiveTheme, mode, resolvedDark, setTheme, setMode, syncStatus, lastSyncedAt],
+    () => ({ theme, effectiveTheme, seasonalTheme, mode, resolvedDark, setTheme, setMode, syncStatus, lastSyncedAt }),
+    [theme, effectiveTheme, seasonalTheme, mode, resolvedDark, setTheme, setMode, syncStatus, lastSyncedAt],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

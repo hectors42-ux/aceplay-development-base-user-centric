@@ -13,11 +13,11 @@ import {
   ChevronRight,
   Gift,
   Ticket,
-  BarChart3,
   Download,
   Sparkles,
-  
   BarChart3,
+  Building2,
+  SlidersHorizontal,
 } from "lucide-react";
 import { AnalyticsManualDialog } from "@/components/analytics/AnalyticsManualDialog";
 import { Link } from "react-router-dom";

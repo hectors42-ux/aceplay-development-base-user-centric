@@ -251,6 +251,13 @@ vi.mock("@/hooks/useMatchHistory", () => ({
 // este test. La estructura interna del sheet se prueba en
 // match-history-variants.test.tsx (sin Embla anidado). Aquí solo validamos que
 // el botón "Ver historial" abre el sheet.
+// El home monta widgets de economía/sponsor (XP/Liga/Racha/Fichas/lockup) con
+// varios useQuery async + framer-motion: pesados e irrelevantes para los tests
+// de NAVEGACIÓN. Los mockeamos a null para un render rápido y determinístico
+// (mismo criterio que MatchHistorySheet).
+vi.mock("@/components/home/EconomyStrip", () => ({ EconomyStrip: () => null }));
+vi.mock("@/components/SponsorLockup", () => ({ SponsorLockup: () => null }));
+
 vi.mock("@/components/profile/MatchHistorySheet", () => ({
   MatchHistorySheet: ({ open }: { open: boolean }) =>
     open ? (

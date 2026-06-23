@@ -6,6 +6,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { LevelHeroCard } from "@/components/rating/LevelHeroCard";
 
 import { MatchOfTheWeekCard } from "@/components/home/MatchOfTheWeekCard";
+import { EconomyStrip } from "@/components/home/EconomyStrip";
 import { HomeRecentMatchesCard } from "@/components/home/HomeRecentMatchesCard";
 import { PendingConfirmationsCard } from "@/components/home/PendingConfirmationsCard";
 import { useAuth } from "@/components/providers/AuthProvider";
@@ -39,6 +40,7 @@ const Index = () => {
           <div className="xl:col-span-2 space-y-3">
             <HeroCard />
             <PendingConfirmationsCard />
+            <EconomyStrip />
             <HomeRecentMatchesCard />
             <section className="px-5" aria-label="Tu nivel actual">
               <LevelHeroCard

@@ -14,6 +14,7 @@ import {
   Building2,
   Gift,
   SlidersHorizontal,
+  BarChart3,
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
@@ -50,6 +51,7 @@ const adminItems = [
   { title: "Marcas", url: "/admin/brands", icon: Building2 },
   { title: "Catálogo Fichas", url: "/admin/rewards", icon: Gift },
   { title: "Placements", url: "/admin/placements", icon: Megaphone },
+  { title: "Organizador", url: "/admin/organizer", icon: BarChart3 },
   { title: "Economía", url: "/admin/economy", icon: SlidersHorizontal },
   { title: "Anuncios", url: "/admin/comunicaciones", icon: Megaphone },
   { title: "Documentos", url: "/admin/documentos", icon: FileText },

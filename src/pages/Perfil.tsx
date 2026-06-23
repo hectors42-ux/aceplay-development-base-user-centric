@@ -13,6 +13,7 @@ import {
   ChevronRight,
   Gift,
   Ticket,
+  BarChart3,
   Download,
   Sparkles,
   
@@ -32,9 +33,11 @@ import { WelcomeTour, resetWelcomeTour } from "@/components/onboarding/WelcomeTo
 import { NotificationPreferencesCard } from "@/components/profile/NotificationPreferencesCard";
 import { Button } from "@/components/ui/button";
 import { useClubBrand } from "@/components/providers/ClubBrandProvider";
+import { useCanCreate } from "@/hooks/useCanCreate";
 
 const Perfil = () => {
   const { profile, user, isAdmin, signOut } = useAuth();
+  const { canCreate } = useCanCreate();
   const { brand } = useClubBrand();
   const [editing, setEditing] = useState(false);
   const [tourOpen, setTourOpen] = useState(false);
@@ -109,6 +112,18 @@ const Perfil = () => {
           </div>
         </section>
 
+        {canCreate && !isAdmin && (
+          <section className="space-y-2 px-5">
+            <h2 className="flex items-center gap-2 font-display text-base font-semibold">
+              <BarChart3 className="h-4 w-4" /> Organizador
+            </h2>
+            <Link to="/admin/organizer" className="flex items-center justify-between rounded-2xl border border-border bg-card px-4 py-3 text-sm font-medium text-foreground shadow-card transition-smooth hover:bg-muted">
+              <span className="flex items-center gap-2"><BarChart3 className="h-4 w-4 text-primary" /> Métricas de mis torneos</span>
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            </Link>
+          </section>
+        )}
+
         <section className="space-y-2 px-5">
           <h2 className="flex items-center gap-2 font-display text-base font-semibold">
             <Settings className="h-4 w-4" /> Preferencias
@@ -132,6 +147,7 @@ const Perfil = () => {
                 { to: "/admin/brands", icon: Building2, label: "Marcas" },
                 { to: "/admin/rewards", icon: Gift, label: "Catálogo de Fichas" },
                 { to: "/admin/placements", icon: Megaphone, label: "Placements de marca" },
+                { to: "/admin/organizer", icon: BarChart3, label: "Métricas de organizador" },
                 { to: "/admin/economy", icon: SlidersHorizontal, label: "Economía (config)" },
                 { to: "/admin/comunicaciones", icon: Megaphone, label: "Anuncios del club" },
                 { to: "/admin/documentos", icon: FileText, label: "Reglamentos y documentos" },

@@ -74,6 +74,7 @@ const AdminBrands = lazy(() => import("./pages/admin/AdminBrands.tsx"));
 const AdminRewards = lazy(() => import("./pages/admin/AdminRewards.tsx"));
 const AdminPlacements = lazy(() => import("./pages/admin/AdminPlacements.tsx"));
 const AdminEconomy = lazy(() => import("./pages/admin/AdminEconomy.tsx"));
+const OrganizerPanel = lazy(() => import("./pages/admin/OrganizerPanel.tsx"));
 const AdminDemoProtocol = lazy(() => import("./pages/admin/AdminDemoProtocol.tsx"));
 const AnalyticsLayout = lazy(() =>
   import("./components/analytics/AnalyticsLayout").then((m) => ({ default: m.AnalyticsLayout }))
@@ -362,6 +363,15 @@ const App = () => (
                     element={
                       <ProtectedRoute requiredRole={["club_admin", "super_admin"]}>
                         <AdminEconomy />
+                      </ProtectedRoute>
+                    }
+                  />
+                  {/* Panel del organizador: accesible a admin u organizador (el RPC acota los datos). */}
+                  <Route
+                    path="/admin/organizer"
+                    element={
+                      <ProtectedRoute>
+                        <OrganizerPanel />
                       </ProtectedRoute>
                     }
                   />

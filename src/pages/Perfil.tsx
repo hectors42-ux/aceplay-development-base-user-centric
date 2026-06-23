@@ -34,9 +34,24 @@ import { NotificationPreferencesCard } from "@/components/profile/NotificationPr
 import { Button } from "@/components/ui/button";
 import { useClubBrand } from "@/components/providers/ClubBrandProvider";
 import { useCanCreate } from "@/hooks/useCanCreate";
+import { Zap, Coins } from "lucide-react";
+import { TierGem, type Tier } from "@/components/arena";
+import { useActiveSport } from "@/components/providers/SportProvider";
+import { useUserProfileSummary } from "@/hooks/useUserProfileSummary";
+import { useLeague, tierName } from "@/hooks/useEconomy";
+import { useFichas } from "@/hooks/useFichas";
+
+// Tier de liga (número) → gema TierGem (Madera→Platino).
+const PERFIL_TIER_GEM: Tier[] = ["madera", "bronce", "plata", "oro", "platino", "platino"];
+const gemForTier = (t?: number | null): Tier => PERFIL_TIER_GEM[Math.min(Math.max(t ?? 0, 0), 5)];
 
 const Perfil = () => {
   const { profile, user, isAdmin, signOut } = useAuth();
+  const { ratingSport } = useActiveSport();
+  const { data: summary } = useUserProfileSummary(user?.id ?? null, ratingSport);
+  const { data: league = [] } = useLeague();
+  const { data: fichas } = useFichas();
+  const myTier = league.find((m) => m.is_me)?.tier ?? null;
   const { canCreate } = useCanCreate();
   const { brand } = useClubBrand();
   const [editing, setEditing] = useState(false);
@@ -86,6 +101,39 @@ const Perfil = () => {
         {user && (
           <section className="px-5">
             <PlayerProfileCard userId={user.id} mode="own" />
+          </section>
+        )}
+
+        {/* Dos CAPAS separadas y explícitas: habilidad (Rating·Skill) ≠ premio (Fichas). */}
+        {user && (
+          <section className="px-5" aria-label="Tus capas">
+            <div className="grid grid-cols-2 gap-3">
+              {/* HABILIDAD — Rating / Skill (volt) */}
+              <div className="rounded-2xl border border-skill/30 bg-skill/5 p-3">
+                <div className="flex items-center gap-1.5 text-skill">
+                  <Zap className="h-4 w-4" />
+                  <span className="text-[10px] font-bold uppercase tracking-wide">Rating · Skill</span>
+                </div>
+                <div className="mt-1 flex items-center gap-2">
+                  <p className="font-display text-2xl font-bold leading-none tabular-nums text-foreground">
+                    {summary?.rating?.level != null ? Number(summary.rating.level).toFixed(1) : "—"}
+                  </p>
+                  {myTier != null && <TierGem tier={gemForTier(myTier)} size="sm" title={`Liga ${tierName(myTier)}`} />}
+                </div>
+                <p className="mt-1 text-[10px] text-muted-foreground">Se gana jugando · no se canjea</p>
+              </div>
+              {/* PREMIO — Fichas (oro) */}
+              <Link to="/tienda" className="block rounded-2xl border border-fichas/30 bg-fichas/5 p-3 transition-smooth hover:bg-fichas/10">
+                <div className="flex items-center gap-1.5 text-fichas">
+                  <Coins className="h-4 w-4" />
+                  <span className="text-[10px] font-bold uppercase tracking-wide">Puntos · Fichas</span>
+                </div>
+                <p className="mt-1 font-display text-2xl font-bold leading-none tabular-nums text-foreground">
+                  {fichas?.balance ?? 0}
+                </p>
+                <p className="mt-1 text-[10px] text-muted-foreground">Toca para canjear</p>
+              </Link>
+            </div>
           </section>
         )}
 

@@ -11,6 +11,7 @@ import { SponsorLockup } from "@/components/SponsorLockup";
 import { HomeRecentMatchesCard } from "@/components/home/HomeRecentMatchesCard";
 import { PendingConfirmationsCard } from "@/components/home/PendingConfirmationsCard";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { Steps } from "@/components/arena";
 import { useUserProfileSummary } from "@/hooks/useUserProfileSummary";
 import { useActiveSport } from "@/components/providers/SportProvider";
 import { useClubBrand } from "@/components/providers/ClubBrandProvider";
@@ -58,6 +59,14 @@ const Index = () => {
                 linkToProfile
                 className="min-h-[260px] lg:min-h-[280px]"
               />
+              {!summaryLoading && summary?.rating?.level != null && (
+                <div className="mt-3 rounded-2xl border border-border bg-card/60 p-3" aria-label="Camino de ascenso de nivel">
+                  <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                    Camino de ascenso · habilidad
+                  </p>
+                  <Steps current={Math.round(summary.rating.level)} />
+                </div>
+              )}
             </section>
           </div>
           <aside className="space-y-3">

@@ -33,9 +33,9 @@ export const EconomyStrip = () => {
       <div className="rounded-3xl border border-border bg-card p-4 shadow-card">
         {/* Moneda de Fichas → acceso a la Tienda (HUD) */}
         <Link to="/tienda" aria-label="Ir a la Tienda de premios"
-          className="mb-3 flex items-center justify-between rounded-2xl bg-amber-500/10 px-3 py-2 transition-smooth hover:bg-amber-500/20">
+          className="mb-3 flex items-center justify-between rounded-2xl bg-fichas/12 px-3 py-2 transition-smooth hover:bg-fichas/20">
           <span className="flex items-center gap-2">
-            <Coins className="h-4 w-4 text-amber-600" strokeWidth={2.2} />
+            <Coins className="h-4 w-4 text-fichas" strokeWidth={2.2} />
             <span className="font-display text-sm font-bold tabular-nums">{fichas?.balance ?? 0}</span>
             <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Fichas · Tienda</span>
           </span>
@@ -44,20 +44,20 @@ export const EconomyStrip = () => {
 
         {/* Chips: XP · Liga · Racha */}
         <div className="grid grid-cols-3 gap-2">
-          <div className="flex flex-col items-center justify-center rounded-2xl bg-primary/5 p-3 text-center">
-            <Zap className="h-4 w-4 text-primary" strokeWidth={2.2} />
+          <div className="flex flex-col items-center justify-center rounded-2xl bg-skill/8 p-3 text-center">
+            <Zap className="h-4 w-4 text-skill" strokeWidth={2.2} />
             <p className="mt-1 font-display text-lg font-bold tabular-nums leading-none">{xp?.xp_week ?? 0}</p>
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground">XP semana</p>
           </div>
           <div className="flex flex-col items-center justify-center rounded-2xl bg-muted p-3 text-center">
-            <Trophy className="h-4 w-4 text-primary" strokeWidth={2.2} />
+            <Trophy className="h-4 w-4 text-muted-foreground" strokeWidth={2.2} />
             <p className="mt-1 font-display text-sm font-bold leading-none">{tier ? tierName(tier) : "—"}</p>
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
               {rank ? `Liga · #${rank}` : "Sin liga"}
             </p>
           </div>
           <div className="flex flex-col items-center justify-center rounded-2xl bg-muted p-3 text-center">
-            <Flame className={cn("h-4 w-4", weeks > 0 ? "text-orange-500" : "text-muted-foreground")} strokeWidth={2.2} />
+            <Flame className={cn("h-4 w-4", weeks > 0 ? "text-action" : "text-muted-foreground")} strokeWidth={2.2} />
             <p className="mt-1 font-display text-lg font-bold tabular-nums leading-none">{weeks}</p>
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{weeks === 1 ? "semana" : "semanas"}</p>
           </div>
@@ -77,14 +77,14 @@ export const EconomyStrip = () => {
                     <p className={cn("truncate text-xs font-medium", m.completed && "text-muted-foreground line-through")}>
                       {m.title}
                     </p>
-                    <span className="flex shrink-0 items-center gap-1 text-[11px] font-semibold text-primary">
-                      {m.completed ? <CheckCircle2 className="h-3.5 w-3.5 text-success" /> : null}
+                    <span className="flex shrink-0 items-center gap-1 text-[11px] font-semibold text-skill">
+                      {m.completed ? <CheckCircle2 className="h-3.5 w-3.5 text-confirm" /> : null}
                       +{m.reward_xp} XP
                     </span>
                   </div>
                   <div className="mt-1.5 flex items-center gap-2">
                     <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
-                      <div className={cn("h-full rounded-full transition-all", m.completed ? "bg-success" : "bg-primary")} style={{ width: `${pct}%` }} />
+                      <div className={cn("h-full rounded-full transition-all", m.completed ? "bg-confirm" : "bg-skill")} style={{ width: `${pct}%` }} />
                     </div>
                     <span className="text-[10px] tabular-nums text-muted-foreground">{Math.min(m.progress, m.target)}/{m.target}</span>
                   </div>

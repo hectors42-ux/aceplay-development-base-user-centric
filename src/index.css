@@ -11,6 +11,44 @@
 
 @layer base {
   /* ============================================================
+     ROLES HOMOLOGADOS — constantes en TODOS los temas (el contrato).
+     Cada rol = UN hue distinto; nunca dos casi iguales. Los temas
+     cambian SUPERFICIES (base/elevaciones/bordes/ink), NUNCA estos
+     hues de rol. Reusado por Cemento/Arcilla/Pasto (Épica K).
+       skill/XP  volt    #C6FF1A  → habilidad
+       action    naranja #EC6E2E  → marca + CTA · Desafío · EN VIVO · racha
+                 (rampa: glow #FF8A4D · deep #B8521C — el MISMO naranja del logo)
+       fichas    oro     #FFC53D  → premio
+       info      azul    #6E86FF  → info · Descubrir · portabilidad
+       confirm   verde   #2BD17E  → confirmación · positivo
+     Las 3 capas quedan SIEMPRE separadas por color de rol:
+       habilidad(skill) · enganche(action/info) · premio(fichas).
+     Firewall visual: estos tokens son 100% visuales; no implican
+     cruce de capas de datos (no tocan ledgers ni RPCs).
+     ============================================================ */
+  :root {
+    --skill: 75 100% 55%;
+    --skill-foreground: 75 80% 7%;
+
+    --action: 20 83% 55%;
+    --action-foreground: 222 45% 9%;
+    --action-glow: 21 100% 65%;
+    --action-deep: 21 74% 42%;
+
+    --brand: 20 83% 55%;
+    --brand-foreground: 222 45% 9%;
+
+    --fichas: 42 100% 62%;
+    --fichas-foreground: 40 80% 8%;
+
+    --info: 230 100% 72%;
+    --info-foreground: 230 60% 12%;
+
+    --confirm: 150 66% 49%;
+    --confirm-foreground: 150 70% 7%;
+  }
+
+  /* ============================================================
      ARCILLA ACEPLAY — light (default AcePlay V3)
      Clay #b6502b · Cream #f8f6f2 · Ink #2b1b12 · Olive #5d6a39
      ============================================================ */
@@ -172,73 +210,89 @@
   }
 
   /* ============================================================
-     ARENA — tema DEFAULT (dark). Tokens PLACEHOLDER: el reskin fino
-     llega en la Fase 2 (G). Dark en ambos modos (es un tema oscuro).
+     ARENA — tema DEFAULT (dark). Paleta HOMOLOGADA (Épica G).
+     Este bloque define SOLO superficies (navy profundo) + el mapeo de
+     los tokens shadcn a los roles homologados de :root. Los hues de rol
+     (skill/action/fichas/info/confirm) viven en :root y NO se redefinen
+     aquí — un tema solo cambia superficies.
      ============================================================ */
   :root.theme-arena,
   :root.theme-arena.dark {
-    --background: 222 16% 10%;
-    --foreground: 40 30% 93%;
+    /* Superficies — navy profundo. */
+    --background: 224 32% 7%;
+    --foreground: 220 28% 96%;
 
-    --card: 222 16% 14%;
-    --card-foreground: 40 30% 93%;
+    --card: 224 28% 11%;
+    --card-foreground: 220 28% 96%;
 
-    --popover: 222 16% 14%;
-    --popover-foreground: 40 30% 93%;
+    --popover: 224 26% 13%;
+    --popover-foreground: 220 28% 96%;
 
-    --primary: 36 72% 56%;
-    --primary-foreground: 222 20% 8%;
-    --primary-glow: 40 82% 62%;
-    --primary-deep: 30 55% 32%;
+    /* Marca + acción = naranja homologado (= --action / --brand). UN SOLO naranja. */
+    --primary: 20 83% 55%;
+    --primary-foreground: 222 45% 9%;
+    --primary-glow: 21 100% 65%;
+    --primary-deep: 21 74% 42%;
 
-    --secondary: 222 12% 22%;
-    --secondary-foreground: 40 24% 88%;
+    --brand-primary: 20 83% 55%;
+    --brand-primary-glow: 21 100% 65%;
+    --brand-primary-deep: 21 74% 42%;
 
-    --muted: 222 12% 17%;
-    --muted-foreground: 40 12% 70%;
+    --secondary: 223 18% 19%;
+    --secondary-foreground: 220 22% 90%;
 
-    --accent: 188 45% 44%;
-    --accent-foreground: 222 16% 10%;
+    --muted: 223 20% 15%;
+    --muted-foreground: 220 16% 66%;
 
-    --destructive: 0 70% 55%;
-    --destructive-foreground: 40 30% 95%;
+    /* accent = superficie sutil para hover/realces (NO un color de rol). */
+    --accent: 223 20% 17%;
+    --accent-foreground: 220 22% 92%;
 
-    --success: 150 45% 46%;
-    --success-foreground: 222 16% 10%;
+    /* destructive = error (rojo verdadero 0°, distinto del naranja de acción 20°). */
+    --destructive: 0 75% 58%;
+    --destructive-foreground: 0 0% 100%;
 
-    --warning: 38 88% 55%;
-    --warning-foreground: 222 16% 10%;
+    /* success = confirmación = verde homologado. */
+    --success: 150 66% 49%;
+    --success-foreground: 150 70% 7%;
 
-    --court-hard: 200 60% 55%;
-    --court-clay: 30 70% 52%;
+    --warning: 38 92% 56%;
+    --warning-foreground: 38 60% 8%;
 
-    --olive: 70 25% 40%;
-    --olive-deep: 70 24% 20%;
-    --olive-soft: 70 18% 24%;
+    /* court: hard = azul info · clay = naranja acción. */
+    --court-hard: 230 100% 72%;
+    --court-clay: 20 83% 55%;
 
-    --border: 222 12% 24%;
-    --input: 222 12% 24%;
-    --ring: 36 72% 56%;
+    --olive: 75 40% 40%;
+    --olive-deep: 75 38% 18%;
+    --olive-soft: 223 18% 19%;
 
-    --gradient-clay: linear-gradient(135deg, hsl(36 72% 56%), hsl(40 82% 62%));
-    --gradient-clay-deep: linear-gradient(160deg, hsl(30 55% 30%), hsl(36 72% 56%));
-    --gradient-court: linear-gradient(135deg, hsl(188 45% 30%), hsl(222 16% 14%));
-    --gradient-warm: linear-gradient(180deg, hsl(222 16% 10%), hsl(222 16% 14%));
-    --gradient-overlay: linear-gradient(180deg, hsl(0 0% 0% / 0) 0%, hsl(0 0% 0% / 0.9) 100%);
+    --border: 223 16% 22%;
+    --input: 223 16% 22%;
+    --ring: 20 83% 55%;
 
-    --shadow-clay: 0 12px 36px -14px hsl(36 72% 56% / 0.34);
-    --shadow-soft: 0 4px 20px -8px hsl(0 0% 0% / 0.5);
-    --shadow-card: 0 2px 12px -4px hsl(0 0% 0% / 0.4);
-    --shadow-elevated: 0 20px 60px -20px hsl(0 0% 0% / 0.6);
+    --font-display: 'Archivo', system-ui, -apple-system, sans-serif;
+    --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
 
-    --sidebar-background: 222 16% 13%;
-    --sidebar-foreground: 40 30% 93%;
-    --sidebar-primary: 36 72% 56%;
-    --sidebar-primary-foreground: 222 16% 10%;
-    --sidebar-accent: 222 12% 18%;
-    --sidebar-accent-foreground: 40 24% 88%;
-    --sidebar-border: 222 12% 20%;
-    --sidebar-ring: 36 72% 56%;
+    --gradient-clay: linear-gradient(135deg, hsl(20 83% 55%), hsl(21 100% 65%));
+    --gradient-clay-deep: linear-gradient(160deg, hsl(21 74% 38%), hsl(20 83% 55%));
+    --gradient-court: linear-gradient(135deg, hsl(230 60% 30%), hsl(224 28% 11%));
+    --gradient-warm: linear-gradient(180deg, hsl(224 32% 7%), hsl(224 28% 11%));
+    --gradient-overlay: linear-gradient(180deg, hsl(224 40% 4% / 0) 0%, hsl(224 40% 4% / 0.92) 100%);
+
+    --shadow-clay: 0 12px 36px -14px hsl(20 83% 55% / 0.4);
+    --shadow-soft: 0 4px 20px -8px hsl(224 50% 3% / 0.5);
+    --shadow-card: 0 2px 12px -4px hsl(224 50% 3% / 0.45);
+    --shadow-elevated: 0 22px 60px -20px hsl(224 50% 3% / 0.65);
+
+    --sidebar-background: 224 30% 9%;
+    --sidebar-foreground: 220 28% 96%;
+    --sidebar-primary: 20 83% 55%;
+    --sidebar-primary-foreground: 222 45% 9%;
+    --sidebar-accent: 223 20% 15%;
+    --sidebar-accent-foreground: 220 22% 90%;
+    --sidebar-border: 223 16% 20%;
+    --sidebar-ring: 20 83% 55%;
   }
 
   /* ============================================================

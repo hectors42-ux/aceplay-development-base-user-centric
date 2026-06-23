@@ -28,6 +28,10 @@ export default {
         sans: ['var(--font-sans)'],
         display: ['var(--font-display)'],
         mono: ['"DM Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+        // Familias del contrato Arena (cargadas en index.html).
+        archivo: ['"Archivo"', 'system-ui', 'sans-serif'],
+        cormorant: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+        'dm-sans': ['"DM Sans"', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -40,6 +44,33 @@ export default {
           foreground: "hsl(var(--primary-foreground))",
           glow: "hsl(var(--primary-glow))",
           deep: "hsl(var(--primary-deep))",
+        },
+        // Roles homologados (Épica G) — un hue por capa. Constantes entre temas.
+        skill: {
+          DEFAULT: "hsl(var(--skill))",
+          foreground: "hsl(var(--skill-foreground))",
+        },
+        action: {
+          DEFAULT: "hsl(var(--action))",
+          foreground: "hsl(var(--action-foreground))",
+          glow: "hsl(var(--action-glow))",
+          deep: "hsl(var(--action-deep))",
+        },
+        brand: {
+          DEFAULT: "hsl(var(--brand))",
+          foreground: "hsl(var(--brand-foreground))",
+        },
+        fichas: {
+          DEFAULT: "hsl(var(--fichas))",
+          foreground: "hsl(var(--fichas-foreground))",
+        },
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
+        },
+        confirm: {
+          DEFAULT: "hsl(var(--confirm))",
+          foreground: "hsl(var(--confirm-foreground))",
         },
         success: {
           DEFAULT: "hsl(var(--success))",

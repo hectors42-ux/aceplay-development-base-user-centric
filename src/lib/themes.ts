@@ -1,6 +1,56 @@
 export type ThemeId = "arena" | "terre-battue" | "us-open" | "wimbledon";
 export type ThemeMode = "light" | "dark" | "system";
 
+/**
+ * CONTRATO DE ROLES (homologado — Épica G). Fuente de verdad de los acentos.
+ * Cada rol = UN hue distinto, CONSTANTE en todos los temas. Un tema solo cambia
+ * SUPERFICIES (base dark / elevaciones / bordes / ink), nunca estos hues de rol.
+ * Reusado por Cemento/Arcilla/Pasto en la Épica K.
+ *
+ * Las 3 capas del producto quedan SIEMPRE separadas por color de rol:
+ *   habilidad → skill(volt) · enganche → action(naranja)/info(azul) ·
+ *   premio → fichas(oro). confirm(verde) = feedback positivo.
+ *
+ * Firewall visual: el color de rol es 100% presentación; NO implica cruce de
+ * capas de datos y NO toca ledgers ni RPCs. Los tokens viven como CSS vars
+ * (`--skill`, `--action`, …) que el ThemeProvider intercambia por tema.
+ */
+export type RoleKey = "skill" | "action" | "fichas" | "info" | "confirm";
+export interface RoleToken {
+  /** Hex definitivo homologado. */
+  hex: string;
+  /** Mismo color en convención shadcn (H S% L%) — así vive en index.css. */
+  hsl: string;
+  /** Rol semántico (no es un color "suelto"). */
+  role: string;
+}
+export const ROLE_PALETTE: Record<RoleKey, RoleToken> = {
+  skill: { hex: "#C6FF1A", hsl: "75 100% 55%", role: "habilidad / XP" },
+  action: { hex: "#EC6E2E", hsl: "20 83% 55%", role: "marca + CTA · Desafío · EN VIVO · racha" },
+  fichas: { hex: "#FFC53D", hsl: "42 100% 62%", role: "Fichas / premio" },
+  info: { hex: "#6E86FF", hsl: "230 100% 72%", role: "info / Descubrir / portabilidad" },
+  confirm: { hex: "#2BD17E", hsl: "150 66% 49%", role: "confirmación / positivo" },
+};
+
+/** Rampa del naranja de acción (mismo hue): glow=realces, deep=sombras/depth. */
+export const ACTION_RAMP = { base: "#EC6E2E", glow: "#FF8A4D", deep: "#B8521C" } as const;
+
+/**
+ * Contrato de SUPERFICIES que cada tema implementa (los roles de arriba son
+ * constantes; estas son las variables que un tema NUEVO sí redefine). Sirve de
+ * guía para la Épica K: agregar un tema = dar valores a estas superficies, sin
+ * tocar los roles. Lista los nombres de CSS var, no valores.
+ */
+export const SURFACE_CONTRACT = [
+  "background", "foreground",
+  "card", "card-foreground",
+  "popover", "popover-foreground",
+  "secondary", "secondary-foreground",
+  "muted", "muted-foreground",
+  "accent", "accent-foreground",
+  "border", "input", "ring",
+] as const;
+
 export interface ThemeMeta {
   id: ThemeId;
   label: string;
@@ -11,15 +61,16 @@ export interface ThemeMeta {
 }
 
 export const THEMES: Record<ThemeId, ThemeMeta> = {
-  // 'arena' es el tema DEFAULT (dark). Tokens placeholder por ahora; el reskin
-  // fino llega en la Fase 2 (G-J).
+  // 'arena' es el tema DEFAULT (dark). Paleta HOMOLOGADA (Épica G): superficies
+  // navy + roles volt/naranja/oro/azul/verde. El reskin de pantallas llega en H/J.
   arena: {
     id: "arena",
     label: "Arena",
-    sublabel: "Dark · arena · cancha — el tema por defecto",
-    swatches: ["#0f1115", "#d99a3e", "#2f9e9e", "#e9e3d6"],
+    sublabel: "Dark · navy profundo · naranja de acción — el tema por defecto",
+    // preview: superficie · acción(naranja) · skill(volt) · fichas(oro)
+    swatches: ["#0D111C", "#EC6E2E", "#C6FF1A", "#FFC53D"],
     fontDisplay: '"Archivo", system-ui, sans-serif',
-    fontSans: "Inter, system-ui, sans-serif",
+    fontSans: '"DM Sans", system-ui, sans-serif',
   },
   "terre-battue": {
     id: "terre-battue",

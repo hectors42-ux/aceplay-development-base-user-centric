@@ -46,6 +46,7 @@ const AdminLadder = lazy(() => import("./pages/AdminLadder.tsx"));
 const AdminLadderDetail = lazy(() => import("./pages/AdminLadderDetail.tsx"));
 const Onboarding = lazy(() => import("./pages/Onboarding.tsx"));
 const Perfil = lazy(() => import("./pages/Perfil.tsx"));
+const AvatarPicker = lazy(() => import("./pages/AvatarPicker.tsx"));
 const PartnerMatchDetail = lazy(() => import("./pages/PartnerMatchDetail.tsx"));
 const AdminAnnouncements = lazy(() => import("./pages/AdminAnnouncements.tsx"));
 const AdminLegalDocs = lazy(() => import("./pages/AdminLegalDocs.tsx"));
@@ -257,6 +258,14 @@ const App = () => (
                     element={
                       <ProtectedRoute>
                         <Perfil />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/perfil/avatar"
+                    element={
+                      <ProtectedRoute>
+                        <AvatarPicker />
                       </ProtectedRoute>
                     }
                   />

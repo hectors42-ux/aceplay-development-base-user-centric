@@ -98,15 +98,15 @@ const Perfil = () => {
 
         <section className="space-y-2 px-5">
           <h2 className="flex items-center gap-2 font-display text-base font-semibold">
-            <Gift className="h-4 w-4" /> Premios
+            <Gift className="h-4 w-4 text-fichas" /> Premios
           </h2>
           <div className="space-y-2">
             <Link to="/tienda" className="flex items-center justify-between rounded-2xl border border-border bg-card px-4 py-3 text-sm font-medium text-foreground shadow-card transition-smooth hover:bg-muted">
-              <span className="flex items-center gap-2"><Gift className="h-4 w-4 text-primary" /> Tienda de premios</span>
+              <span className="flex items-center gap-2"><Gift className="h-4 w-4 text-fichas" /> Tienda de premios</span>
               <ChevronRight className="h-4 w-4 text-muted-foreground" />
             </Link>
             <Link to="/mis-canjes" className="flex items-center justify-between rounded-2xl border border-border bg-card px-4 py-3 text-sm font-medium text-foreground shadow-card transition-smooth hover:bg-muted">
-              <span className="flex items-center gap-2"><Ticket className="h-4 w-4 text-primary" /> Mis canjes</span>
+              <span className="flex items-center gap-2"><Ticket className="h-4 w-4 text-fichas" /> Mis canjes</span>
               <ChevronRight className="h-4 w-4 text-muted-foreground" />
             </Link>
           </div>

@@ -8,7 +8,7 @@ import { BottomNav } from "@/components/BottomNav";
 // IMPORTANTE: en toda la Tienda NUNCA se muestran precios en pesos. Un premio se
 // muestra como "beneficio en [Marca]" + su costo en FICHAS.
 const FichasCost = ({ n }: { n: number }) => (
-  <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 text-xs font-bold text-amber-700 dark:text-amber-400">
+  <span className="inline-flex items-center gap-1 rounded-full bg-fichas/15 px-2 py-0.5 text-xs font-bold text-fichas">
     <Coins className="h-3.5 w-3.5" /> {n} Fichas
   </span>
 );
@@ -44,7 +44,7 @@ const Tienda = () => {
         {/* Saldo + acceso a Mis canjes */}
         <div className="mb-5 flex items-center justify-between rounded-3xl border border-border bg-card p-4 shadow-card">
           <div className="flex items-center gap-2">
-            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-amber-500/15 text-amber-600">
+            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-fichas/15 text-fichas">
               <Coins className="h-5 w-5" />
             </span>
             <div>
@@ -58,7 +58,7 @@ const Tienda = () => {
         </div>
 
         {fichas?.expiring_amount ? (
-          <p className="mb-4 rounded-2xl border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-[11px] text-amber-700 dark:text-amber-400">
+          <p className="mb-4 rounded-2xl border border-fichas/30 bg-fichas/5 px-3 py-2 text-[11px] text-fichas">
             {fichas.expiring_amount} Fichas vencen pronto. Canjéalas antes de que expiren.
           </p>
         ) : null}

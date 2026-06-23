@@ -196,7 +196,7 @@ const CargarResultado = () => {
                   </span>
                 </p>
                 <div className="mt-3 flex gap-2">
-                  <Button size="sm" variant="clay" className="flex-1" disabled={busyMatch === p.match_id} onClick={() => confirm(p.match_id)}>
+                  <Button size="sm" variant="confirm" className="flex-1" disabled={busyMatch === p.match_id} onClick={() => confirm(p.match_id)}>
                     {busyMatch === p.match_id ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Check className="h-4 w-4" /> Confirmar</>}
                   </Button>
                   <Button size="sm" variant="outline" className="flex-1" disabled={busyMatch === p.match_id} onClick={() => { setDisputeFor(p.match_id); setDisputeReason(""); }}>

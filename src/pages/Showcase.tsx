@@ -6,6 +6,7 @@ import {
   CoinPill, TierGem, TIER_ORDER, LiveBadge, SponsorLockup, MatchScore,
   ArenaBottomNav, type NavItemSpec,
 } from "@/components/arena";
+import { CelebrationOverlay } from "@/components/feedback";
 import { ROLE_PALETTE } from "@/lib/themes";
 
 const NAV: NavItemSpec[] = [
@@ -28,6 +29,7 @@ const Section = ({ title, hint, children }: { title: string; hint?: string; chil
 
 const Showcase = () => {
   const [activeNav, setActiveNav] = useState("desafio");
+  const [celebrate, setCelebrate] = useState(false);
   return (
     <div className="min-h-screen bg-background pb-16">
       <header className="safe-top sticky top-0 z-30 border-b border-border bg-background/85 px-5 py-3 backdrop-blur-xl">
@@ -113,7 +115,30 @@ const Showcase = () => {
         <Section title="Bottom-nav + FAB" hint="Primitiva presentacional. FAB Desafío y tab activo en naranja de acción.">
           <ArenaBottomNav items={NAV} activeId={activeNav} onSelect={setActiveNav} />
         </Section>
+
+        {/* ceremonia */}
+        <Section title="Ceremonia" hint="Ascenso con XP (volt) y Fichas (oro) en capas SEPARADAS — nunca se mezclan.">
+          <button
+            type="button"
+            onClick={() => setCelebrate(true)}
+            className="rounded-full bg-action px-4 py-2 text-sm font-semibold text-action-foreground transition-transform hover:scale-105"
+          >
+            Ver ceremonia de ascenso
+          </button>
+        </Section>
       </main>
+
+      {celebrate && (
+        <CelebrationOverlay
+          kind="major"
+          title="¡Subiste de Liga!"
+          subtitle="Tu constancia te llevó a Plata. Tu nivel (habilidad) no cambia."
+          delta={[2, 1]}
+          xp={40}
+          fichas={25}
+          onClose={() => setCelebrate(false)}
+        />
+      )}
     </div>
   );
 };

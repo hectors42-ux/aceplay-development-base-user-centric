@@ -1,9 +1,10 @@
 import { useEffect, type ReactNode } from 'react';
-import { X, Check, Trophy, ArrowRight, Share2 } from 'lucide-react';
+import { X, Check, Trophy, ArrowRight, Share2, Zap, Coins } from 'lucide-react';
 import { Confetti } from './Confetti';
 import { useCountUp } from './useCountUp';
 import { HapticButton } from './HapticButton';
 import { haptic } from '@/lib/feedback/haptic';
+import { cn } from '@/lib/utils';
 
 export type CelebrationKind = 'minor' | 'major' | 'epic';
 
@@ -16,6 +17,9 @@ export interface CelebrationProps {
   delta?: [from: number, to: number];
   /** Pill secundario opcional para `minor` (ej. "+1 PG"). */
   pill?: string;
+  /** Recompensas, mostradas en CAPAS SEPARADAS: XP (habilidad/volt) ≠ Fichas (premio/oro). */
+  xp?: number;
+  fichas?: number;
   /** Solo `minor`. Default 4000ms. */
   duration?: number;
   onClose?: () => void;
@@ -52,10 +56,30 @@ export function CelebrationOverlay(props: CelebrationProps) {
   return <EpicCeremony {...props} />;
 }
 
+// Recompensas en CAPAS SEPARADAS — XP (habilidad, volt) y Fichas (premio, oro)
+// nunca se mezclan: refuerza el firewall visual (XP no compra Fichas ni viceversa).
+function RewardRow({ xp, fichas, className }: { xp?: number; fichas?: number; className?: string }) {
+  if (xp == null && fichas == null) return null;
+  return (
+    <div className={cn('flex flex-wrap items-center justify-center gap-2', className)}>
+      {xp != null && (
+        <span className="inline-flex items-center gap-1 rounded-full bg-skill/20 px-2.5 py-1 text-xs font-bold text-skill">
+          <Zap className="h-3.5 w-3.5" /> +{xp} XP
+        </span>
+      )}
+      {fichas != null && (
+        <span className="inline-flex items-center gap-1 rounded-full bg-fichas/20 px-2.5 py-1 text-xs font-bold text-fichas">
+          <Coins className="h-3.5 w-3.5" /> +{fichas} Fichas
+        </span>
+      )}
+    </div>
+  );
+}
+
 // ─────────────────────────────────────────────────────────────
 // MINOR — toast bottom, no bloquea taps
 // ─────────────────────────────────────────────────────────────
-function MinorToast({ title, subtitle, pill, duration = 4000, onClose }: CelebrationProps) {
+function MinorToast({ title, subtitle, pill, xp, fichas, duration = 4000, onClose }: CelebrationProps) {
   useEffect(() => {
     const t = setTimeout(() => onClose?.(), duration);
     return () => clearTimeout(t);
@@ -86,6 +110,7 @@ function MinorToast({ title, subtitle, pill, duration = 4000, onClose }: Celebra
             {pill}
           </span>
         )}
+        <RewardRow xp={xp} fichas={fichas} className="shrink-0" />
       </div>
     </div>
   );
@@ -94,7 +119,7 @@ function MinorToast({ title, subtitle, pill, duration = 4000, onClose }: Celebra
 // ─────────────────────────────────────────────────────────────
 // MAJOR — overlay full-screen con delta animado
 // ─────────────────────────────────────────────────────────────
-function MajorOverlay({ title, subtitle, badge, delta, onClose }: CelebrationProps) {
+function MajorOverlay({ title, subtitle, badge, delta, xp, fichas, onClose }: CelebrationProps) {
   const target = delta ? delta[1] : 0;
   const start = delta ? delta[0] : 0;
   const animated = useCountUp(target, { start, duration: 1100 });
@@ -163,6 +188,9 @@ function MajorOverlay({ title, subtitle, badge, delta, onClose }: CelebrationPro
           {subtitle}
         </p>
       )}
+
+      {/* XP y Fichas en capas separadas — nunca se mezclan (firewall visual). */}
+      <RewardRow xp={xp} fichas={fichas} className="z-10 mt-5" />
 
       <HapticButton
         level="medium"

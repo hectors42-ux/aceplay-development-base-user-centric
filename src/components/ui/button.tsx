@@ -13,6 +13,7 @@ const buttonVariants = cva(
         clay: "bg-gradient-clay text-primary-foreground shadow-clay hover:brightness-110",
         court: "bg-gradient-court text-accent-foreground shadow-soft hover:brightness-110",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        confirm: "bg-confirm text-confirm-foreground hover:bg-confirm/90 shadow-card",
         outline: "border-2 border-primary/20 bg-background hover:bg-primary/5 hover:border-primary/40 text-foreground",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-muted text-foreground",

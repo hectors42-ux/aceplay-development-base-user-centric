@@ -41,6 +41,9 @@ const Ranking = lazy(() => import("./pages/Ranking.tsx"));
 const CargarResultado = lazy(() => import("./pages/CargarResultado.tsx"));
 const Escalerilla = lazy(() => import("./pages/Escalerilla.tsx"));
 const Descubrir = lazy(() => import("./pages/Descubrir.tsx"));
+const Tienda = lazy(() => import("./pages/Tienda.tsx"));
+const TiendaItem = lazy(() => import("./pages/TiendaItem.tsx"));
+const MisCanjes = lazy(() => import("./pages/MisCanjes.tsx"));
 const TorneoBracket = lazy(() => import("./pages/TorneoBracket.tsx"));
 const AdminLadder = lazy(() => import("./pages/AdminLadder.tsx"));
 const AdminLadderDetail = lazy(() => import("./pages/AdminLadderDetail.tsx"));
@@ -242,6 +245,30 @@ const App = () => (
                     element={
                       <ProtectedRoute>
                         <Descubrir />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/tienda"
+                    element={
+                      <ProtectedRoute>
+                        <Tienda />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/tienda/:id"
+                    element={
+                      <ProtectedRoute>
+                        <TiendaItem />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/mis-canjes"
+                    element={
+                      <ProtectedRoute>
+                        <MisCanjes />
                       </ProtectedRoute>
                     }
                   />

@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
-import { Zap, Flame, Trophy, Target, CheckCircle2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Zap, Flame, Trophy, Target, CheckCircle2, Coins, ChevronRight } from "lucide-react";
 import { useXP, useLeague, useStreak, useMissions, tierName } from "@/hooks/useEconomy";
+import { useFichas } from "@/hooks/useFichas";
 import { cn } from "@/lib/utils";
 
 /**
@@ -13,6 +15,7 @@ export const EconomyStrip = () => {
   const { data: league = [] } = useLeague();
   const { data: streak } = useStreak();
   const { data: missions = [] } = useMissions();
+  const { data: fichas } = useFichas();
 
   const me = league.find((m) => m.is_me);
   const tier = me?.tier ?? null;
@@ -28,6 +31,17 @@ export const EconomyStrip = () => {
       aria-label="Tu progreso de la semana"
     >
       <div className="rounded-3xl border border-border bg-card p-4 shadow-card">
+        {/* Moneda de Fichas → acceso a la Tienda (HUD) */}
+        <Link to="/tienda" aria-label="Ir a la Tienda de premios"
+          className="mb-3 flex items-center justify-between rounded-2xl bg-amber-500/10 px-3 py-2 transition-smooth hover:bg-amber-500/20">
+          <span className="flex items-center gap-2">
+            <Coins className="h-4 w-4 text-amber-600" strokeWidth={2.2} />
+            <span className="font-display text-sm font-bold tabular-nums">{fichas?.balance ?? 0}</span>
+            <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Fichas · Tienda</span>
+          </span>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        </Link>
+
         {/* Chips: XP · Liga · Racha */}
         <div className="grid grid-cols-3 gap-2">
           <div className="flex flex-col items-center justify-center rounded-2xl bg-primary/5 p-3 text-center">

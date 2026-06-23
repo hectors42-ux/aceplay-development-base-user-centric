@@ -4,6 +4,7 @@ import {
   Swords,
   User,
   Compass,
+  LayoutGrid,
   Users,
   Megaphone,
   FileText,
@@ -34,11 +35,12 @@ import appIcon from "@/assets/brand/app-icon-light.png.asset.json";
 import { cn } from "@/lib/utils";
 
 // "Reservar" y "Clases" se quitaron: módulos dormidos (ver src/config/modules.ts).
+// Nav unificada (Épica F): mismos 5 destinos que el bottom-nav móvil.
 const memberItems = [
   { title: "Inicio", url: "/", icon: Home, id: "home" },
-  { title: "Competir", url: "/ranking", icon: Swords, id: "competir" },
   { title: "Descubrir", url: "/descubrir", icon: Compass, id: "descubrir" },
-  { title: "Torneos", url: "/torneos", icon: Trophy, id: "torneos" },
+  { title: "Desafío", url: "/ranking", icon: Swords, id: "desafio" },
+  { title: "Espacios", url: "/espacios", icon: LayoutGrid, id: "espacios" },
   { title: "Perfil", url: "/perfil", icon: User, id: "perfil" },
 ];
 

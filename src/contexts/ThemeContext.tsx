@@ -58,7 +58,7 @@ const isDirty = () => {
   try { return localStorage.getItem(THEME_DIRTY_KEY) === "1"; } catch { return false; }
 };
 
-const THEME_CLASSES = ["theme-terre-battue", "theme-us-open", "theme-wimbledon"];
+const THEME_CLASSES = ["theme-arena", "theme-terre-battue", "theme-us-open", "theme-wimbledon"];
 
 const applyToHtml = (theme: ThemeId, dark: boolean) => {
   const root = document.documentElement;
@@ -134,7 +134,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
           .from("profiles")
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .update({ theme: localTheme, theme_mode: localMode } as any)
-          .eq("user_id", user.id);
+          .eq("id", user.id);
         if (cancelled) return;
         if (error) {
           setSyncStatus("error");
@@ -150,7 +150,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
         .from("profiles")
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .select("theme, theme_mode" as any)
-        .eq("user_id", user.id)
+        .eq("id", user.id)
         .maybeSingle();
       if (cancelled) return;
       if (error) {
@@ -197,7 +197,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
           .from("profiles")
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .update(patch as any)
-          .eq("user_id", user.id);
+          .eq("id", user.id);
         return { ok: !error, hasUser: true };
       } catch {
         return { ok: false, hasUser: true };

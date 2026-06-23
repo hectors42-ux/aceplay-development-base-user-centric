@@ -1,4 +1,4 @@
-export type ThemeId = "terre-battue" | "us-open" | "wimbledon";
+export type ThemeId = "arena" | "terre-battue" | "us-open" | "wimbledon";
 export type ThemeMode = "light" | "dark" | "system";
 
 export interface ThemeMeta {
@@ -11,6 +11,16 @@ export interface ThemeMeta {
 }
 
 export const THEMES: Record<ThemeId, ThemeMeta> = {
+  // 'arena' es el tema DEFAULT (dark). Tokens placeholder por ahora; el reskin
+  // fino llega en la Fase 2 (G-J).
+  arena: {
+    id: "arena",
+    label: "Arena",
+    sublabel: "Dark · arena · cancha — el tema por defecto",
+    swatches: ["#0f1115", "#d99a3e", "#2f9e9e", "#e9e3d6"],
+    fontDisplay: '"Archivo", system-ui, sans-serif',
+    fontSans: "Inter, system-ui, sans-serif",
+  },
   "terre-battue": {
     id: "terre-battue",
     label: "Arcilla AcePlay",
@@ -37,11 +47,12 @@ export const THEMES: Record<ThemeId, ThemeMeta> = {
   },
 };
 
-export const THEME_IDS: ThemeId[] = ["terre-battue", "us-open", "wimbledon"];
+export const THEME_IDS: ThemeId[] = ["arena", "terre-battue", "us-open", "wimbledon"];
 export const THEME_MODES: ThemeMode[] = ["light", "dark", "system"];
 
-export const DEFAULT_THEME: ThemeId = "terre-battue";
-export const DEFAULT_MODE: ThemeMode = "light";
+// Arena (dark) es el DEFAULT de la app desde el arranque.
+export const DEFAULT_THEME: ThemeId = "arena";
+export const DEFAULT_MODE: ThemeMode = "dark";
 
 export const THEME_STORAGE_KEY = "aceplay.theme";
 export const THEME_MODE_STORAGE_KEY = "aceplay.theme_mode";

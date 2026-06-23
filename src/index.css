@@ -172,6 +172,76 @@
   }
 
   /* ============================================================
+     ARENA — tema DEFAULT (dark). Tokens PLACEHOLDER: el reskin fino
+     llega en la Fase 2 (G). Dark en ambos modos (es un tema oscuro).
+     ============================================================ */
+  :root.theme-arena,
+  :root.theme-arena.dark {
+    --background: 222 16% 10%;
+    --foreground: 40 30% 93%;
+
+    --card: 222 16% 14%;
+    --card-foreground: 40 30% 93%;
+
+    --popover: 222 16% 14%;
+    --popover-foreground: 40 30% 93%;
+
+    --primary: 36 72% 56%;
+    --primary-foreground: 222 20% 8%;
+    --primary-glow: 40 82% 62%;
+    --primary-deep: 30 55% 32%;
+
+    --secondary: 222 12% 22%;
+    --secondary-foreground: 40 24% 88%;
+
+    --muted: 222 12% 17%;
+    --muted-foreground: 40 12% 70%;
+
+    --accent: 188 45% 44%;
+    --accent-foreground: 222 16% 10%;
+
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 40 30% 95%;
+
+    --success: 150 45% 46%;
+    --success-foreground: 222 16% 10%;
+
+    --warning: 38 88% 55%;
+    --warning-foreground: 222 16% 10%;
+
+    --court-hard: 200 60% 55%;
+    --court-clay: 30 70% 52%;
+
+    --olive: 70 25% 40%;
+    --olive-deep: 70 24% 20%;
+    --olive-soft: 70 18% 24%;
+
+    --border: 222 12% 24%;
+    --input: 222 12% 24%;
+    --ring: 36 72% 56%;
+
+    --gradient-clay: linear-gradient(135deg, hsl(36 72% 56%), hsl(40 82% 62%));
+    --gradient-clay-deep: linear-gradient(160deg, hsl(30 55% 30%), hsl(36 72% 56%));
+    --gradient-court: linear-gradient(135deg, hsl(188 45% 30%), hsl(222 16% 14%));
+    --gradient-warm: linear-gradient(180deg, hsl(222 16% 10%), hsl(222 16% 14%));
+    --gradient-overlay: linear-gradient(180deg, hsl(0 0% 0% / 0) 0%, hsl(0 0% 0% / 0.9) 100%);
+
+    --shadow-clay: 0 12px 36px -14px hsl(36 72% 56% / 0.34);
+    --shadow-soft: 0 4px 20px -8px hsl(0 0% 0% / 0.5);
+    --shadow-card: 0 2px 12px -4px hsl(0 0% 0% / 0.4);
+    --shadow-elevated: 0 20px 60px -20px hsl(0 0% 0% / 0.6);
+
+    --sidebar-background: 222 16% 13%;
+    --sidebar-foreground: 40 30% 93%;
+    --sidebar-primary: 36 72% 56%;
+    --sidebar-primary-foreground: 222 16% 10%;
+    --sidebar-accent: 222 12% 18%;
+    --sidebar-accent-foreground: 40 24% 88%;
+    --sidebar-border: 222 12% 20%;
+    --sidebar-ring: 36 72% 56%;
+  }
+
+  /* ============================================================
      US OPEN — light (Flushing blue · noche en NY)
      Primario: azul Flushing #0058A8 · acento: amarillo pelota #D7E80B
      · magenta luces estadio #7A2E8E

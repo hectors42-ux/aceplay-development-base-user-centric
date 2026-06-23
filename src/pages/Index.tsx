@@ -3,7 +3,6 @@ import { AppHeader } from "@/components/AppHeader";
 import { HeroCard } from "@/components/HeroCard";
 import { QuickActions } from "@/components/QuickActions";
 import { BottomNav } from "@/components/BottomNav";
-import { LevelHeroCard } from "@/components/rating/LevelHeroCard";
 
 import { MatchOfTheWeekCard } from "@/components/home/MatchOfTheWeekCard";
 import { EconomyStrip } from "@/components/home/EconomyStrip";
@@ -11,7 +10,9 @@ import { SponsorLockup } from "@/components/SponsorLockup";
 import { HomeRecentMatchesCard } from "@/components/home/HomeRecentMatchesCard";
 import { PendingConfirmationsCard } from "@/components/home/PendingConfirmationsCard";
 import { useAuth } from "@/components/providers/AuthProvider";
-import { Steps } from "@/components/arena";
+import { Link } from "react-router-dom";
+import { ArenaHero, Steps } from "@/components/arena";
+import { RATING_SPORT_LABEL } from "@/lib/rating-utils";
 import { useUserProfileSummary } from "@/hooks/useUserProfileSummary";
 import { useActiveSport } from "@/components/providers/SportProvider";
 import { useClubBrand } from "@/components/providers/ClubBrandProvider";
@@ -42,32 +43,32 @@ const Index = () => {
           <div className="xl:col-span-2 space-y-3">
             <HeroCard />
             <PendingConfirmationsCard />
+            {/* CAPA HABILIDAD — ArenaHero (nivel/categoría como trofeo). Link a Perfil. */}
+            {!summaryLoading && summary?.rating?.level != null && (
+              <section className="px-5" aria-label="Tu nivel actual">
+                <Link to="/perfil" aria-label="Tu nivel" className="block">
+                  <ArenaHero
+                    nivel={summary.rating.level}
+                    categoria={summary.rating.category ?? "—"}
+                    sport={RATING_SPORT_LABEL[ratingSport]}
+                  />
+                </Link>
+              </section>
+            )}
+            {/* CAPAS ENGANCHE + PREMIO (Liga/XP · Racha · Fichas) + misiones. */}
             <EconomyStrip />
-            <SponsorLockup scope="home" />
-            <HomeRecentMatchesCard />
-            <section className="px-5" aria-label="Tu nivel actual">
-              <LevelHeroCard
-                level={summary?.rating?.level ?? null}
-                category={summary?.rating?.category ?? null}
-                delta={summary?.rating?.last_change_delta ?? 0}
-                sport={ratingSport}
-                rankingPosition={summary?.positions.ranking ?? null}
-                ladderPosition={summary?.positions.ladder ?? null}
-                ladderStatus={summary?.positions.ladder_status ?? null}
-                variant="slim"
-                loading={summaryLoading}
-                linkToProfile
-                className="min-h-[260px] lg:min-h-[280px]"
-              />
-              {!summaryLoading && summary?.rating?.level != null && (
-                <div className="mt-3 rounded-2xl border border-border bg-card/60 p-3" aria-label="Camino de ascenso de nivel">
+            {!summaryLoading && summary?.rating?.level != null && (
+              <section className="px-5" aria-label="Camino de ascenso de nivel">
+                <div className="rounded-2xl border border-border bg-card/60 p-3">
                   <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
                     Camino de ascenso · habilidad
                   </p>
                   <Steps current={Math.round(summary.rating.level)} />
                 </div>
-              )}
-            </section>
+              </section>
+            )}
+            <SponsorLockup scope="home" />
+            <HomeRecentMatchesCard />
           </div>
           <aside className="space-y-3">
             <MatchOfTheWeekCard />

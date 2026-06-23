@@ -43,8 +43,9 @@ export const BottomNav = () => {
 
   return (
     <nav aria-label="Navegación principal"
-      className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background/80 backdrop-blur-xl safe-bottom md:hidden">
-      <ul className="mx-auto flex max-w-md items-end justify-around px-2 pt-2">
+      style={{ bottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
+      className="glass-nav-bar fixed left-3 right-3 z-40 rounded-[30px] md:hidden">
+      <ul className="mx-auto flex max-w-md items-end justify-around px-3 py-2">
         {items.map((item) => {
           const Icon = item.icon;
           const active = item.to === "/" ? location.pathname === "/" : location.pathname.startsWith(item.to);
@@ -73,9 +74,9 @@ export const BottomNav = () => {
             <li key={item.id} className="flex-1">
               <NavLink to={item.to} aria-current={active ? "page" : undefined}
                 className={cn("flex w-full flex-col items-center gap-1 rounded-lg px-2 py-2 transition-smooth",
-                  active ? "text-primary" : "text-muted-foreground hover:text-foreground")}>
-                <span className={cn("relative flex h-9 w-9 items-center justify-center rounded-lg transition-smooth", active && "bg-primary/5")}>
-                  {active && <span aria-hidden className="absolute -top-2 left-1/2 h-0.5 w-6 -translate-x-1/2 bg-primary" />}
+                  active ? "text-skill" : "text-muted-foreground hover:text-foreground")}>
+                <span className={cn("relative flex h-9 w-9 items-center justify-center rounded-lg transition-smooth", active && "bg-skill/5")}>
+                  {active && <span aria-hidden className="absolute -top-2 left-1/2 h-0.5 w-6 -translate-x-1/2 bg-skill" />}
                   <Icon className="h-5 w-5" strokeWidth={active ? 2.5 : 2} />
                   {item.live && !showBadge && (
                     <span aria-label="Modo operador activo" className="pointer-events-none absolute -right-1 -top-1 flex h-2.5 w-2.5">

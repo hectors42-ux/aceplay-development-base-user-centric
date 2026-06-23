@@ -20,8 +20,8 @@ export const AppHeader = ({ memberName, greeting, interactive = true }: AppHeade
   const { profile } = useAuth();
 
   return (
-    <header className="safe-top sticky top-0 z-30 bg-background/85 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-md lg:max-w-6xl items-center justify-between gap-3 px-5 lg:px-6 pb-3 pt-3">
+    <header className="safe-top sticky top-0 z-30 px-3 pt-2">
+      <div className="glass-bar mx-auto flex max-w-md lg:max-w-6xl items-center justify-between gap-3 rounded-[22px] px-4 py-2.5">
         <div className="flex items-center gap-3">
           <Link
             to="/perfil"

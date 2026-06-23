@@ -1,5 +1,6 @@
 import { Check, Monitor, Moon, Sun } from "lucide-react";
-import { THEMES, ThemeMode } from "@/lib/themes";
+import { THEMES, PICKER_THEME_IDS, ThemeMode, type ThemeId } from "@/lib/themes";
+import { SEASONAL_BLURB, type SurfaceTheme } from "@/lib/seasonal-theme";
 import { useTheme } from "@/contexts/ThemeContext";
 import { cn } from "@/lib/utils";
 
@@ -10,23 +11,25 @@ const MODES: { id: ThemeMode; label: string; Icon: typeof Sun }[] = [
 ];
 
 export const ThemePicker = () => {
-  const { theme, mode, setTheme, setMode } = useTheme();
+  const { theme, effectiveTheme, mode, setTheme, setMode } = useTheme();
 
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="font-display text-base font-semibold text-foreground">Tema</h3>
+        <h3 className="font-display text-base font-semibold text-foreground">Apariencia</h3>
         <p className="mt-1 text-xs text-muted-foreground">
-          Cambia la paleta y la tipografía de toda la app.
+          Elige tu superficie. Tu look persiste en tu perfil.
         </p>
         <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {Object.values(THEMES).map((t) => {
-            const sel = t.id === theme;
+          {PICKER_THEME_IDS.map((id) => {
+            const t = THEMES[id as ThemeId];
+            const sel = id === theme;
+            const isSeasonal = id === "seasonal";
             return (
               <button
-                key={t.id}
+                key={id}
                 type="button"
-                onClick={() => setTheme(t.id)}
+                onClick={() => setTheme(id)}
                 aria-pressed={sel}
                 className={cn(
                   "relative flex flex-col gap-2 rounded-2xl border-2 p-4 text-left transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
@@ -52,6 +55,11 @@ export const ThemePicker = () => {
                 <div>
                   <p className="font-display text-base font-semibold text-foreground">{t.label}</p>
                   <p className="text-[11px] text-muted-foreground">{t.sublabel}</p>
+                  {isSeasonal && (
+                    <p className="mt-1 text-[11px] font-medium text-primary">
+                      Ahora: {THEMES[effectiveTheme]?.label ?? "Arena"} · {SEASONAL_BLURB[effectiveTheme as SurfaceTheme] ?? ""}
+                    </p>
+                  )}
                 </div>
               </button>
             );

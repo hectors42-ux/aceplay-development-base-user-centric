@@ -1,5 +1,21 @@
-export type ThemeId = "arena" | "terre-battue" | "us-open" | "wimbledon";
+export type ThemeId =
+  | "arena"
+  | "cement"
+  | "clay"
+  | "grass"
+  | "seasonal"
+  | "terre-battue"
+  | "us-open"
+  | "wimbledon";
 export type ThemeMode = "light" | "dark" | "system";
+
+// Superficies seleccionables (Épica K) — temas con bloque CSS propio. 'seasonal'
+// NO está aquí: es un MODO que resuelve a una de estas superficies por mes.
+export const SURFACE_THEME_IDS = ["arena", "cement", "clay", "grass"] as const;
+export type SurfaceThemeId = (typeof SURFACE_THEME_IDS)[number];
+export const isSeasonalTheme = (t: unknown): t is "seasonal" => t === "seasonal";
+export const isSurfaceTheme = (t: unknown): t is SurfaceThemeId =>
+  typeof t === "string" && (SURFACE_THEME_IDS as readonly string[]).includes(t);
 
 /**
  * CONTRATO DE ROLES (homologado — Épica G). Fuente de verdad de los acentos.
@@ -72,6 +88,40 @@ export const THEMES: Record<ThemeId, ThemeMeta> = {
     fontDisplay: '"Archivo", system-ui, sans-serif',
     fontSans: '"DM Sans", system-ui, sans-serif',
   },
+  // Temas estacionales de SUPERFICIE (Épica K). Roles homologados constantes
+  // (skill/action/fichas/info/confirm desde :root); solo cambia la superficie.
+  cement: {
+    id: "cement",
+    label: "Cemento",
+    sublabel: "Hard · azul-cemento · plexicushion nocturno",
+    swatches: ["#0F1B2E", "#EC6E2E", "#C6FF1A", "#6E86FF"],
+    fontDisplay: '"Archivo", system-ui, sans-serif',
+    fontSans: '"DM Sans", system-ui, sans-serif',
+  },
+  clay: {
+    id: "clay",
+    label: "Arcilla",
+    sublabel: "Polvo de ladrillo · terracota · Roland-Garros",
+    swatches: ["#1F120B", "#EC6E2E", "#C6FF1A", "#FFC53D"],
+    fontDisplay: '"Archivo", system-ui, sans-serif',
+    fontSans: '"DM Sans", system-ui, sans-serif',
+  },
+  grass: {
+    id: "grass",
+    label: "Pasto",
+    sublabel: "Césped · verde inglés · Wimbledon clásico",
+    swatches: ["#0C1F13", "#EC6E2E", "#C6FF1A", "#2BD17E"],
+    fontDisplay: '"Archivo", system-ui, sans-serif',
+    fontSans: '"DM Sans", system-ui, sans-serif',
+  },
+  seasonal: {
+    id: "seasonal",
+    label: "Estacional",
+    sublabel: "Auto · rota la superficie según la temporada de tenis",
+    swatches: ["#0D111C", "#0F1B2E", "#1F120B", "#0C1F13"],
+    fontDisplay: '"Archivo", system-ui, sans-serif',
+    fontSans: '"DM Sans", system-ui, sans-serif',
+  },
   "terre-battue": {
     id: "terre-battue",
     label: "Arcilla AcePlay",
@@ -98,7 +148,13 @@ export const THEMES: Record<ThemeId, ThemeMeta> = {
   },
 };
 
-export const THEME_IDS: ThemeId[] = ["arena", "terre-battue", "us-open", "wimbledon"];
+export const THEME_IDS: ThemeId[] = [
+  "arena", "cement", "clay", "grass", "seasonal",
+  "terre-battue", "us-open", "wimbledon",
+];
+
+// Tarjetas que muestra el selector de Apariencia (Perfil → Ajustes).
+export const PICKER_THEME_IDS: ThemeId[] = ["arena", "cement", "clay", "grass", "seasonal"];
 export const THEME_MODES: ThemeMode[] = ["light", "dark", "system"];
 
 // Arena (dark) es el DEFAULT de la app desde el arranque.

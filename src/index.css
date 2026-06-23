@@ -46,6 +46,11 @@
 
     --confirm: 150 66% 49%;
     --confirm-foreground: 150 70% 7%;
+
+    /* Material "Liquid Glass" (Épica L). brd/hi constantes; --glass-bg tinta por tema. */
+    --glass-bg: rgba(16, 23, 40, 0.55);
+    --glass-brd: rgba(255, 255, 255, 0.14);
+    --glass-hi: rgba(255, 255, 255, 0.18);
   }
 
   /* ============================================================
@@ -293,6 +298,188 @@
     --sidebar-accent-foreground: 220 22% 90%;
     --sidebar-border: 223 16% 20%;
     --sidebar-ring: 20 83% 55%;
+    --glass-bg: rgba(16, 23, 40, 0.55);
+  }
+
+  /* ============================================================
+     CEMENTO (cement) — Hard / azul-cemento nocturno (Épica K).
+     Solo SUPERFICIES; roles (skill/action/fichas/info/confirm) desde :root.
+     ============================================================ */
+  :root.theme-cement,
+  :root.theme-cement.dark {
+    --background: 216 42% 10%;
+    --foreground: 210 30% 95%;
+    --card: 216 36% 14%;
+    --card-foreground: 210 30% 95%;
+    --popover: 216 34% 16%;
+    --popover-foreground: 210 30% 95%;
+    --primary: 20 83% 55%;
+    --primary-foreground: 216 45% 9%;
+    --primary-glow: 21 100% 65%;
+    --primary-deep: 21 74% 42%;
+    --brand-primary: 20 83% 55%;
+    --brand-primary-glow: 21 100% 65%;
+    --brand-primary-deep: 21 74% 42%;
+    --secondary: 216 26% 22%;
+    --secondary-foreground: 210 24% 90%;
+    --muted: 216 28% 17%;
+    --muted-foreground: 213 18% 68%;
+    --accent: 216 28% 19%;
+    --accent-foreground: 210 24% 92%;
+    --destructive: 0 75% 58%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 150 66% 49%;
+    --success-foreground: 150 70% 7%;
+    --warning: 38 92% 56%;
+    --warning-foreground: 38 60% 8%;
+    --court-hard: 210 90% 60%;
+    --court-clay: 20 83% 55%;
+    --olive: 200 30% 40%;
+    --olive-deep: 210 30% 18%;
+    --olive-soft: 216 26% 20%;
+    --border: 216 24% 24%;
+    --input: 216 24% 24%;
+    --ring: 20 83% 55%;
+    --font-display: 'Archivo', system-ui, -apple-system, sans-serif;
+    --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+    --gradient-clay: linear-gradient(135deg, hsl(20 83% 55%), hsl(21 100% 65%));
+    --gradient-clay-deep: linear-gradient(160deg, hsl(21 74% 38%), hsl(20 83% 55%));
+    --gradient-court: linear-gradient(135deg, hsl(210 60% 32%), hsl(216 36% 14%));
+    --gradient-warm: linear-gradient(180deg, hsl(216 42% 10%), hsl(216 36% 14%));
+    --gradient-overlay: linear-gradient(180deg, hsl(216 50% 4% / 0) 0%, hsl(216 50% 4% / 0.92) 100%);
+    --shadow-clay: 0 12px 36px -14px hsl(20 83% 55% / 0.4);
+    --shadow-soft: 0 4px 20px -8px hsl(216 50% 3% / 0.5);
+    --shadow-card: 0 2px 12px -4px hsl(216 50% 3% / 0.45);
+    --shadow-elevated: 0 22px 60px -20px hsl(216 50% 3% / 0.65);
+    --sidebar-background: 216 40% 12%;
+    --sidebar-foreground: 210 30% 95%;
+    --sidebar-primary: 20 83% 55%;
+    --sidebar-primary-foreground: 216 45% 9%;
+    --sidebar-accent: 216 28% 17%;
+    --sidebar-accent-foreground: 210 24% 90%;
+    --sidebar-border: 216 24% 20%;
+    --sidebar-ring: 20 83% 55%;
+    --glass-bg: rgba(12, 34, 58, 0.52);
+  }
+
+  /* ============================================================
+     ARCILLA (clay) — polvo de ladrillo · Roland-Garros (Épica K).
+     ============================================================ */
+  :root.theme-clay,
+  :root.theme-clay.dark {
+    --background: 18 42% 10%;
+    --foreground: 30 26% 94%;
+    --card: 18 34% 13%;
+    --card-foreground: 30 26% 94%;
+    --popover: 16 30% 16%;
+    --popover-foreground: 30 26% 94%;
+    --primary: 20 83% 55%;
+    --primary-foreground: 18 50% 9%;
+    --primary-glow: 21 100% 65%;
+    --primary-deep: 21 74% 42%;
+    --brand-primary: 20 83% 55%;
+    --brand-primary-glow: 21 100% 65%;
+    --brand-primary-deep: 21 74% 42%;
+    --secondary: 18 22% 22%;
+    --secondary-foreground: 30 22% 90%;
+    --muted: 18 24% 17%;
+    --muted-foreground: 25 16% 68%;
+    --accent: 18 24% 18%;
+    --accent-foreground: 30 22% 92%;
+    --destructive: 0 75% 58%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 150 66% 49%;
+    --success-foreground: 150 70% 7%;
+    --warning: 38 92% 56%;
+    --warning-foreground: 38 60% 8%;
+    --court-hard: 200 60% 55%;
+    --court-clay: 18 70% 52%;
+    --olive: 75 30% 38%;
+    --olive-deep: 70 28% 18%;
+    --olive-soft: 18 22% 20%;
+    --border: 18 22% 24%;
+    --input: 18 22% 24%;
+    --ring: 20 83% 55%;
+    --font-display: 'Archivo', system-ui, -apple-system, sans-serif;
+    --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+    --gradient-clay: linear-gradient(135deg, hsl(20 83% 55%), hsl(21 100% 65%));
+    --gradient-clay-deep: linear-gradient(160deg, hsl(21 74% 38%), hsl(20 83% 55%));
+    --gradient-court: linear-gradient(135deg, hsl(18 55% 30%), hsl(18 34% 13%));
+    --gradient-warm: linear-gradient(180deg, hsl(18 42% 10%), hsl(18 34% 13%));
+    --gradient-overlay: linear-gradient(180deg, hsl(18 50% 4% / 0) 0%, hsl(18 50% 4% / 0.92) 100%);
+    --shadow-clay: 0 12px 36px -14px hsl(20 83% 55% / 0.42);
+    --shadow-soft: 0 4px 20px -8px hsl(18 50% 3% / 0.5);
+    --shadow-card: 0 2px 12px -4px hsl(18 50% 3% / 0.45);
+    --shadow-elevated: 0 22px 60px -20px hsl(18 50% 3% / 0.65);
+    --sidebar-background: 18 40% 12%;
+    --sidebar-foreground: 30 26% 94%;
+    --sidebar-primary: 20 83% 55%;
+    --sidebar-primary-foreground: 18 50% 9%;
+    --sidebar-accent: 18 24% 17%;
+    --sidebar-accent-foreground: 30 22% 90%;
+    --sidebar-border: 18 22% 20%;
+    --sidebar-ring: 20 83% 55%;
+    --glass-bg: rgba(46, 22, 12, 0.52);
+  }
+
+  /* ============================================================
+     PASTO (grass) — césped · Wimbledon (Épica K).
+     ============================================================ */
+  :root.theme-grass,
+  :root.theme-grass.dark {
+    --background: 150 38% 8%;
+    --foreground: 90 22% 94%;
+    --card: 150 28% 12%;
+    --card-foreground: 90 22% 94%;
+    --popover: 150 26% 15%;
+    --popover-foreground: 90 22% 94%;
+    --primary: 20 83% 55%;
+    --primary-foreground: 150 50% 8%;
+    --primary-glow: 21 100% 65%;
+    --primary-deep: 21 74% 42%;
+    --brand-primary: 20 83% 55%;
+    --brand-primary-glow: 21 100% 65%;
+    --brand-primary-deep: 21 74% 42%;
+    --secondary: 150 20% 20%;
+    --secondary-foreground: 90 20% 90%;
+    --muted: 150 20% 16%;
+    --muted-foreground: 140 14% 66%;
+    --accent: 150 22% 15%;
+    --accent-foreground: 90 20% 92%;
+    --destructive: 0 75% 58%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 150 66% 49%;
+    --success-foreground: 150 70% 7%;
+    --warning: 38 92% 56%;
+    --warning-foreground: 38 60% 8%;
+    --court-hard: 200 60% 55%;
+    --court-clay: 20 83% 55%;
+    --olive: 95 40% 40%;
+    --olive-deep: 140 30% 16%;
+    --olive-soft: 150 20% 18%;
+    --border: 150 20% 22%;
+    --input: 150 20% 22%;
+    --ring: 20 83% 55%;
+    --font-display: 'Archivo', system-ui, -apple-system, sans-serif;
+    --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+    --gradient-clay: linear-gradient(135deg, hsl(20 83% 55%), hsl(21 100% 65%));
+    --gradient-clay-deep: linear-gradient(160deg, hsl(21 74% 38%), hsl(20 83% 55%));
+    --gradient-court: linear-gradient(135deg, hsl(150 45% 26%), hsl(150 28% 12%));
+    --gradient-warm: linear-gradient(180deg, hsl(150 38% 8%), hsl(150 28% 12%));
+    --gradient-overlay: linear-gradient(180deg, hsl(150 50% 3% / 0) 0%, hsl(150 50% 3% / 0.92) 100%);
+    --shadow-clay: 0 12px 36px -14px hsl(20 83% 55% / 0.4);
+    --shadow-soft: 0 4px 20px -8px hsl(150 50% 3% / 0.5);
+    --shadow-card: 0 2px 12px -4px hsl(150 50% 3% / 0.45);
+    --shadow-elevated: 0 22px 60px -20px hsl(150 50% 3% / 0.65);
+    --sidebar-background: 150 32% 10%;
+    --sidebar-foreground: 90 22% 94%;
+    --sidebar-primary: 20 83% 55%;
+    --sidebar-primary-foreground: 150 50% 8%;
+    --sidebar-accent: 150 20% 16%;
+    --sidebar-accent-foreground: 90 20% 90%;
+    --sidebar-border: 150 20% 18%;
+    --sidebar-ring: 20 83% 55%;
+    --glass-bg: rgba(10, 38, 22, 0.52);
   }
 
   /* ============================================================
@@ -911,5 +1098,60 @@
   .flip-flash {
     background-color: hsl(var(--primary) / 0.12) !important;
     transition: background-color 600ms ease-out;
+  }
+}
+
+/* ============================================================
+   LIQUID GLASS (Épica L) — material translúcido de las barras
+   flotantes (header + bottom-nav). Tematizado por --glass-bg.
+   ============================================================ */
+@layer components {
+  .glass-bar {
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    backdrop-filter: blur(22px) saturate(180%);
+    border: 1px solid var(--glass-brd);
+    box-shadow:
+      0 12px 30px -16px rgba(0, 0, 0, 0.6),
+      inset 0 1px 0 var(--glass-hi),
+      inset 0 -8px 18px -12px rgba(0, 0, 0, 0.4);
+  }
+  .glass-nav-bar {
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(26px) saturate(185%);
+    backdrop-filter: blur(26px) saturate(185%);
+    border: 1px solid var(--glass-brd);
+    box-shadow:
+      0 22px 44px -14px rgba(0, 0, 0, 0.65),
+      inset 0 1px 0 var(--glass-hi),
+      inset 0 -10px 22px -14px rgba(0, 0, 0, 0.45);
+  }
+  /* Línea-sheen superior de la burbuja de nav. */
+  .glass-nav-bar::before {
+    content: "";
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    top: 1px;
+    height: 1px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, transparent, var(--glass-hi), transparent);
+    pointer-events: none;
+  }
+  /* Fallback: sin backdrop-filter → material sólido legible (sube el alpha). */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass-bar,
+    .glass-nav-bar {
+      background: hsl(var(--background) / 0.92);
+    }
+  }
+  /* Respeta prefers-reduced-transparency → material sólido. */
+  @media (prefers-reduced-transparency: reduce) {
+    .glass-bar,
+    .glass-nav-bar {
+      background: hsl(var(--background) / 0.96);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
   }
 }

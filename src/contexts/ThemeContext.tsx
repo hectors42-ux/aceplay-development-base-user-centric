@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   DEFAULT_MODE,
   DEFAULT_THEME,
+  isSeasonalTheme,
   isThemeMode,
   normalizeThemeId,
   THEME_DIRTY_KEY,
@@ -18,6 +19,12 @@ import {
   ThemeId,
   ThemeMode,
 } from "@/lib/themes";
+import {
+  DEFAULT_SEASONAL_CALENDAR,
+  resolveSeasonalTheme,
+  type SeasonalSegment,
+  type SurfaceTheme,
+} from "@/lib/seasonal-theme";
 
 export type ThemeSyncStatus =
   | "local-only" // sin sesión: solo localStorage
@@ -27,7 +34,10 @@ export type ThemeSyncStatus =
   | "error";     // último intento devolvió error
 
 interface ThemeCtx {
+  /** Elección del usuario (puede ser 'seasonal'). */
   theme: ThemeId;
+  /** Superficie efectivamente aplicada (si theme='seasonal', la resuelta por mes). */
+  effectiveTheme: ThemeId;
   mode: ThemeMode;
   resolvedDark: boolean;
   setTheme: (t: ThemeId) => void;
@@ -58,7 +68,10 @@ const isDirty = () => {
   try { return localStorage.getItem(THEME_DIRTY_KEY) === "1"; } catch { return false; }
 };
 
-const THEME_CLASSES = ["theme-arena", "theme-terre-battue", "theme-us-open", "theme-wimbledon"];
+const THEME_CLASSES = [
+  "theme-arena", "theme-cement", "theme-clay", "theme-grass",
+  "theme-terre-battue", "theme-us-open", "theme-wimbledon",
+];
 
 const applyToHtml = (theme: ThemeId, dark: boolean) => {
   const root = document.documentElement;
@@ -96,6 +109,8 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     isDirty() ? "pending" : "local-only",
   );
   const [lastSyncedAt, setLastSyncedAt] = useState<number | null>(null);
+  const [seasonalCalendar, setSeasonalCalendar] = useState<SeasonalSegment[]>(DEFAULT_SEASONAL_CALENDAR);
+  const [seasonalTick, setSeasonalTick] = useState(0);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -107,9 +122,50 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 
   const resolvedDark = mode === "dark" || (mode === "system" && systemDark);
 
+  // Si el usuario eligió 'seasonal', la superficie efectiva se resuelve por mes.
+  const effectiveTheme: ThemeId = useMemo(
+    () => (isSeasonalTheme(theme) ? (resolveSeasonalTheme(new Date(), seasonalCalendar) as ThemeId) : theme),
+    // seasonalTick fuerza re-resolución al cambiar de día / recuperar foco.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [theme, seasonalCalendar, seasonalTick],
+  );
+
   useEffect(() => {
-    applyToHtml(theme, resolvedDark);
-  }, [theme, resolvedDark]);
+    applyToHtml(effectiveTheme, resolvedDark);
+  }, [effectiveTheme, resolvedDark]);
+
+  // Re-evaluar el tema estacional al recuperar foco / cambiar de hora.
+  useEffect(() => {
+    if (!isSeasonalTheme(theme) || typeof window === "undefined") return;
+    const bump = () => setSeasonalTick((t) => t + 1);
+    window.addEventListener("focus", bump);
+    document.addEventListener("visibilitychange", bump);
+    const id = window.setInterval(bump, 60 * 60 * 1000);
+    return () => {
+      window.removeEventListener("focus", bump);
+      document.removeEventListener("visibilitychange", bump);
+      window.clearInterval(id);
+    };
+  }, [theme]);
+
+  // Calendario estacional editable por admin (economy_config); fallback al default.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("economy_config")
+        .select("value")
+        .eq("key", "seasonal_theme_calendar")
+        .maybeSingle();
+      if (cancelled || !data) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const segs = (data as any).value as unknown;
+      if (Array.isArray(segs) && segs.every((s) => s && typeof s.month === "number" && typeof s.theme === "string")) {
+        setSeasonalCalendar(segs as SeasonalSegment[]);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   // Sync con profiles. Estrategia:
   //  - Si el flag local "dirty" está activo (el usuario cambió algo desde el último sync) → PUSH local → remoto.
@@ -246,8 +302,8 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   );
 
   const value = useMemo<ThemeCtx>(
-    () => ({ theme, mode, resolvedDark, setTheme, setMode, syncStatus, lastSyncedAt }),
-    [theme, mode, resolvedDark, setTheme, setMode, syncStatus, lastSyncedAt],
+    () => ({ theme, effectiveTheme, mode, resolvedDark, setTheme, setMode, syncStatus, lastSyncedAt }),
+    [theme, effectiveTheme, mode, resolvedDark, setTheme, setMode, syncStatus, lastSyncedAt],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

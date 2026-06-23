@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { UserAvatar } from "@/components/avatar/UserAvatar";
+import { MatchScore } from "@/components/arena";
 import { toast } from "sonner";
 
 interface SpaceRow { space_id: string; name: string; sport: string | null; type: string }
@@ -45,9 +46,6 @@ const SPORT_OPTIONS = [
   { value: "tennis|singles", label: "Tenis · Singles" },
   { value: "padel|doubles", label: "Pádel · Dobles" },
 ];
-
-const scoreText = (sets: { a: number; b: number }[]) =>
-  sets && sets.length ? sets.map((s) => `${s.a}-${s.b}`).join(", ") : "Sin score";
 
 const CargarResultado = () => {
   const { user } = useAuth();
@@ -189,12 +187,15 @@ const CargarResultado = () => {
                     {p.sport === "padel" ? "Pádel" : "Tenis"}
                   </span>
                 </div>
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  {scoreText(p.score)} · te registró como{" "}
-                  <span className={p.i_won ? "text-success font-medium" : "text-destructive font-medium"}>
-                    {p.i_won ? "ganador" : "perdedor"}
+                <div className="mt-1 flex items-center gap-3">
+                  <MatchScore sets={p.score} />
+                  <span className="text-xs text-muted-foreground">
+                    te registró como{" "}
+                    <span className={p.i_won ? "text-confirm font-medium" : "text-destructive font-medium"}>
+                      {p.i_won ? "ganador" : "perdedor"}
+                    </span>
                   </span>
-                </p>
+                </div>
                 <div className="mt-3 flex gap-2">
                   <Button size="sm" variant="confirm" className="flex-1" disabled={busyMatch === p.match_id} onClick={() => confirm(p.match_id)}>
                     {busyMatch === p.match_id ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Check className="h-4 w-4" /> Confirmar</>}

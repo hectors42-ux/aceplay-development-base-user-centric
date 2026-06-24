@@ -173,7 +173,82 @@ const useCanchaRefresh = () => {
     qc.invalidateQueries({ queryKey: ["received-challenges"] });
     qc.invalidateQueries({ queryKey: ["community-calls"] });
     qc.invalidateQueries({ queryKey: ["match-agenda"] });
+    qc.invalidateQueries({ queryKey: ["availability-feed"] });
   };
+};
+
+// ── Feed de llamados enriquecido (availability_feed · solo lectura, M4) ────────
+export interface FeedCall {
+  id: string;
+  user_id: string;
+  name: string | null;
+  avatar_url: string | null;
+  avatar_kind: string | null;
+  avatar_look: string | null;
+  poster_nivel: number | null;
+  poster_category: string | null;
+  slots: string[];
+  space_id: string | null;
+  space_name: string | null;
+  scope: "zone" | "open";
+  note: string | null;
+  status: string;
+  taken_by: string | null;
+  created_at: string;
+  is_mine: boolean;
+}
+export const useAvailabilityFeed = () => {
+  const { user } = useAuth();
+  const { ratingSport } = useActiveSport();
+  return useQuery<FeedCall[]>({
+    queryKey: ["availability-feed", ratingSport, user?.id],
+    enabled: !!user,
+    refetchInterval: 20_000, // feed "en vivo": refresca solo cada 20s
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("availability_feed", { _sport: ratingSport });
+      if (error) throw error;
+      return (data as FeedCall[] | null) ?? [];
+    },
+  });
+};
+
+// ── Publicar disponibilidad (post_availability → availability_calls 'open') ────
+export const usePostAvailability = () => {
+  const refresh = useCanchaRefresh();
+  return useMutation({
+    mutationFn: async (vars: { sport: string; slots: string[]; spaceId: string | null; scope: "zone" | "open"; note?: string }) => {
+      const { data, error } = await supabase.rpc("post_availability", {
+        _sport: vars.sport,
+        _slots: vars.slots,
+        _space_id: vars.spaceId,
+        _scope: vars.scope,
+        _note: vars.note ?? null,
+      });
+      if (error) throw error;
+      return data as string;
+    },
+    onSuccess: () => {
+      refresh();
+      toast.success("¡Llamado publicado! Lo ve toda tu Zona.");
+    },
+    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "No se pudo publicar el llamado"),
+  });
+};
+
+// ── Retirar un llamado propio (status='expired'; RLS permite solo el propio) ───
+export const useWithdrawAvailability = () => {
+  const refresh = useCanchaRefresh();
+  return useMutation({
+    mutationFn: async (callId: string) => {
+      const { error } = await supabase.from("availability_calls").update({ status: "expired" }).eq("id", callId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      refresh();
+      toast.success("Llamado retirado");
+    },
+    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "No se pudo retirar"),
+  });
 };
 
 export const useRespondChallenge = () => {

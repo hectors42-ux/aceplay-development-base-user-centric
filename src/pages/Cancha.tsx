@@ -158,6 +158,19 @@ const Cancha = () => {
               </div>
             </div>
 
+            {/* Llamados abiertos de la comunidad (M4). */}
+            <Link
+              to="/cancha/llamados"
+              className="flex items-center gap-3 rounded-2xl border border-action/30 bg-action/[0.05] p-4 shadow-card transition-smooth hover:bg-action/10"
+            >
+              <Megaphone className="h-5 w-5 shrink-0 text-action" />
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-bold text-foreground">Llamados a jugar</span>
+                <span className="block text-xs text-muted-foreground">Disponibilidad abierta · el primero que pueda, juega</span>
+              </span>
+              <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+            </Link>
+
             {/* Buscar partner (resumen, 2 sugeridos de tu Zona). Retar/Perfil = M3. */}
             <section className="space-y-3 rounded-2xl border border-border bg-card p-4 shadow-card">
               <p className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-wider text-action">

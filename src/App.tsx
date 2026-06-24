@@ -41,6 +41,8 @@ const Cancha = lazy(() => import("./pages/Cancha.tsx"));
 const BuscarPartner = lazy(() => import("./pages/BuscarPartner.tsx"));
 const JugadorPublico = lazy(() => import("./pages/JugadorPublico.tsx"));
 const EnviarReto = lazy(() => import("./pages/EnviarReto.tsx"));
+const LanzarDisponibilidad = lazy(() => import("./pages/LanzarDisponibilidad.tsx"));
+const Llamados = lazy(() => import("./pages/Llamados.tsx"));
 const CargarResultado = lazy(() => import("./pages/CargarResultado.tsx"));
 const Escalerilla = lazy(() => import("./pages/Escalerilla.tsx"));
 const Descubrir = lazy(() => import("./pages/Descubrir.tsx"));
@@ -249,6 +251,23 @@ const App = () => (
                     element={
                       <ProtectedRoute>
                         <EnviarReto />
+                      </ProtectedRoute>
+                    }
+                  />
+                  {/* Llamados abiertos (M4): lanzar disponibilidad + feed en vivo. */}
+                  <Route
+                    path="/cancha/disponibilidad"
+                    element={
+                      <ProtectedRoute>
+                        <LanzarDisponibilidad />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/cancha/llamados"
+                    element={
+                      <ProtectedRoute>
+                        <Llamados />
                       </ProtectedRoute>
                     }
                   />

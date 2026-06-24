@@ -2,7 +2,7 @@
 
 > Trabajo identificado y **deliberadamente diferido**, no bugs sueltos. Cada entrada
 > es una pieza acotada con alcance propio. Última actualización: 2026-06-24
-> (cierre de la fase de reskin/diseño).
+> (cierre de la Épica M · Cancha).
 
 ---
 
@@ -48,6 +48,11 @@ Hooks de la misma familia que llevan el mismo marcador y deben revisarse al cabl
 **Es una pieza propia (varios archivos + posible migración de modelo), no un parche.**
 No bloquea el reskin: las pantallas de torneo se pueden reskinear con datos de seed; el
 cableado real se hace después.
+
+> **Relación con la Épica M (Cancha):** la **agenda** de Cancha (`get_match_agenda`) arranca
+> SOLO con challenges aceptados + retos de escalera (Addendum B). Cuando se cablee esta vitrina,
+> los partidos de torneo se **suman de forma ADITIVA** (un `UNION ALL` más) — ya queda el marcador
+> `// TODO: sumar partidos de torneo al cablear la vitrina` en `get_match_agenda`, sin reestructurar.
 
 ---
 
@@ -126,3 +131,49 @@ navy vs cálido".
   superficie. Decisión confirmada por el cliente.
 - Coherente con el **sistema estacional K** (Cemento navy-azul / Arcilla cálido / Pasto verde /
   Arena navy): no se solapa Arena con Arcilla.
+
+---
+
+## 6. Épica M · Cancha — ✅ COMPLETADA (M1–M5)
+
+**Estado:** ✅ **COMPLETADA** (2026-06-24). La sección "Cancha" (vida competitiva + conexión:
+el reemplazo del grupo de WhatsApp) se montó **SOBRE el motor existente sin tocarlo**. Cero
+`tenant_id`. Firewall de 3 cruces **probado en vivo de punta a punta**.
+
+### Lo entregado, por pieza
+- **M1 · datos + RPCs** (`20260628120000`…`160000`): tablas `availability_calls`, `challenges`
+  (solo negocia slots), `profile_privacy` (reusa `is_minor`); RPCs `suggest_partners`,
+  `post/take_availability`, `send/respond_challenge`, `compute_ascension_path` (camino de
+  ascenso, solo lectura), `get_public_profile`, `get_match_agenda`, `availability_feed`,
+  `flag_results_pending` (estado "vencido" derivado **on-read**, sin cron). Firewall vitest.
+- **M2 · hub `/cancha`** (3 tabs Progreso/Subir/Conexión) + FAB → /cancha (absorbe `/ranking`,
+  que redirige) + notificaciones del Inicio (reto recibido · carga tu resultado · llamado).
+- **M3 · conexión visible**: `/cancha/buscar` (Zona, match% + "por qué", empate→más cercano),
+  `/jugador/:id` (perfil público), `/cancha/reto/:toId` (enviar reto · lugar + slots).
+- **M4 · llamados abiertos**: `/cancha/disponibilidad` (lanzar) + `/cancha/llamados` (feed en
+  vivo, "Tomar" first-come atómico). **Carrera multi-usuario probada** (solo el primero gana).
+- **M5 · cierre del loop**: `/invitaciones`, `/agenda`, `/resultado/cargar/:matchId`
+  (`record_challenge_result` reusa `record_match`), `/victoria/:matchId` (badge compartible,
+  sin precios). **Loop validado en vivo:** el rating se movió **solo tras la doble confirmación**.
+
+### Guardas cumplidas (verificadas en vivo)
+- **Firewall de 3 cruces:** ninguna RPC de conexión (sugerir/publicar/tomar/retar/agendar)
+  escribe en rating/xp/fichas; el premio sigue **solo** en el flujo de resultado (motor +
+  anti-farming). El badge es presentación, no otorga nada.
+- **Protección de menores (Ley 21.719 · Addendum D), en BACKEND** (reusa `is_minor`, una sola
+  fuente de verdad): un menor no aparece en matchmaking, no expone datos en el perfil público,
+  **no publica disponibilidad** (`post_availability` rechaza) y **nunca** aparece en el feed.
+
+Commits `35b51f1` (M1) · `d2fdd1e` (M2) · `8ff2a17` (M3) · `2a08b1f` (M4) · `05db9e8` (fix
+menores) · `f951d0f`/`5d91315` (M5).
+
+---
+
+## 7. Épica K · temas estacionales — DIFERIDA (guinda final)
+
+**Estado:** diferida como **última guinda**, después de cerrar todo lo competitivo (Cancha ✅).
+
+- Temas de superficie por temporada (Cemento navy-azul / Arcilla cálido / Pasto verde / Arena
+  navy) + modo estacional automático por calendario. Es **acabado visual**, no núcleo: no
+  bloquea ninguna función. Coherente con la decisión de fondo navy (punto 5).
+- Se retoma cuando se decida cerrar el pulido visual estacional; sin dependencias con Cancha.

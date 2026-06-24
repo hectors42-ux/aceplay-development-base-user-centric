@@ -195,6 +195,88 @@ export const useRespondChallenge = () => {
   });
 };
 
+// ── Perfil público (get_public_profile · privacidad + is_minor mandan, Addendum D) ─
+export interface PublicProfile {
+  user_id: string;
+  name: string | null;
+  avatar_url: string | null;
+  avatar_kind: string | null;
+  avatar_look: string | null;
+  is_minor: boolean;
+  nivel: number | null;
+  category: string | null;
+  matches_played: number | null;
+  show_record: boolean;
+  show_ranking: boolean;
+  show_streak: boolean;
+  show_spaces: boolean;
+  show_head_to_head: boolean;
+  h2h_wins: number | null;
+  h2h_losses: number | null;
+}
+export const usePublicProfile = (id: string | undefined) => {
+  const { user } = useAuth();
+  const { ratingSport } = useActiveSport();
+  return useQuery<PublicProfile | null>({
+    queryKey: ["public-profile", id, ratingSport, user?.id],
+    enabled: !!user && !!id,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_public_profile", { _user_id: id, _sport: ratingSport });
+      if (error) throw error;
+      return (data as PublicProfile[] | null)?.[0] ?? null;
+    },
+  });
+};
+
+// ── Mis espacios activos (para el "Lugar" del reto: club/escalerilla en común) ──
+export interface MySpace {
+  id: string;
+  name: string | null;
+  type: string;
+}
+export const useMySpaces = () => {
+  const { user } = useAuth();
+  return useQuery<MySpace[]>({
+    queryKey: ["my-spaces", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("space_membership")
+        .select("space:space!space_membership_space_id_fkey(id, name, type)")
+        .eq("player_id", user!.id)
+        .eq("status", "active");
+      if (error) throw error;
+      const rows = (data as unknown as { space: MySpace | null }[]) ?? [];
+      return rows
+        .map((r) => r.space)
+        .filter((s): s is MySpace => !!s && (s.type === "club" || s.type === "escalerilla"));
+    },
+  });
+};
+
+// ── Enviar reto (send_challenge → challenges 'pending'; no premia nada) ────────
+export const useSendChallenge = () => {
+  const refresh = useCanchaRefresh();
+  return useMutation({
+    mutationFn: async (vars: { to: string; spaceId: string | null; slots: string[]; sport: string; note?: string }) => {
+      const { data, error } = await supabase.rpc("send_challenge", {
+        _to: vars.to,
+        _space_id: vars.spaceId,
+        _slots: vars.slots,
+        _sport: vars.sport,
+        _note: vars.note ?? null,
+      });
+      if (error) throw error;
+      return data as string;
+    },
+    onSuccess: () => {
+      refresh();
+      toast.success("Reto enviado · queda pendiente de su respuesta");
+    },
+    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "No se pudo enviar el reto"),
+  });
+};
+
 export const useTakeAvailability = () => {
   const refresh = useCanchaRefresh();
   return useMutation({

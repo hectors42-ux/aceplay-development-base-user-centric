@@ -38,6 +38,9 @@ const TournamentCategoryDetail = lazy(() => import("./pages/TournamentCategoryDe
 const OperatorLiveBoard = lazy(() => import("./pages/OperatorLiveBoard.tsx"));
 const ResultadoPendiente = lazy(() => import("./pages/ResultadoPendiente.tsx"));
 const Cancha = lazy(() => import("./pages/Cancha.tsx"));
+const BuscarPartner = lazy(() => import("./pages/BuscarPartner.tsx"));
+const JugadorPublico = lazy(() => import("./pages/JugadorPublico.tsx"));
+const EnviarReto = lazy(() => import("./pages/EnviarReto.tsx"));
 const CargarResultado = lazy(() => import("./pages/CargarResultado.tsx"));
 const Escalerilla = lazy(() => import("./pages/Escalerilla.tsx"));
 const Descubrir = lazy(() => import("./pages/Descubrir.tsx"));
@@ -221,6 +224,31 @@ const App = () => (
                     element={
                       <ProtectedRoute>
                         <Cancha />
+                      </ProtectedRoute>
+                    }
+                  />
+                  {/* Conexión visible (M3): buscar partner · perfil público · enviar reto. */}
+                  <Route
+                    path="/cancha/buscar"
+                    element={
+                      <ProtectedRoute>
+                        <BuscarPartner />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/jugador/:id"
+                    element={
+                      <ProtectedRoute>
+                        <JugadorPublico />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/cancha/reto/:toId"
+                    element={
+                      <ProtectedRoute>
+                        <EnviarReto />
                       </ProtectedRoute>
                     }
                   />

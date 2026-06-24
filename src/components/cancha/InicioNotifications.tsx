@@ -9,23 +9,12 @@ import {
   useRespondChallenge,
   useTakeAvailability,
 } from "@/hooks/useCancha";
+import { formatSlot as fmtSlot } from "@/lib/cancha-utils";
 
 // Notificaciones del Inicio (sección Cancha). Cada tarjeta usa el color de su capa:
 //   · Reto recibido = NARANJA (acción) · Carga tu resultado = ORO · Llamado = AZUL.
 // Solo leen y disparan RPCs de M1 (no premian). El estado "vencido_sin_resultado"
 // llega por el fallback on-read de get_match_agenda (Addendum C, sin cron).
-
-const fmtSlot = (iso: string | null): string => {
-  if (!iso) return "por coordinar";
-  const d = new Date(iso);
-  const now = new Date();
-  const yest = new Date(now);
-  yest.setDate(now.getDate() - 1);
-  const time = d.toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" });
-  if (d.toDateString() === now.toDateString()) return `Hoy ${time}`;
-  if (d.toDateString() === yest.toDateString()) return `Ayer ${time}`;
-  return `${d.toLocaleDateString("es-CL", { weekday: "short", day: "numeric", month: "short" })} ${time}`;
-};
 
 export function InicioNotifications() {
   const { data: received = [] } = useReceivedChallenges();

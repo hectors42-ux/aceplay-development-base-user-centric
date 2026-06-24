@@ -162,7 +162,7 @@ const Cancha = () => {
             <section className="space-y-3 rounded-2xl border border-border bg-card p-4 shadow-card">
               <p className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-wider text-action">
                 <span>Buscar partner · parejo + cerca</span>
-                <span className="text-muted-foreground">pronto: ver todos</span>
+                <Link to="/cancha/buscar" className="text-muted-foreground hover:text-foreground">ver todos →</Link>
               </p>
               {suggested.length === 0 && (
                 <p className="text-xs text-muted-foreground">Aún no hay rivales sugeridos en tu Zona.</p>
@@ -181,8 +181,8 @@ const Cancha = () => {
                     </p>
                   </div>
                   <div className="flex shrink-0 flex-col gap-1">
-                    <Button variant="clay" size="sm" disabled title="Enviar reto: M3">Retar</Button>
-                    <Button variant="outline" size="sm" disabled title="Perfil público: M3">Perfil</Button>
+                    <Button asChild variant="clay" size="sm"><Link to={`/cancha/reto/${p.user_id}`}>Retar</Link></Button>
+                    <Button asChild variant="outline" size="sm"><Link to={`/jugador/${p.user_id}`}>Perfil</Link></Button>
                   </div>
                 </div>
               ))}

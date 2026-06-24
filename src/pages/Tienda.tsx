@@ -1,15 +1,13 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Coins, Store, Ticket, ChevronRight, Tag } from "lucide-react";
+import { ArrowLeft, Coins, Store, Ticket } from "lucide-react";
 import { useRewards, useFichas, type RewardRow } from "@/hooks/useFichas";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BottomNav } from "@/components/BottomNav";
-import { CoinPill } from "@/components/arena";
 import { CoinHud } from "@/components/home/CoinHud";
 
 // IMPORTANTE: en toda la Tienda NUNCA se muestran precios en pesos. Un premio se
-// muestra como "beneficio en [Marca]" + su costo en FICHAS (primitiva CoinPill/oro).
-const FichasCost = ({ n }: { n: number }) => <CoinPill kind="fichas" value={`${n} Fichas`} />;
+// muestra como "beneficio en [Marca]" + su costo en FICHAS (botón oro .btn.gold).
 
 const Tienda = () => {
   const { data: rewards = [], isLoading } = useRewards();
@@ -64,40 +62,49 @@ const Tienda = () => {
           </p>
         ) : null}
 
+        {/* Sponsors cortesía (diseño tienda.png). */}
+        {byBrand.length > 0 && (
+          <div className="mb-4 flex items-center gap-2 overflow-x-auto pb-1">
+            <span className="shrink-0 text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Premios cortesía de</span>
+            {byBrand.map(([brand]) => (
+              <span key={brand} className="shrink-0 rounded-md border border-border bg-card px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-foreground">
+                {brand}
+              </span>
+            ))}
+          </div>
+        )}
+
         {isLoading ? (
-          <div className="space-y-2">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-24 w-full rounded-2xl" />)}</div>
-        ) : byBrand.length === 0 ? (
+          <div className="grid grid-cols-2 gap-3">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-44 w-full rounded-2xl" />)}</div>
+        ) : rewards.length === 0 ? (
           <p className="rounded-2xl border border-dashed border-border bg-card p-6 text-center text-sm text-muted-foreground">
             Aún no hay premios disponibles.
           </p>
         ) : (
-          <div className="space-y-6">
-            {byBrand.map(([brand, items]) => (
-              <div key={brand}>
-                <p className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-foreground">
-                  <Tag className="h-4 w-4 text-primary" /> {brand}
-                </p>
-                <div className="space-y-2">
-                  {items.map((r) => (
-                    <Link key={r.id} to={`/tienda/${r.id}`}
-                      className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3.5 shadow-card transition-smooth hover:border-primary/40 hover:bg-muted/40">
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate font-display text-sm font-semibold">{r.benefit_label}</p>
-                        <p className="truncate text-[11px] text-muted-foreground">{r.title}</p>
-                        <div className="mt-1.5 flex items-center gap-2">
-                          <FichasCost n={r.cost_fichas} />
-                          {r.stock != null && r.stock <= 5 && (
-                            <span className="text-[10px] font-medium text-muted-foreground">
-                              {r.stock > 0 ? `Quedan ${r.stock}` : "Agotado"}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
-                    </Link>
-                  ))}
-                </div>
-              </div>
+          <div className="grid grid-cols-2 gap-3">
+            {rewards.map((r) => (
+              <Link key={r.id} to={`/tienda/${r.id}`}
+                className="flex flex-col rounded-2xl border border-border bg-card p-3.5 shadow-card transition-smooth hover:border-primary/40">
+                <span className="self-start rounded-md bg-muted px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-muted-foreground">
+                  {r.brand_name}
+                </span>
+                <p className="mt-2 font-display text-sm font-bold leading-tight text-foreground">{r.benefit_label}</p>
+                <p className="mt-0.5 line-clamp-2 text-[11px] text-muted-foreground">{r.title}</p>
+                {r.stock != null && r.stock <= 5 && (
+                  <span className="mt-1 text-[10px] font-medium text-muted-foreground">{r.stock > 0 ? `Quedan ${r.stock}` : "Agotado"}</span>
+                )}
+                {/* Precio = botón oro (.btn.gold del diseño) — costo SIEMPRE en Fichas. */}
+                <span
+                  className="mt-auto flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-extrabold text-[hsl(var(--fichas-foreground))]"
+                  style={{
+                    marginTop: "0.75rem",
+                    background: "linear-gradient(180deg, hsl(var(--fichas)), hsl(var(--fichas-deep)))",
+                    boxShadow: "0 10px 24px -8px hsl(var(--fichas) / 0.4), inset 0 1px 0 rgba(255,255,255,.4)",
+                  }}
+                >
+                  <Coins className="h-4 w-4" /> {r.cost_fichas} Fichas
+                </span>
+              </Link>
             ))}
           </div>
         )}

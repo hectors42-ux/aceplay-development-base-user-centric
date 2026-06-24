@@ -35,7 +35,8 @@ import { NotificationPreferencesCard } from "@/components/profile/NotificationPr
 import { Button } from "@/components/ui/button";
 import { useClubBrand } from "@/components/providers/ClubBrandProvider";
 import { useCanCreate } from "@/hooks/useCanCreate";
-import { Zap, Coins } from "lucide-react";
+import { Zap, Coins, Flame } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { TierGem, type Tier } from "@/components/arena";
 import { useActiveSport } from "@/components/providers/SportProvider";
 import { useUserProfileSummary } from "@/hooks/useUserProfileSummary";
@@ -141,6 +142,34 @@ const Perfil = () => {
                 </p>
                 <p className="mt-1 text-[10px] text-muted-foreground">Toca para canjear</p>
               </Link>
+            </div>
+          </section>
+        )}
+
+        {/* Rejilla de stats (diseño perfil.png): Ranking · Récord · Racha · Jugados. */}
+        {user && summary && (
+          <section className="px-5" aria-label="Estadísticas">
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { k: "Ranking", v: summary.positions.ranking != null ? `#${summary.positions.ranking}` : "—", cls: "text-action" },
+                { k: "Récord", v: `${summary.stats.wins}–${summary.stats.losses}`, cls: "text-foreground" },
+                {
+                  k: "Racha",
+                  v: (
+                    <span className="inline-flex items-center gap-1.5">
+                      {summary.stats.streak > 0 && <Flame className="h-5 w-5 text-action" />}
+                      <span className="tabular-nums">{Math.abs(summary.stats.streak)}</span>
+                    </span>
+                  ),
+                  cls: "text-foreground",
+                },
+                { k: "Jugados", v: summary.rating?.matches_played ?? 0, cls: "text-foreground" },
+              ].map((s) => (
+                <div key={s.k} className="rounded-2xl border border-border bg-card p-4 text-center shadow-card">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{s.k}</p>
+                  <p className={cn("mt-1 font-display text-2xl font-bold leading-none", s.cls)}>{s.v}</p>
+                </div>
+              ))}
             </div>
           </section>
         )}

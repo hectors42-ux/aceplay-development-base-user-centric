@@ -1,7 +1,7 @@
 # PENDIENTES — piezas formales de trabajo
 
 > Trabajo identificado y **deliberadamente diferido**, no bugs sueltos. Cada entrada
-> es una pieza acotada con alcance propio. Última actualización: 2026-06-23.
+> es una pieza acotada con alcance propio. Última actualización: 2026-06-24.
 
 ---
 
@@ -64,3 +64,37 @@ cableado real se hace después.
   ascenso→`+25 league_promotion`, ambos solo en `fichas_ledger` (firewall intacto).
 - **Pendiente opcional:** que el seed dispare estos hitos (insert incompleto + update, o
   un `grant_fichas` directo) para que el demo muestre Fichas de hito sin pasos manuales.
+
+---
+
+## 3. Homologación de diseño — 2 elementos bloqueados por datos (Fase 2)
+
+**Estado:** la homologación visual a `docs/design/` está hecha salvo 2 elementos que
+necesitan datos que hoy NO existen. Solo se cablean en Fase 2; no son reskin.
+
+- **"Desafío del día" de Inicio** (rival sugerido + "+30 PTS" + head-to-head, como en
+  `docs/design/reference/inicio.png`): `src/hooks/useMatchOfTheWeek.ts` es **stub**
+  (`items: []`), así que `MatchOfTheWeekCard` no renderiza. Hace falta un RPC/hook que
+  proponga un oponente del nivel del jugador (relacionado: `useSuggestedMatchup`,
+  `useChallengeablePlayers`, también stub). Hasta entonces, el home omite esa tarjeta.
+- **"PRESENTA [Marca]" por evento en Descubrir** (`descubrir.png`): el RPC
+  `discover_opportunities` no devuelve la marca/sponsor por oportunidad ni un flag
+  "destacado". Para el lockup por evento y el tag DESTACADO hay que extender el RPC.
+  El lockup general (`SponsorLockup scope="discover"`) y los tags Abierto/En vivo sí están.
+
+**Todo lo demás del handoff sí está homologado** (CoinHud doble moneda, insignia `.arena`
+con anillo volt, botones oro en Tienda, cabecera de Perfil, Liquid Glass por tema, FAB
+naranja). Ver commits `7e2ae73`…`33fcee5`.
+
+---
+
+## 4. Decisión de diseño pendiente — fondo navy vs cálido
+
+**Estado:** abierta, requiere decisión del cliente.
+
+- Las 4 referencias PNG (`docs/design/reference/*.png`) muestran un **fondo oscuro cálido
+  (naranja)**, pero el token `--bg` del CSS de diseño (`docs/design/tokens/aceplay-arena.css`)
+  es **navy `#070B16`**. El README dice "tokens manda", así que la app usa **navy**.
+- Si se quiere el fondo cálido de los PNG, es un cambio de la **superficie del tema Arena**
+  (`--background`/`--arena-grad`) que además debe coordinarse con el **sistema estacional K**
+  (Cemento navy-azul / Arcilla cálido / Pasto verde) para no solapar Arena con Arcilla.

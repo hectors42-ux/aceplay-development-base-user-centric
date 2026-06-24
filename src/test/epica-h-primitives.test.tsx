@@ -57,7 +57,8 @@ describe("Épica H — primitivas Arena renderizan", () => {
     render(<ArenaHero nivel={5} categoria="Cuarta" sport="Pádel" />);
     render(<XPMeter value={118} max={300} />);
     render(<TierGem tier="oro" />);
-    expect(screen.getByText("5")).toBeInTheDocument();
+    // ArenaHero ahora muestra la categoría en grande + "Nivel 5.0 / 7.0".
+    expect(screen.getByText("5.0")).toBeInTheDocument();
     expect(screen.getByText(/Cuarta/)).toBeInTheDocument();
     expect(screen.getByLabelText(/Liga Oro/i)).toBeInTheDocument();
   });

@@ -42,7 +42,7 @@ export const SportSwitcher = ({ className, compact = false }: SportSwitcherProps
               "rounded-full px-3 py-1 font-medium uppercase tracking-[0.12em] transition-smooth",
               compact ? "py-0.5" : "py-1",
               active
-                ? "bg-primary text-primary-foreground shadow-sm"
+                ? "bg-skill text-skill-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground",
             )}
           >

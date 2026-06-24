@@ -29,6 +29,7 @@
   :root {
     --skill: 75 100% 55%;
     --skill-foreground: 75 80% 7%;
+    --skill-deep: 74 100% 38%;
 
     --action: 20 83% 55%;
     --action-foreground: 222 45% 9%;
@@ -1153,5 +1154,26 @@
       -webkit-backdrop-filter: none;
       backdrop-filter: none;
     }
+  }
+
+  /* Anillo volt del Arena Hero (conic-gradient enmascarado) — diseño `.arena .ring`. */
+  .arena-ring::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2.5px;
+    background: conic-gradient(
+      from 0deg,
+      hsl(var(--skill-deep)), hsl(var(--skill)), #f4ffd6, hsl(var(--skill)),
+      hsl(var(--skill-deep)), hsl(var(--skill-deep)), hsl(var(--skill)), hsl(var(--skill-deep))
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    opacity: 0.75;
+    filter: drop-shadow(0 0 9px hsl(var(--skill) / 0.45));
+    pointer-events: none;
   }
 }

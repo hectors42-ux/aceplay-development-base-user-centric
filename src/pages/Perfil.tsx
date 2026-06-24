@@ -34,7 +34,7 @@ import { LegalLinksList } from "@/components/legal/LegalLinksList";
 import { WelcomeTour, resetWelcomeTour } from "@/components/onboarding/WelcomeTour";
 import { NotificationPreferencesCard } from "@/components/profile/NotificationPreferencesCard";
 import { Button } from "@/components/ui/button";
-import { useClubBrand } from "@/components/providers/ClubBrandProvider";
+import { AppFooter } from "@/components/AppFooter";
 import { useCanCreate } from "@/hooks/useCanCreate";
 import { Zap, Coins, Flame } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -56,7 +56,6 @@ const Perfil = () => {
   const { data: fichas } = useFichas();
   const myTier = league.find((m) => m.is_me)?.tier ?? null;
   const { canCreate } = useCanCreate();
-  const { brand } = useClubBrand();
   const [editing, setEditing] = useState(false);
   const [tourOpen, setTourOpen] = useState(false);
 
@@ -336,14 +335,7 @@ const Perfil = () => {
           </Button>
         </section>
 
-        <footer className="space-y-1 px-5 pt-2 text-center">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-            {brand.name} · {new Date().getFullYear()}
-          </p>
-          <p className="text-[10px] text-muted-foreground/80">
-            Todos los derechos reservados.
-          </p>
-        </footer>
+        <AppFooter className="pb-2" />
       </main>
 
       {profile && (

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {
-  Calendar,
+  Compass,
   Trophy,
   Swords,
   TrendingUp,
@@ -13,46 +13,52 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/compone
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const TOUR_STORAGE_KEY = "aceplay-welcome-tour-seen-v2";
+const TOUR_STORAGE_KEY = "aceplay-welcome-tour-seen-v3";
 
 interface TourStep {
-  icon: typeof Calendar;
+  icon: typeof Trophy;
   title: string;
   description: string;
   accent: string;
 }
 
+// Tour alineado a la app ACTUAL (Arena · gamificada · 5 destinos): nada de
+// "club como centro" ni reservas/clases (módulos dormidos). Las 3 capas:
+// habilidad (nivel) · enganche (liga/XP/racha) · premio (Fichas).
 const STEPS: TourStep[] = [
   {
     icon: Sparkles,
-    title: "Tu club, tu nivel, tu competencia",
-    description: "Lo esencial de AcePlay en 5 segundos.",
-    accent: "from-primary to-primary-glow",
+    title: "Tennis, gamified",
+    description: "Tu nivel, tu liga y tus desafíos en un solo lugar. Lo esencial en 5 segundos.",
+    accent: "from-action to-[hsl(var(--action-deep))]",
   },
   {
     icon: TrendingUp,
-    title: "Ranking & nivel",
-    description: "Tu rating evoluciona con cada match validado. Subes de categoría jugando.",
-    accent: "from-primary to-primary-deep",
+    title: "Tu nivel sube jugando",
+    description:
+      "Tu rating evoluciona con cada partido que el rival confirma. Subes de categoría compitiendo — nunca se compra.",
+    accent: "from-action to-[hsl(var(--action-deep))]",
   },
   {
     icon: Swords,
-    title: "Escalerilla & desafíos",
-    description: "Reta socios, sube posiciones y defiende tu lugar en la escalerilla del club.",
-    accent: "from-accent to-primary",
+    title: "Desafía y sube en la escalerilla",
+    description:
+      "Con el botón Desafío retas a jugadores de tu nivel. Ganas y subes posiciones; el resultado cuenta cuando tu rival lo confirma.",
+    accent: "from-action to-[hsl(var(--action-deep))]",
   },
   {
     icon: Trophy,
-    title: "Torneos del club",
-    description: "Inscríbete, sigue tu cuadro y agenda partidos directo desde la app.",
-    accent: "from-primary-glow to-primary",
+    title: "Liga, XP y Fichas",
+    description:
+      "Cada semana compites en tu Liga y ganas XP. Los hitos te dan Fichas que canjeas por beneficios en la Tienda — son capas distintas: tu rating no se compra con Fichas.",
+    accent: "from-action to-[hsl(var(--action-deep))]",
   },
   {
-    icon: Calendar,
-    title: "Reservas y clases",
+    icon: Compass,
+    title: "Descubre toda la red",
     description:
-      "Reserva canchas desde la app o vía el sistema del club, y agenda clases con los coaches.",
-    accent: "from-primary-deep to-primary",
+      "Inscríbete en eventos abiertos de cualquier club desde Descubrir, sin hacerte socio. Tu rating es portable: viaja contigo por toda la red.",
+    accent: "from-action to-[hsl(var(--action-deep))]",
   },
 ];
 
@@ -60,9 +66,8 @@ const STEPS: TourStep[] = [
 const BRIDGE = {
   icon: ClipboardList,
   title: "Antes de empezar…",
-  description:
-    "7 preguntas rápidas para estimar tu nivel inicial. Toma menos de un minuto.",
-  accent: "from-primary to-accent",
+  description: "7 preguntas rápidas para estimar tu nivel inicial. Toma menos de un minuto.",
+  accent: "from-action to-[hsl(var(--action-deep))]",
 };
 
 export const WelcomeTour = ({

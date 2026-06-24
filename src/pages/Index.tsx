@@ -3,6 +3,7 @@ import { CoinHud } from "@/components/home/CoinHud";
 import { SportSwitcher } from "@/components/SportSwitcher";
 import { QuickActions } from "@/components/QuickActions";
 import { BottomNav } from "@/components/BottomNav";
+import { AppFooter } from "@/components/AppFooter";
 
 import { MatchOfTheWeekCard } from "@/components/home/MatchOfTheWeekCard";
 import { EconomyStrip } from "@/components/home/EconomyStrip";
@@ -15,23 +16,17 @@ import { ArenaHero, Steps } from "@/components/arena";
 import { RATING_SPORT_LABEL } from "@/lib/rating-utils";
 import { useUserProfileSummary } from "@/hooks/useUserProfileSummary";
 import { useActiveSport } from "@/components/providers/SportProvider";
-import { useClubBrand } from "@/components/providers/ClubBrandProvider";
 import { prefetchAppRoutes } from "@/lib/prefetch-routes";
 
 const Index = () => {
-  const { profile, user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
   const { ratingSport } = useActiveSport();
-  const { brand } = useClubBrand();
   const { data: summary, loading: summaryLoading } = useUserProfileSummary(user?.id ?? null, ratingSport);
 
   // Prefetch de rutas del bottom-nav durante el idle del navegador.
-  // Acelera la primera navegación a Reservar/Torneos/Ranking/Perfil.
   useEffect(() => {
     prefetchAppRoutes();
   }, []);
-  const hour = new Date().getHours();
-  const greeting = hour < 12 ? "Buen día" : hour < 19 ? "Buenas tardes" : "Buenas noches";
-  const memberName = authLoading && !profile ? "" : profile ? `${profile.first_name} ${profile.last_name}`.trim() : "Socio";
 
   return (
     <div className="min-h-screen bg-background">
@@ -44,12 +39,8 @@ const Index = () => {
       </div>
 
       <main className="mx-auto max-w-md md:max-w-2xl lg:max-w-3xl xl:max-w-6xl space-y-3 pb-28 md:pb-12 pt-2 px-0 lg:px-6">
-        {/* saludo + selector de deporte */}
-        <div className="flex items-center justify-between gap-3 px-5">
-          <div className="leading-tight">
-            <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">{greeting}</p>
-            <h1 className="font-display text-2xl font-bold text-foreground">{memberName}</h1>
-          </div>
+        {/* Selector de deporte centrado (la identidad ya vive en el HUD). */}
+        <div className="flex justify-center px-5">
           <SportSwitcher />
         </div>
 
@@ -92,14 +83,7 @@ const Index = () => {
           </aside>
         </div>
 
-        <footer className="space-y-1 px-5 pt-2 text-center">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-            {brand.name} · {new Date().getFullYear()}
-          </p>
-          <p className="text-[10px] text-muted-foreground/80">
-            Todos los derechos reservados.
-          </p>
-        </footer>
+        <AppFooter />
       </main>
 
       <BottomNav />

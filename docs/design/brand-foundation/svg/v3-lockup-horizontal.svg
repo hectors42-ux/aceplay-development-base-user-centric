@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2800 800" width="2800" height="800">
+<defs></defs>
+<rect width="2800" height="800" fill="#f8f6f2"></rect>
+
+  <g transform="translate(120,100)">
+    <g>
+      
+      <rect x="60" y="498" width="24" height="24" rx="3" fill="#b6502b" opacity="0.0"></rect>
+      
+      <path d="M 84.00000000000001 504&#xA;           C 84.00000000000001 240 216 108 468 108" stroke="#b6502b" stroke-width="60" stroke-linecap="round" fill="none"></path>
+      
+      <circle cx="504" cy="108" r="48" fill="#b6502b"></circle>
+    </g>
+  </g>
+  <g transform="translate(820,460)">
+    <text font-family="Cormorant Garamond, Georgia, serif" font-weight="600" font-size="280" letter-spacing="-12" fill="#2b1b12">
+      Ace<tspan font-style="italic" font-weight="500" fill="#b6502b">Play</tspan>
+    </text>
+  </g>
+  <g transform="translate(820,580)">
+    <line x1="0" y1="0" x2="80" y2="0" stroke="#b6502b" stroke-width="3"></line>
+    <text x="100" y="14" font-family="DM Mono, ui-monospace, monospace" font-size="36" letter-spacing="20" fill="#706051">TENNIS, GAMIFIED.</text>
+  </g>
+
+</svg>

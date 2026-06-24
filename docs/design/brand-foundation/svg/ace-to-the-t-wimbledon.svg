@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1600" width="1600" height="1600">
+<defs></defs>
+<rect width="1600" height="1600" fill="#f4efe6"></rect>
+
+<g>
+  
+  <rect x="250" y="250" width="1100" height="1100" fill="#15563a" rx="8"></rect>
+  
+  <rect x="250" y="250" width="1100" height="1100" fill="none" stroke="#ffffff" stroke-width="10"></rect>
+  
+  <line x1="250" y1="800" x2="1350" y2="800" stroke="#ffffff" stroke-width="8"></line>
+  <line x1="250" y1="525" x2="1350" y2="525" stroke="#ffffff" stroke-width="8"></line>
+  <line x1="250" y1="1075" x2="1350" y2="1075" stroke="#ffffff" stroke-width="8"></line>
+  
+  <line x1="800" y1="525" x2="800" y2="1075" stroke="#ffffff" stroke-width="8"></line>
+  
+  <line x1="220" y1="800" x2="1380" y2="800" stroke="#122b20" stroke-width="14" stroke-dasharray="14 10"></line>
+
+  
+  <defs>
+    <marker id="arrow-Wimbledon" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto">
+      <path d="M 0,0 L 12,6 L 0,12 z" fill="#c8a04c"></path>
+    </marker>
+  </defs>
+  <path d="M 1270,1270 Q 1040,1040 830,555" fill="none" stroke="#c8a04c" stroke-width="14" stroke-linecap="round" marker-end="url(#arrow-Wimbledon)" stroke-dasharray="4 24"></path>
+  
+  <circle cx="818" cy="543" r="30" fill="#c8a04c"></circle>
+
+  
+  <text x="800" y="1480" text-anchor="middle" font-family="&#39;DM Mono&#39;, ui-monospace, monospace" font-size="42" letter-spacing="24" fill="#3f5a4e">A C E · T O · T H E · T</text>
+</g>
+
+</svg>

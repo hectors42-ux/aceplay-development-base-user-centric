@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+<defs></defs>
+
+
+  <rect width="1024" height="1024" rx="224" ry="224" fill="#f8f6f2"></rect>
+  <g transform="translate(0,40)">
+    <text x="512" y="860.16" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="600" font-size="1024" letter-spacing="-20.48" fill="#b6502b">A</text>
+  </g>
+
+</svg>

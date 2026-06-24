@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<title>AcePlay · Brand Foundation V3 · Definitive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --clay:#b6502b;
+    --clay-glow:#e07a45;
+    --clay-deep:#732c13;
+    --cream-0:#f8f6f2;
+    --cream-1:#f0eae0;
+    --cream-2:#e6dccb;
+    --ink:#2b1b12;
+    --ink-mid:#5a4a3e;
+    --ink-soft:#8a7868;
+    --olive:#5d6a39;
+    --gold:#c0a042;
+    --green:#15553b;
+    --blue:#0058a8;
+    --border:#e0d6c4;
+
+    --font-serif:"Cormorant Garamond",Georgia,serif;
+    --font-sans:"DM Sans",system-ui,sans-serif;
+    --font-mono:"DM Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--cream-0);color:var(--ink);font-family:var(--font-sans);-webkit-font-smoothing:antialiased;font-feature-settings:"cv02","cv11";}
+
+  /* ===== Editorial section ===== */
+  section{padding:120px 96px;border-bottom:1px solid var(--border);position:relative;}
+  section.dense{padding:80px 96px;}
+
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:48px;}
+
+  .eyebrow{
+    font-family:var(--font-mono);font-size:11px;letter-spacing:.32em;
+    text-transform:uppercase;color:var(--clay);display:flex;align-items:center;gap:14px;
+  }
+  .eyebrow::before{content:"";display:inline-block;width:32px;height:1px;background:var(--clay);}
+
+  h1.title{
+    font-family:var(--font-serif);font-weight:600;font-size:128px;line-height:.92;letter-spacing:-.035em;color:var(--ink);
+    margin-top:32px;
+  }
+  h1.title em{color:var(--clay);font-style:italic;font-weight:500;}
+
+  h2{
+    font-family:var(--font-serif);font-weight:600;font-size:64px;line-height:1.0;letter-spacing:-.025em;color:var(--ink);margin-top:18px;
+  }
+  h2 em{color:var(--clay);font-style:italic;font-weight:500;}
+
+  h3{
+    font-family:var(--font-serif);font-weight:600;font-size:32px;letter-spacing:-.015em;
+  }
+
+  p{font-size:18px;line-height:1.55;color:var(--ink-mid);max-width:62ch;margin-top:18px;}
+  p.lede{font-size:24px;line-height:1.45;color:var(--ink);max-width:48ch;}
+  p.note{font-size:13px;color:var(--ink-soft);font-family:var(--font-mono);letter-spacing:.04em;}
+
+  /* ===== Cover ===== */
+  .cover{min-height:100vh;display:flex;flex-direction:column;justify-content:space-between;}
+  .cover-head{display:flex;justify-content:space-between;align-items:flex-start;}
+  .cover-meta{font-family:var(--font-mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink-soft);text-align:right;line-height:2;}
+
+  .cover-hero{display:flex;align-items:flex-end;gap:64px;}
+  .cover-hero .arc-wrap{width:340px;flex-shrink:0;}
+  .cover-hero .wordmark{flex:1;}
+
+  .tagline-line{
+    margin-top:32px;display:flex;align-items:center;gap:20px;
+    font-family:var(--font-mono);font-size:14px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-mid);
+  }
+  .tagline-line::before{content:"";width:48px;height:1px;background:var(--clay);}
+
+  .cover-foot{
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:var(--font-mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-soft);
+    padding-top:32px;border-top:1px solid var(--border);
+  }
+  .toc{display:flex;gap:32px;flex-wrap:wrap;}
+  .toc a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid transparent;padding-bottom:2px;transition:.15s;}
+  .toc a:hover{color:var(--ink);border-color:var(--ink);}
+
+  /* ===== Mark display ===== */
+  .display{
+    background:var(--cream-1);padding:80px;display:flex;align-items:center;justify-content:center;border-radius:4px;
+    aspect-ratio:1/1;
+  }
+  .display.wide{aspect-ratio:16/9;padding:64px 80px;}
+  .display.dark{background:var(--ink);}
+  .display.clay{background:var(--clay);}
+  .display img{max-width:100%;max-height:100%;}
+  .display .label{position:absolute;top:24px;left:32px;font-family:var(--font-mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink-soft);}
+  .display.dark .label,.display.clay .label{color:rgba(248,246,242,.55);}
+
+  /* ===== Stat row ===== */
+  .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-top:48px;}
+  .stat-row .cell{background:var(--cream-0);padding:32px;display:flex;flex-direction:column;gap:8px;}
+  .stat-row .k{font-family:var(--font-mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink-soft);}
+  .stat-row .v{font-family:var(--font-serif);font-weight:600;font-size:32px;letter-spacing:-.02em;}
+
+  /* ===== Palette swatches ===== */
+  .swatch{
+    aspect-ratio:1/1.1;border-radius:4px;padding:24px;display:flex;flex-direction:column;justify-content:flex-end;
+    position:relative;overflow:hidden;
+  }
+  .swatch .name{font-family:var(--font-serif);font-weight:600;font-size:24px;line-height:1.1;letter-spacing:-.01em;}
+  .swatch .hex{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;margin-top:6px;opacity:.7;}
+  .swatch .role{position:absolute;top:24px;left:24px;font-family:var(--font-mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;opacity:.55;}
+
+  .pal-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:48px;}
+
+  /* ===== Type specimen ===== */
+  .type-spec{display:grid;grid-template-columns:1fr 2fr;gap:64px;align-items:center;padding:48px 0;border-bottom:1px solid var(--border);}
+  .type-spec:last-child{border-bottom:none;}
+  .type-spec .meta{display:flex;flex-direction:column;gap:6px;}
+  .type-spec .meta .name{font-family:var(--font-serif);font-weight:600;font-size:32px;letter-spacing:-.015em;}
+  .type-spec .meta .role{font-family:var(--font-mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink-soft);}
+  .type-spec .specimen{font-size:128px;line-height:1;letter-spacing:-.03em;color:var(--ink);}
+  .type-spec .specimen.serif{font-family:var(--font-serif);font-weight:600;}
+  .type-spec .specimen.sans{font-family:var(--font-sans);font-weight:600;}
+  .type-spec .specimen.mono{font-family:var(--font-mono);font-size:40px;letter-spacing:.04em;text-transform:uppercase;}
+
+  /* ===== Don't / Do grid ===== */
+  .dont-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:48px;}
+  .dont-card{aspect-ratio:1/1;background:var(--cream-1);padding:32px;display:flex;flex-direction:column;justify-content:space-between;border-radius:4px;position:relative;overflow:hidden;}
+  .dont-card .x{font-family:var(--font-mono);font-size:10px;letter-spacing:.28em;color:var(--clay);display:flex;align-items:center;gap:10px;}
+  .dont-card .x::before{content:"×";font-family:var(--font-serif);font-size:20px;color:var(--clay);}
+  .dont-card .label{font-family:var(--font-mono);font-size:11px;letter-spacing:.24em;color:var(--ink-mid);text-transform:uppercase;line-height:1.5;}
+  .dont-card .demo{flex:1;display:flex;align-items:center;justify-content:center;padding:16px;}
+  .dont-card .demo img{max-width:100%;max-height:100%;opacity:.7;}
+  .dont-card.skewed .demo img{transform:skewX(-15deg);}
+  .dont-card.gradient .demo{background:linear-gradient(135deg,#f00,#00f,#0f0);border-radius:8px;}
+  .dont-card.stretched .demo img{transform:scaleY(1.4);}
+  .dont-card.crowded .demo{padding:0;}
+
+  /* ===== Applications mock ===== */
+  .app-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;}
+  .app-mock{aspect-ratio:9/16;background:var(--cream-1);border-radius:24px;padding:32px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;position:relative;}
+  .app-mock.dark{background:var(--ink);color:var(--cream-0);}
+  .app-mock.clay{background:var(--clay);color:#fff;}
+  .app-mock .top{font-family:var(--font-mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;opacity:.65;}
+  .app-mock .mark-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;flex:1;}
+  .app-mock .mark-wrap img{width:90px;height:90px;}
+  .app-mock .wm{font-family:var(--font-serif);font-weight:600;font-size:42px;letter-spacing:-.02em;color:inherit;}
+  .app-mock .wm em{color:var(--clay);font-style:italic;font-weight:500;}
+  .app-mock.dark .wm em{color:var(--clay-glow);}
+  .app-mock.clay .wm em{color:var(--cream-0);}
+  .app-mock .foot{font-family:var(--font-mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;opacity:.55;text-align:center;}
+
+  /* ===== Closing hero ===== */
+  .closing{background:var(--ink);color:var(--cream-0);padding:160px 96px;text-align:center;}
+  .closing h1{font-family:var(--font-serif);font-weight:500;font-size:160px;line-height:.92;letter-spacing:-.035em;color:var(--cream-0);}
+  .closing h1 em{color:var(--clay);font-style:italic;}
+  .closing .sub{font-family:var(--font-mono);font-size:13px;letter-spacing:.32em;text-transform:uppercase;color:rgba(248,246,242,.55);margin-top:32px;display:inline-flex;align-items:center;gap:18px;}
+  .closing .sub::before,.closing .sub::after{content:"";width:48px;height:1px;background:rgba(248,246,242,.3);}
+
+  /* ===== util ===== */
+  .col-span-2{grid-column:span 2;}
+  .right{text-align:right;}
+  .mt-xl{margin-top:96px;}
+  .mt-l{margin-top:64px;}
+  .mt-m{margin-top:32px;}
+
+  @media (max-width:1100px){
+    section{padding:80px 32px;}
+    .grid-2,.grid-3,.stat-row,.dont-grid,.pal-grid,.app-grid{grid-template-columns:1fr;}
+    .pal-grid{grid-template-columns:repeat(2,1fr);}
+    .stat-row{grid-template-columns:repeat(2,1fr);}
+    .dont-grid,.app-grid{grid-template-columns:repeat(2,1fr);}
+    h1.title{font-size:72px;}
+    h2{font-size:40px;}
+    .cover-hero{flex-direction:column;align-items:flex-start;}
+    .closing h1{font-size:80px;}
+    .type-spec{grid-template-columns:1fr;}
+    .type-spec .specimen{font-size:72px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== COVER ===================== -->
+<section class="cover" id="cover">
+  <div class="cover-head">
+    <div class="eyebrow">AcePlay · Brand Foundation · V3</div>
+    <div class="cover-meta">
+      <div>Definitive direction</div>
+      <div>MMXXVI</div>
+    </div>
+  </div>
+
+  <div class="cover-hero">
+    <div class="arc-wrap">
+      <img src="png/v3-mark-arc-primary.png" alt="AcePlay mark" style="width:100%"/>
+    </div>
+    <div class="wordmark">
+      <div class="eyebrow">— The brand</div>
+      <h1 class="title">Ace<em>Play</em>.</h1>
+      <div class="tagline-line">Tennis, gamified.</div>
+    </div>
+  </div>
+
+  <div class="cover-foot">
+    <div class="toc">
+      <a href="#position">01 · Position</a>
+      <a href="#mark">02 · Mark</a>
+      <a href="#wordmark">03 · Wordmark</a>
+      <a href="#lockup">04 · Lockup</a>
+      <a href="#palette">05 · Palette</a>
+      <a href="#type">06 · Type</a>
+      <a href="#apps">07 · Applications</a>
+      <a href="#donts">08 · Don'ts</a>
+    </div>
+    <div>10 sections · 12 assets</div>
+  </div>
+</section>
+
+<!-- ===================== 01 POSITION ===================== -->
+<section id="position">
+  <div class="eyebrow">01 · Position</div>
+  <h2>The discipline of the ace.<br/>The joy of <em>play</em>.</h2>
+  <div class="grid-2 mt-l">
+    <div>
+      <p class="lede">AcePlay sits at the intersection of tennis tradition and the modern player's reality. Centuries of ritual on one side. Gamified, mobile, social on the other.</p>
+      <p>The brand needs to feel <strong>serious about the sport</strong> — premium materials, editorial typography, restrained palette — and <strong>playful about the game</strong> — a single signature gesture, a kinetic visual device, a tagline that winks.</p>
+      <p>Not another tennis app. A consumer brand for amateurs and competitors who want their tennis to count.</p>
+    </div>
+    <div>
+      <div class="stat-row" style="grid-template-columns:1fr 1fr;">
+        <div class="cell"><div class="k">Audience</div><div class="v">Amateur · Competitive</div></div>
+        <div class="cell"><div class="k">Distribution</div><div class="v">Consumer App</div></div>
+        <div class="cell"><div class="k">Tone</div><div class="v">Premium · Kinetic</div></div>
+        <div class="cell"><div class="k">Voice</div><div class="v">Direct · Confident</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 02 MARK ===================== -->
+<section id="mark">
+  <div class="eyebrow">02 · The Mark</div>
+  <h2>One gesture. <em>The serve.</em></h2>
+  <p class="lede mt-m">A single ascending arc tracing the path of a perfect serve, terminating in the impact point. The arc is the mark, the system, and the brand's voice — drawn once and applied everywhere.</p>
+
+  <div class="grid-3 mt-xl">
+    <div class="display" style="position:relative;">
+      <span class="label">Primary · on cream</span>
+      <img src="png/v3-mark-arc-primary.png" alt="Mark on cream"/>
+    </div>
+    <div class="display clay" style="position:relative;">
+      <span class="label">Reverse · on clay</span>
+      <img src="png/v3-mark-arc-reverse.png" alt="Mark reverse"/>
+    </div>
+    <div class="display dark" style="position:relative;">
+      <span class="label">On ink</span>
+      <img src="png/v3-mark-arc-ink.png" alt="Mark on ink"/>
+    </div>
+  </div>
+
+  <div class="grid-2 mt-xl">
+    <div>
+      <h3>What the arc means</h3>
+      <p>The arc references the parabolic trajectory of a topspin serve — low at the racket, high at the apex, landing precisely on the T. It also reads as an ascending score, a level-up, progress.</p>
+      <p>The terminating dot is the ball's impact point — the ace.</p>
+    </div>
+    <div>
+      <h3>Why a single gesture</h3>
+      <p>A symbol with one move is recognizable at any scale, in any color, on any surface. It survives the favicon. It survives the billboard. It animates naturally — stroke-paint on splash, draws itself on first load.</p>
+      <p>The Cormorant "A" remains the secondary monogram for app icons and avatars where the arc would feel abstract.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 03 WORDMARK ===================== -->
+<section id="wordmark">
+  <div class="eyebrow">03 · Wordmark</div>
+  <h2>Cormorant Garamond. <em>Ace</em> upright, <em>Play</em> italic.</h2>
+  <p class="lede mt-m">One typeface. Two registers. The tension between roman "Ace" (the discipline) and italic "Play" (the joy) is the entire brand in two syllables.</p>
+
+  <div class="display wide mt-l" style="position:relative;">
+    <span class="label">Primary wordmark · on cream</span>
+    <img src="png/v3-wordmark-primary.png" style="max-height:240px"/>
+  </div>
+
+  <div class="display wide dark mt-m" style="position:relative;">
+    <span class="label">Reverse · on ink</span>
+    <img src="png/v3-wordmark-reverse.png" style="max-height:240px"/>
+  </div>
+
+  <div class="grid-2 mt-xl">
+    <div>
+      <h3>Construction</h3>
+      <p>Cormorant Garamond SemiBold 600 for "Ace", Italic Medium 500 for "Play". Letter-spacing tightened to -0.037em for display use. The "P" descender is allowed to breathe — never crop it.</p>
+    </div>
+    <div>
+      <h3>Why italic Play</h3>
+      <p>Italic is movement. It tilts the second syllable into action — fitting for the half of the brand that gamifies. The color flip (ink → clay) reinforces the shift. Read top-down: tradition becomes play.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 04 LOCKUP ===================== -->
+<section id="lockup">
+  <div class="eyebrow">04 · Lockup</div>
+  <h2>Mark + wordmark + <em>tagline</em>.</h2>
+
+  <div class="display wide mt-l" style="position:relative;background:var(--cream-1);">
+    <span class="label">Primary lockup · horizontal</span>
+    <img src="png/v3-lockup-horizontal.png" style="max-height:340px"/>
+  </div>
+
+  <div class="grid-2 mt-l">
+    <div class="display" style="position:relative;background:var(--cream-1);aspect-ratio:1/1;">
+      <span class="label">Stacked variant</span>
+      <img src="png/v3-lockup-stacked.png" style="max-height:520px"/>
+    </div>
+    <div>
+      <h3>Construction rules</h3>
+      <p>Mark height = cap height of the wordmark. Mark sits to the left of the wordmark with a gap equal to half the cap height. The mark's ball terminator aligns optically with the top of the "A".</p>
+      <p>Tagline sits below the wordmark, separated by a horizontal clay rule of 80px length. Tagline is set in DM Mono 11–14pt, all caps, 0.32em letter-spacing.</p>
+      <p class="note mt-m">CLEAR SPACE · MINIMUM = 1/2 CAP HEIGHT ON ALL SIDES</p>
+      <p class="note">MIN SIZE · 24PX TALL (DIGITAL) · 12MM TALL (PRINT)</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 05 PALETTE ===================== -->
+<section id="palette">
+  <div class="eyebrow">05 · Palette</div>
+  <h2>Terre Battue is home. <em>US Open</em> and <em>Wimbledon</em> are seasonal.</h2>
+  <p class="lede mt-m">The primary palette mirrors clay — the surface of the game's most demanding tournament. Two seasonal palettes mirror Flushing Meadows and the All England Club, used for editions and themed launches.</p>
+
+  <h3 class="mt-xl">Terre Battue · primary</h3>
+  <div class="pal-grid">
+    <div class="swatch" style="background:var(--clay);color:#fff;"><span class="role">Primary</span><div class="name">Clay</div><div class="hex">#B6502B · HSL 16 62 44</div></div>
+    <div class="swatch" style="background:var(--clay-glow);color:#fff;"><span class="role">Glow</span><div class="name">Clay Glow</div><div class="hex">#E07A45 · HSL 18 70 54</div></div>
+    <div class="swatch" style="background:var(--clay-deep);color:#fff;"><span class="role">Deep</span><div class="name">Clay Deep</div><div class="hex">#732C13 · HSL 14 60 28</div></div>
+    <div class="swatch" style="background:var(--ink);color:var(--cream-0);"><span class="role">Ink</span><div class="name">Ink</div><div class="hex">#2B1B12 · HSL 22 40 12</div></div>
+    <div class="swatch" style="background:var(--cream-0);color:var(--ink);border:1px solid var(--border)"><span class="role">Cream</span><div class="name">Cream</div><div class="hex">#F8F6F2 · HSL 38 32 96</div></div>
+    <div class="swatch" style="background:var(--olive);color:#fff;"><span class="role">Accent</span><div class="name">Olive</div><div class="hex">#5D6A39 · HSL 82 30 32</div></div>
+  </div>
+
+  <h3 class="mt-xl">US Open · seasonal</h3>
+  <div class="pal-grid">
+    <div class="swatch" style="background:var(--blue);color:#fff;"><span class="role">Primary</span><div class="name">Flushing Blue</div><div class="hex">#0058A8 · HSL 209 100 33</div></div>
+    <div class="swatch" style="background:#d7e80b;color:var(--ink);"><span class="role">Secondary</span><div class="name">Ball Yellow</div><div class="hex">#D7E80B · HSL 65 86 48</div></div>
+    <div class="swatch" style="background:#7a2e8e;color:#fff;"><span class="role">Accent</span><div class="name">Magenta</div><div class="hex">#7A2E8E · HSL 289 51 37</div></div>
+    <div class="swatch" style="background:#06316b;color:#fff;"><span class="role">Deep</span><div class="name">Night Blue</div><div class="hex">#06316B · HSL 214 90 22</div></div>
+    <div class="swatch" style="background:#f6f7fa;color:var(--ink);border:1px solid var(--border)"><span class="role">BG</span><div class="name">Daylight</div><div class="hex">#F6F7FA · HSL 220 33 97</div></div>
+    <div class="swatch" style="background:#0d1e2c;color:#fff;"><span class="role">Ink</span><div class="name">Night Ink</div><div class="hex">#0D1E2C · HSL 214 53 11</div></div>
+  </div>
+
+  <h3 class="mt-xl">Wimbledon · seasonal</h3>
+  <div class="pal-grid">
+    <div class="swatch" style="background:var(--green);color:#fff;"><span class="role">Primary</span><div class="name">Grass Green</div><div class="hex">#15553B · HSL 154 60 21</div></div>
+    <div class="swatch" style="background:#4b2e83;color:#fff;"><span class="role">Accent</span><div class="name">AELTC Purple</div><div class="hex">#4B2E83 · HSL 259 48 35</div></div>
+    <div class="swatch" style="background:var(--gold);color:var(--ink);"><span class="role">Trophy</span><div class="name">Trophy Gold</div><div class="hex">#C0A042 · HSL 41 53 54</div></div>
+    <div class="swatch" style="background:#0c3b27;color:#fff;"><span class="role">Deep</span><div class="name">Forest</div><div class="hex">#0C3B27 · HSL 154 65 14</div></div>
+    <div class="swatch" style="background:#f4efe6;color:var(--ink);border:1px solid var(--border)"><span class="role">BG</span><div class="name">Cream Lawn</div><div class="hex">#F4EFE6 · HSL 36 39 93</div></div>
+    <div class="swatch" style="background:#0f2a20;color:#fff;"><span class="role">Ink</span><div class="name">Forest Ink</div><div class="hex">#0F2A20 · HSL 154 40 12</div></div>
+  </div>
+</section>
+
+<!-- ===================== 06 TYPE ===================== -->
+<section id="type">
+  <div class="eyebrow">06 · Typography</div>
+  <h2>Three voices. <em>Serif</em>, sans, mono.</h2>
+  <p class="lede mt-m">Cormorant Garamond carries the display moments — wordmark, headlines, editorial hero. DM Sans does the work — UI, body, navigation. DM Mono is the data — scores, captions, eyebrows, tournament boards.</p>
+
+  <div class="mt-l">
+    <div class="type-spec">
+      <div class="meta">
+        <div class="role">Display · Headlines · Wordmark</div>
+        <div class="name">Cormorant Garamond</div>
+        <p>500–700 · Roman & Italic</p>
+      </div>
+      <div class="specimen serif">Ace<em style="font-style:italic;color:var(--clay);">Play</em></div>
+    </div>
+    <div class="type-spec">
+      <div class="meta">
+        <div class="role">UI · Body · Buttons</div>
+        <div class="name">DM Sans</div>
+        <p>400 / 500 / 600 / 700</p>
+      </div>
+      <div class="specimen sans" style="font-size:88px;">Match, set, level&nbsp;up.</div>
+    </div>
+    <div class="type-spec">
+      <div class="meta">
+        <div class="role">Data · Eyebrows · Scoreboards</div>
+        <div class="name">DM Mono</div>
+        <p>400 / 500 · ALL CAPS · 0.28em tracking</p>
+      </div>
+      <div class="specimen mono">15 · 30 · 40 · ad</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 07 APPLICATIONS ===================== -->
+<section id="apps">
+  <div class="eyebrow">07 · Applications</div>
+  <h2>App icon, splash, social, presentations.</h2>
+
+  <div class="grid-3 mt-xl">
+    <div class="display" style="position:relative;">
+      <span class="label">App icon · light</span>
+      <img src="png/v3-app-icon-light.png" style="max-width:80%;border-radius:48px;"/>
+    </div>
+    <div class="display" style="position:relative;background:var(--cream-1);">
+      <span class="label">App icon · dark</span>
+      <img src="png/v3-app-icon-dark.png" style="max-width:80%;border-radius:48px;"/>
+    </div>
+    <div class="display" style="position:relative;">
+      <span class="label">App icon · letter A</span>
+      <img src="png/v3-app-icon-letter.png" style="max-width:80%;border-radius:48px;"/>
+    </div>
+  </div>
+
+  <h3 class="mt-xl">Splash screen system</h3>
+  <div class="app-grid">
+    <div class="app-mock">
+      <div class="top">AcePlay · v3</div>
+      <div class="mark-wrap">
+        <img src="png/v3-mark-arc-primary.png" alt="" style="background:var(--cream-1);border-radius:50%;padding:14px;"/>
+        <div class="wm">Ace<em>Play</em></div>
+      </div>
+      <div class="foot">Tennis, gamified.</div>
+    </div>
+    <div class="app-mock dark">
+      <div class="top">AcePlay · v3</div>
+      <div class="mark-wrap">
+        <img src="png/v3-mark-arc-ink.png" alt="" style="border-radius:50%;padding:14px;background:rgba(255,255,255,.04);"/>
+        <div class="wm">Ace<em>Play</em></div>
+      </div>
+      <div class="foot">Tennis, gamified.</div>
+    </div>
+    <div class="app-mock clay">
+      <div class="top">AcePlay · v3</div>
+      <div class="mark-wrap">
+        <img src="png/v3-mark-arc-reverse.png" alt="" style="background:rgba(255,255,255,.1);border-radius:50%;padding:14px;"/>
+        <div class="wm">Ace<em>Play</em></div>
+      </div>
+      <div class="foot">Tennis, gamified.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 08 DON'TS ===================== -->
+<section id="donts">
+  <div class="eyebrow">08 · Don'ts</div>
+  <h2>What never to do.</h2>
+  <div class="dont-grid">
+    <div class="dont-card stretched">
+      <div class="x">Don't stretch</div>
+      <div class="demo"><img src="png/v3-mark-arc-primary.png"/></div>
+      <div class="label">Preserve the arc's curvature</div>
+    </div>
+    <div class="dont-card skewed">
+      <div class="x">Don't skew</div>
+      <div class="demo"><img src="png/v3-mark-arc-primary.png"/></div>
+      <div class="label">No italic or sheared treatments</div>
+    </div>
+    <div class="dont-card gradient">
+      <div class="x">Don't gradient</div>
+      <div class="demo"></div>
+      <div class="label">Flat color only · no gradients</div>
+    </div>
+    <div class="dont-card crowded">
+      <div class="x">Don't crowd</div>
+      <div class="demo" style="background:repeating-linear-gradient(45deg,#000,#000 4px,#fff 4px,#fff 12px);"><img src="png/v3-mark-arc-primary.png" style="opacity:.9;"/></div>
+      <div class="label">Always respect clear space</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CLOSING ===================== -->
+<section class="closing">
+  <div class="eyebrow" style="justify-content:center;display:inline-flex;color:var(--clay-glow);">— Brand Foundation · V3 · Definitive —</div>
+  <h1>Ace<em>Play</em>.</h1>
+  <div class="sub">Tennis, gamified.</div>
+</section>
+
+</body>
+</html>

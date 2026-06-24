@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 600" width="1800" height="600">
+<defs></defs>
+<rect width="1800" height="600" fill="#2b1b12"></rect>
+
+  <g transform="translate(900,420)">
+    <text text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="600" font-size="380" letter-spacing="-14" fill="#f8f6f2">
+      Ace<tspan font-style="italic" font-weight="500" fill="#dc6938">Play</tspan>
+    </text>
+  </g>
+
+</svg>

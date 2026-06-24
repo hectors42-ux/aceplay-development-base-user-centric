@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
+<defs></defs>
+<rect width="1000" height="1000" fill="#b6502b"></rect>
+
+  <g transform="translate(100,50)">
+    <g fill="#f8f6f2">
+      <path d="&#xA;    M 104 744&#xA;    L 224 744&#xA;    L 372 120&#xA;    L 324 136&#xA;    Z&#xA;  "></path>
+      <path d="&#xA;    M 576 744&#xA;    L 696 744&#xA;    L 476 136&#xA;    L 428 120&#xA;    Z&#xA;  "></path>
+      <path d="&#xA;    M 324 136&#xA;    L 400 88&#xA;    L 476 136&#xA;    L 428 120&#xA;    L 372 120&#xA;    Z&#xA;  "></path>
+      <path d="&#xA;    M 264 457.6&#xA;    Q 400 438.40000000000003 536 457.6&#xA;    L 536 502.4&#xA;    Q 400 483.2 264 502.4&#xA;    Z&#xA;  "></path>
+      <path d="&#xA;    M 89.6 744&#xA;    L 238.4 744&#xA;    L 238.4 768&#xA;    L 89.6 768&#xA;    Z&#xA;  "></path>
+      <path d="&#xA;    M 561.6 744&#xA;    L 710.4 744&#xA;    L 710.4 768&#xA;    L 561.6 768&#xA;    Z&#xA;  "></path>
+    </g>
+  </g>
+
+</svg>

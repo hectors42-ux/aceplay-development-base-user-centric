@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="AcePlay · Rally">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="0%" r="120%">
+      <stop offset="0%" stop-color="#16213C"/>
+      <stop offset="55%" stop-color="#0A1020"/>
+      <stop offset="100%" stop-color="#070B16"/>
+    </radialGradient>
+    <radialGradient id="ball" cx="38%" cy="32%" r="78%">
+      <stop offset="0%" stop-color="#e8ff8a"/>
+      <stop offset="55%" stop-color="#c6f23a"/>
+      <stop offset="100%" stop-color="#9fce10"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="115" fill="url(#bg)"/>
+  <g transform="translate(106 106) scale(3.0)">
+    <circle cx="50" cy="50" r="46" fill="url(#ball)" stroke="#86b00a" stroke-width="1.5"/>
+    <path d="M14 30 Q50 50 14 70" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" opacity=".95"/>
+    <path d="M86 30 Q50 50 86 70" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" opacity=".95"/>
+    <ellipse cx="40" cy="48" rx="6" ry="7.5" fill="#fff"/>
+    <ellipse cx="60" cy="48" rx="6" ry="7.5" fill="#fff"/>
+    <circle cx="41" cy="49" r="3.2" fill="#16271a"/>
+    <circle cx="61" cy="49" r="3.2" fill="#16271a"/>
+    <path d="M40 64 Q50 73 60 64" fill="none" stroke="#16271a" stroke-width="3" stroke-linecap="round"/>
+  </g>
+</svg>

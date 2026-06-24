@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 1500" width="2400" height="1500">
+<defs></defs>
+<rect width="2400" height="1500" fill="#f8f6f2"></rect>
+
+  
+  <path d="M -100 1300 C -100 200 800 100 2500 200" stroke="#b6502b" stroke-width="3" fill="none" opacity="0.16" stroke-dasharray="2 18" stroke-linecap="round"></path>
+  <path d="M -100 1450 C -100 400 1100 250 2500 400" stroke="#b6502b" stroke-width="2" fill="none" opacity="0.10" stroke-dasharray="2 18" stroke-linecap="round"></path>
+
+  <g transform="translate(160,140)">
+    <line x1="0" y1="0" x2="120" y2="0" stroke="#b6502b" stroke-width="3"></line>
+    <text x="140" y="14" font-family="DM Mono, ui-monospace, monospace" font-size="28" letter-spacing="22" fill="#b6502b">A C E P L A Y · BRAND · V3</text>
+  </g>
+
+  <g transform="translate(160,260)">
+    <g>
+      
+      <rect x="48" y="398.4" width="19.2" height="19.2" rx="2.4" fill="#b6502b" opacity="0.0"></rect>
+      
+      <path d="M 67.2 403.2&#xA;           C 67.2 192 172.79999999999998 86.39999999999999 374.40000000000003 86.39999999999999" stroke="#b6502b" stroke-width="48" stroke-linecap="round" fill="none"></path>
+      
+      <circle cx="403.2" cy="86.39999999999999" r="38.4" fill="#b6502b"></circle>
+    </g>
+  </g>
+
+  <g transform="translate(160,1100)">
+    <text font-family="Cormorant Garamond, Georgia, serif" font-weight="600" font-size="380" letter-spacing="-22" fill="#2b1b12">
+      Ace<tspan font-style="italic" font-weight="500" fill="#b6502b">Play</tspan>
+    </text>
+  </g>
+
+  <g transform="translate(160,1280)">
+    <line x1="0" y1="0" x2="100" y2="0" stroke="#b6502b" stroke-width="3"></line>
+    <text x="120" y="14" font-family="DM Mono, ui-monospace, monospace" font-size="36" letter-spacing="20" fill="#706051">TENNIS, GAMIFIED.</text>
+  </g>
+
+  <g transform="translate(2240,140)">
+    <text text-anchor="end" font-family="DM Mono, ui-monospace, monospace" font-size="22" letter-spacing="14" fill="#9c8e81">
+      <tspan x="0" dy="0">BRAND FOUNDATION</tspan>
+      <tspan x="0" dy="36">DEFINITIVE · V3</tspan>
+      <tspan x="0" dy="36">MMXXVI</tspan>
+    </text>
+  </g>
+
+</svg>

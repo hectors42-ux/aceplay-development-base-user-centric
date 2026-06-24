@@ -4,6 +4,7 @@ import { SportSwitcher } from "@/components/SportSwitcher";
 import { QuickActions } from "@/components/QuickActions";
 import { BottomNav } from "@/components/BottomNav";
 import { AppFooter } from "@/components/AppFooter";
+import { InicioNotifications } from "@/components/cancha/InicioNotifications";
 
 import { MatchOfTheWeekCard } from "@/components/home/MatchOfTheWeekCard";
 import { EconomyStrip } from "@/components/home/EconomyStrip";
@@ -43,6 +44,9 @@ const Index = () => {
         <div className="flex justify-center px-5">
           <SportSwitcher />
         </div>
+
+        {/* Notificaciones de la cancha: reto recibido · carga tu resultado · llamado. */}
+        <InicioNotifications />
 
         <div className="xl:grid xl:grid-cols-3 xl:gap-6 space-y-3 xl:space-y-0">
           <div className="xl:col-span-2 space-y-3">

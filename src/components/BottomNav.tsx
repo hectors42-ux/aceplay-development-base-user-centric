@@ -36,7 +36,7 @@ export const BottomNav = () => {
   const items = [
     { id: "home", label: "Inicio", icon: Home, to: "/", fab: false, badge: 0, syncing: false, live: false },
     { id: "descubrir", label: "Descubrir", icon: Compass, to: "/descubrir", fab: false, badge: 0, syncing: false, live: false },
-    { id: "desafio", label: "Desafío", icon: Swords, to: "/ranking", fab: true, badge: ladderCounts.total + partnerPendingCount, syncing: ladderLoading || partnerLoading, live: false },
+    { id: "desafio", label: "Desafío", icon: Swords, to: "/cancha", fab: true, badge: ladderCounts.total + partnerPendingCount, syncing: ladderLoading || partnerLoading, live: false },
     { id: "espacios", label: "Espacios", icon: LayoutGrid, to: "/espacios", fab: false, badge: counts.total, syncing: tournamentLoading, live: operatorTournaments.length > 0 },
     { id: "perfil", label: "Perfil", icon: User, to: "/perfil", fab: false, badge: 0, syncing: false, live: false },
   ];

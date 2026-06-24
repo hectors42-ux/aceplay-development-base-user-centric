@@ -37,7 +37,7 @@ const AdminCategoryPairs = lazy(() => import("./pages/AdminCategoryPairs.tsx"));
 const TournamentCategoryDetail = lazy(() => import("./pages/TournamentCategoryDetail.tsx"));
 const OperatorLiveBoard = lazy(() => import("./pages/OperatorLiveBoard.tsx"));
 const ResultadoPendiente = lazy(() => import("./pages/ResultadoPendiente.tsx"));
-const Ranking = lazy(() => import("./pages/Ranking.tsx"));
+const Cancha = lazy(() => import("./pages/Cancha.tsx"));
 const CargarResultado = lazy(() => import("./pages/CargarResultado.tsx"));
 const Escalerilla = lazy(() => import("./pages/Escalerilla.tsx"));
 const Descubrir = lazy(() => import("./pages/Descubrir.tsx"));
@@ -215,22 +215,18 @@ const App = () => (
                       </ProtectedRoute>
                     }
                   />
+                  {/* Hub competitivo único (Épica M · Cancha). */}
                   <Route
-                    path="/ranking"
+                    path="/cancha"
                     element={
                       <ProtectedRoute>
-                        <Ranking />
+                        <Cancha />
                       </ProtectedRoute>
                     }
                   />
-                  <Route
-                    path="/ladder"
-                    element={
-                      <ProtectedRoute>
-                        <Ranking />
-                      </ProtectedRoute>
-                    }
-                  />
+                  {/* Decisión cerrada: /ranking y /ladder se absorben en /cancha. */}
+                  <Route path="/ranking" element={<Navigate to="/cancha" replace />} />
+                  <Route path="/ladder" element={<Navigate to="/cancha" replace />} />
                   <Route
                     path="/cargar"
                     element={

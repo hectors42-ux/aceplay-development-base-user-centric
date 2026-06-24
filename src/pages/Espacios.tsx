@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Trophy, ListOrdered, ClipboardCheck, ChevronRight, LayoutGrid, Compass } from "lucide-react";
-import { AppHeader } from "@/components/AppHeader";
+import { CoinHud } from "@/components/home/CoinHud";
 import { BottomNav } from "@/components/BottomNav";
 import { useAuth } from "@/components/providers/AuthProvider";
 
@@ -15,12 +15,12 @@ const ENTRIES = [
 ];
 
 const Espacios = () => {
-  const { profile, loading } = useAuth();
-  const memberName = loading && !profile ? "" : profile ? `${profile.first_name} ${profile.last_name}`.trim() : "Socio";
 
   return (
     <div className="min-h-screen bg-background pb-28">
-      <AppHeader memberName={memberName} greeting="Tus espacios" interactive={false} />
+      <div className="safe-top sticky top-0 z-30 px-3 pt-2">
+        <CoinHud className="mx-auto max-w-md" />
+      </div>
       <main className="mx-auto max-w-md px-5 py-4 md:max-w-2xl">
         <h1 className="mb-1 flex items-center gap-2 font-display text-xl font-semibold">
           <LayoutGrid className="h-5 w-5 text-primary" /> Espacios

@@ -23,6 +23,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { UserAvatar } from "@/components/avatar/UserAvatar";
 import { MatchScore } from "@/components/arena";
+import { CoinHud } from "@/components/home/CoinHud";
 import { toast } from "sonner";
 
 interface SpaceRow { space_id: string; name: string; sport: string | null; type: string }
@@ -155,6 +156,7 @@ const CargarResultado = () => {
 
   return (
     <div className="mx-auto max-w-md px-5 py-6">
+      <CoinHud className="mb-5" />
       <div className="mb-5 flex items-center gap-3">
         <Link to="/ranking" className="flex h-9 w-9 items-center justify-center rounded-2xl border border-border bg-card text-muted-foreground">
           <ArrowLeft className="h-4 w-4" />

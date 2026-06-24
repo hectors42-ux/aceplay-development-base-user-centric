@@ -7,6 +7,7 @@ import { useCanCreate } from "@/hooks/useCanCreate";
 import { CreateSpaceDialog } from "@/components/CreateSpaceDialog";
 import { UserAvatar } from "@/components/avatar/UserAvatar";
 import { TierGem, type Tier } from "@/components/arena";
+import { CoinHud } from "@/components/home/CoinHud";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -86,6 +87,7 @@ const Escalerilla = () => {
 
   return (
     <div className="mx-auto max-w-md px-5 py-6">
+      <CoinHud className="mb-5" />
       <div className="mb-5 flex items-center gap-3">
         <Link to="/" className="flex h-9 w-9 items-center justify-center rounded-2xl border border-border bg-card text-muted-foreground">
           <ArrowLeft className="h-4 w-4" />

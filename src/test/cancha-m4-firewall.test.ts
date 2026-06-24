@@ -53,3 +53,28 @@ describe("availability_feed (M4) es solo lectura + guard de menor (Addendum D)",
     expect(sql).toMatch(/pf\.id\s*<>\s*auth\.uid\(\)/i);
   });
 });
+
+describe("FIX M4 · protección de menores en los llamados (Ley 21.719 · Addendum D)", () => {
+  const MIG = join(ROOT, "supabase", "migrations");
+  const file = readdirSync(MIG).find((f) => /cancha_minor_guard/.test(f))!;
+  const sql = stripSql(read(join("supabase", "migrations", file)));
+
+  it("post_availability RECHAZA a un autor menor (is_minor → raise)", () => {
+    const fn = sql.match(/function\s+public\.post_availability[\s\S]*?\$\$;/i)?.[0] ?? "";
+    expect(fn).toMatch(/is_minor\s*\(/i);
+    expect(fn).toMatch(/raise exception/i);
+    expect(fn).toMatch(/menores/i);
+  });
+
+  it("availability_feed NUNCA lista a un autor menor (sin excepción 'su propio')", () => {
+    const fn = sql.match(/function\s+public\.availability_feed[\s\S]*?\$\$;/i)?.[0] ?? "";
+    expect(fn).toMatch(/not\s+public\.is_minor\s*\(/i);
+    // El guard endurecido ya no permite que el menor se vea a sí mismo.
+    expect(fn).not.toMatch(/is_minor[\s\S]*?<>\s*auth\.uid\(\)/i);
+  });
+
+  it("el guard vive en el BACKEND y reusa is_minor() (no crea noción nueva)", () => {
+    expect(sql).not.toMatch(/birthdate\s*>/i); // no recalcula la condición de menor
+    expect(sql).toMatch(/is_minor/);
+  });
+});

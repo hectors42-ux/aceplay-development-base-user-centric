@@ -12,10 +12,11 @@ describe("Épica K — resolveSeasonalTheme (calendario de la gira de tenis)", (
     [new Date(2026, 0, 15), "cement"], // 15-ene → cancha dura
     [new Date(2026, 2, 31), "cement"], // 31-mar → cemento
     [new Date(2026, 3, 1), "clay"],    // 1-abr → arcilla
-    [new Date(2026, 5, 30), "clay"],   // 30-jun → arcilla (antes del corte a pasto)
-    [new Date(2026, 6, 1), "grass"],   // 1-jul → pasto
-    [new Date(2026, 7, 14), "grass"],  // 14-ago → pasto (antes del corte)
-    [new Date(2026, 7, 15), "cement"], // 15-ago → vuelve a cemento (US Open)
+    [new Date(2026, 5, 7), "clay"],    // 7-jun → arcilla (principios de junio)
+    [new Date(2026, 5, 8), "grass"],   // 8-jun → pasto (arranca la gira de césped)
+    [new Date(2026, 5, 30), "grass"],  // 30-jun → pasto
+    [new Date(2026, 6, 31), "grass"],  // 31-jul → pasto
+    [new Date(2026, 7, 1), "cement"],  // 1-ago → cemento (US Open / cierre dura)
     [new Date(2026, 8, 1), "cement"],  // 1-sep → cemento
     [new Date(2026, 10, 30), "cement"],// 30-nov → cemento
     [new Date(2026, 11, 1), "arena"],  // 1-dic → arena (off-season)

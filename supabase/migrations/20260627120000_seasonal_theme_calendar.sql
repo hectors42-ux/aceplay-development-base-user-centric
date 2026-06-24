@@ -7,8 +7,8 @@ values (
   '[
     {"month":1,"day":1,"theme":"cement"},
     {"month":4,"day":1,"theme":"clay"},
-    {"month":7,"day":1,"theme":"grass"},
-    {"month":8,"day":15,"theme":"cement"},
+    {"month":6,"day":8,"theme":"grass"},
+    {"month":8,"day":1,"theme":"cement"},
     {"month":12,"day":1,"theme":"arena"}
   ]'::jsonb
 )

@@ -13,16 +13,16 @@ export interface SeasonalSegment {
 }
 
 // Calendario por defecto (hemisferio norte). Editable por admin vía economy_config.
-//   Ene–Mar      → Cemento  (gira dura: Australia/Indian Wells/Miami)
-//   Abr–Jun      → Arcilla  (polvo de ladrillo europeo → Roland-Garros)
-//   Jul–14 Ago   → Pasto    (Wimbledon y la gira de césped)
-//   15 Ago–Nov   → Cemento  (US Open + cierre dura/indoor)
-//   Dic          → Arena    (off-season: vuelve al look insignia)
+//   Ene–Mar        → Cemento  (gira dura)
+//   Abr–7 Jun      → Arcilla  (polvo de ladrillo → Roland-Garros)
+//   8 Jun–Jul      → Pasto    (Wimbledon / gira de césped)
+//   Ago–Nov        → Cemento  (US Open + cierre dura/indoor)
+//   Dic            → Arena    (off-season: vuelve al look insignia)
 export const DEFAULT_SEASONAL_CALENDAR: SeasonalSegment[] = [
   { month: 1, day: 1, theme: "cement" },
   { month: 4, day: 1, theme: "clay" },
-  { month: 7, day: 1, theme: "grass" },
-  { month: 8, day: 15, theme: "cement" },
+  { month: 6, day: 8, theme: "grass" },
+  { month: 8, day: 1, theme: "cement" },
   { month: 12, day: 1, theme: "arena" },
 ];
 

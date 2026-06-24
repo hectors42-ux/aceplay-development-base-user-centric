@@ -149,9 +149,9 @@ const Descubrir = () => {
                         <Building2 className="h-3 w-3" /> {o.club_name ?? "Otro club"}
                       </p>
                     </div>
-                    <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold",
-                      o.status === "en_curso" ? "bg-success/15 text-success" : "bg-muted text-muted-foreground")}>
-                      {STATUS_LABEL[o.status]}
+                    <span className={cn("shrink-0 rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide",
+                      o.status === "en_curso" ? "border-action/35 bg-action/15 text-action" : "border-info/35 bg-info/15 text-info")}>
+                      {o.status === "en_curso" ? STATUS_LABEL[o.status] : "Abierto"}
                     </span>
                   </div>
 

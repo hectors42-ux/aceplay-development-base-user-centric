@@ -19,11 +19,13 @@ export function CoinHud({ rating, className }: CoinHudProps) {
   const weeks = streak?.current_weeks ?? 0;
   return (
     <div className={cn("glass-bar flex items-center gap-2 rounded-[22px] px-3.5 py-2.5", className)}>
-      <span className="mr-auto flex items-center gap-2 font-display text-lg font-black tracking-tight text-foreground">
-        <span className="grid h-6 w-6 place-items-center rounded-lg bg-gradient-to-br from-action to-[hsl(var(--action-deep))] text-[11px] text-action-foreground">
-          ✦
+      {/* Logo de marca: arco "The Serve" + wordmark Cormorant (Ace roman · Play italic). */}
+      <span className="mr-auto flex items-center gap-2">
+        <img src="/images/mark-arc-primary.png" alt="" aria-hidden className="h-6 w-auto object-contain" />
+        <span className="font-cormorant text-xl font-semibold leading-none tracking-tight">
+          <span className="text-foreground">Ace</span>
+          <span className="italic text-action">Play</span>
         </span>
-        Ace<span className="text-action">Play</span>
       </span>
 
       {/* RATING · skill (volt) — se oculta si no hay valor disponible */}

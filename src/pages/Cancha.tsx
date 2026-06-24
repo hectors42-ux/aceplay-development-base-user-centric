@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Swords, Trophy, ChevronRight, Calendar, Mail, MapPin, Zap } from "lucide-react";
+import { Swords, Trophy, ChevronRight, Calendar, Mail, MapPin, Zap, Megaphone } from "lucide-react";
 import { CoinHud } from "@/components/home/CoinHud";
 import { SportSwitcher } from "@/components/SportSwitcher";
 import { BottomNav } from "@/components/BottomNav";

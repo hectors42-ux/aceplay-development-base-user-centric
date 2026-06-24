@@ -36,7 +36,7 @@ export const BottomNav = () => {
   const items = [
     { id: "home", label: "Inicio", icon: Home, to: "/", fab: false, badge: 0, syncing: false, live: false },
     { id: "descubrir", label: "Descubrir", icon: Compass, to: "/descubrir", fab: false, badge: 0, syncing: false, live: false },
-    { id: "desafio", label: "Desafío", icon: Swords, to: "/cancha", fab: true, badge: ladderCounts.total + partnerPendingCount, syncing: ladderLoading || partnerLoading, live: false },
+    { id: "desafio", label: "Cancha", icon: Swords, to: "/cancha", fab: true, badge: ladderCounts.total + partnerPendingCount, syncing: ladderLoading || partnerLoading, live: false },
     { id: "espacios", label: "Espacios", icon: LayoutGrid, to: "/espacios", fab: false, badge: counts.total, syncing: tournamentLoading, live: operatorTournaments.length > 0 },
     { id: "perfil", label: "Perfil", icon: User, to: "/perfil", fab: false, badge: 0, syncing: false, live: false },
   ];
@@ -56,7 +56,7 @@ export const BottomNav = () => {
             return (
               <li key={item.id} className="flex-1">
                 <NavLink to={item.to} aria-current={active ? "page" : undefined}
-                  aria-label="Desafío" className="flex flex-col items-center gap-1">
+                  aria-label="Cancha" className="flex flex-col items-center gap-1">
                   <span className={cn(
                     "relative -mt-6 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-clay text-primary-foreground shadow-clay ring-4 ring-background transition-transform",
                     active ? "scale-105" : "hover:scale-105",

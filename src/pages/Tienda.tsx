@@ -5,6 +5,7 @@ import { useRewards, useFichas, type RewardRow } from "@/hooks/useFichas";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BottomNav } from "@/components/BottomNav";
 import { CoinPill } from "@/components/arena";
+import { CoinHud } from "@/components/home/CoinHud";
 
 // IMPORTANTE: en toda la Tienda NUNCA se muestran precios en pesos. Un premio se
 // muestra como "beneficio en [Marca]" + su costo en FICHAS (primitiva CoinPill/oro).
@@ -25,6 +26,9 @@ const Tienda = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24">
+      <div className="safe-top sticky top-0 z-30 px-3 pt-2">
+        <CoinHud className="mx-auto max-w-md" />
+      </div>
       <div className="mx-auto max-w-md px-5 py-6">
         <div className="mb-4 flex items-center gap-3">
           <Link to="/" className="flex h-9 w-9 items-center justify-center rounded-2xl border border-border bg-card text-muted-foreground">

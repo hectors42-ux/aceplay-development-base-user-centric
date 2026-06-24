@@ -10,6 +10,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { BottomNav } from "@/components/BottomNav";
 import { SponsorLockup } from "@/components/SponsorLockup";
+import { CoinHud } from "@/components/home/CoinHud";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -78,6 +79,9 @@ const Descubrir = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24">
+      <div className="safe-top sticky top-0 z-30 px-3 pt-2">
+        <CoinHud className="mx-auto max-w-md" />
+      </div>
       <div className="mx-auto max-w-md px-5 py-6">
         <div className="mb-5 flex items-center gap-3">
           <Link to="/" className="flex h-9 w-9 items-center justify-center rounded-2xl border border-border bg-card text-muted-foreground">

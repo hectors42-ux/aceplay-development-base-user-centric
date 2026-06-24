@@ -26,11 +26,13 @@ export function CoinHud({ rating, className }: CoinHudProps) {
         Ace<span className="text-action">Play</span>
       </span>
 
-      {/* RATING · skill (volt) */}
-      <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-skill/10 px-2.5 py-1 text-sm font-extrabold text-skill" aria-label="Tu rating">
-        <span className="grid h-5 w-5 place-items-center rounded-full bg-gradient-to-br from-skill to-[hsl(var(--skill-deep))] text-[9px] text-[hsl(var(--skill-foreground))]">◈</span>
-        <span className="tabular-nums">{rating ?? "—"}</span>
-      </span>
+      {/* RATING · skill (volt) — se oculta si no hay valor disponible */}
+      {rating != null && rating !== "" && (
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-skill/10 px-2.5 py-1 text-sm font-extrabold text-skill" aria-label="Tu rating">
+          <span className="grid h-5 w-5 place-items-center rounded-full bg-gradient-to-br from-skill to-[hsl(var(--skill-deep))] text-[9px] text-[hsl(var(--skill-foreground))]">◈</span>
+          <span className="tabular-nums">{rating}</span>
+        </span>
+      )}
 
       {/* PUNTOS · fichas (oro) → Tienda */}
       <Link to="/tienda" aria-label="Tus Fichas · ir a la Tienda" className="inline-flex items-center gap-1.5 rounded-full border border-border bg-fichas/10 px-2.5 py-1 text-sm font-extrabold text-fichas transition-smooth hover:bg-fichas/20">

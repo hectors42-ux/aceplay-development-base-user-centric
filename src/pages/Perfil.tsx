@@ -24,6 +24,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { BottomNav } from "@/components/BottomNav";
 import { ThemePicker } from "@/components/ThemePicker";
+import { CoinHud } from "@/components/home/CoinHud";
 import { PlayerProfileCard } from "@/components/profile/PlayerProfileCard";
 import { BadgesGrid } from "@/components/profile/BadgesGrid";
 import { ProfileEditDialog } from "@/components/profile/ProfileEditDialog";
@@ -71,7 +72,14 @@ const Perfil = () => {
 
   return (
     <div className="min-h-screen bg-gradient-warm">
-      <header className="safe-top sticky top-0 z-10 border-b border-border bg-background/85 backdrop-blur-md">
+      {/* HUD doble moneda (liquid glass) */}
+      <div className="safe-top sticky top-0 z-30 px-3 pt-2">
+        <CoinHud
+          className="mx-auto max-w-md"
+          rating={summary?.rating?.level != null ? Number(summary.rating.level).toFixed(1) : undefined}
+        />
+      </div>
+      <header className="z-10">
         <div className="mx-auto flex max-w-md items-center gap-3 px-5 pb-3 pt-3">
           <Link
             to="/"

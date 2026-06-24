@@ -1,7 +1,8 @@
 # PENDIENTES — piezas formales de trabajo
 
 > Trabajo identificado y **deliberadamente diferido**, no bugs sueltos. Cada entrada
-> es una pieza acotada con alcance propio. Última actualización: 2026-06-24.
+> es una pieza acotada con alcance propio. Última actualización: 2026-06-24
+> (cierre de la fase de reskin/diseño).
 
 ---
 
@@ -67,11 +68,23 @@ cableado real se hace después.
 
 ---
 
-## 3. Homologación de diseño — 2 elementos bloqueados por datos (Fase 2)
+## 3. Homologación de diseño — COMPLETADA salvo 2 elementos bloqueados por dato
 
-**Estado:** la homologación visual a `docs/design/` está hecha salvo 2 elementos que
-necesitan datos que hoy NO existen. Solo se cablean en Fase 2; no son reskin.
+**Estado:** ✅ **COMPLETADA.** La fase de reskin/diseño se cierra el 2026-06-24. La
+homologación visual a `docs/design/` está hecha en todas las pantallas, **salvo 2 elementos
+que necesitan datos que hoy NO existen** (no son reskin; se cablean en Fase 2).
 
+### Lo que SÍ quedó homologado (cerrado)
+- Sistema Arena: CoinHud doble moneda, insignia `.arena` con anillo volt, botones oro en
+  Tienda, cabecera de Perfil, Liquid Glass por tema, FAB naranja. Commits `7e2ae73`…`33fcee5`.
+- Marca: Rally en favicon + PWA (`name` "AcePlay", fondo navy), Brand Foundation en
+  `docs/design/brand-foundation/`, wordmark Cormorant (Ace roman · Play italic). Commit `ba50474`.
+- HUD con identidad (avatar + nombre), selector de deporte centrado, footer de marca
+  compartido (`AppFooter`: arco + AcePlay · Tennis, gamified · año · derechos, sin club) en
+  Inicio y Perfil, rediseño de la vista de Auth (splash con arco animado + Rally) y tour de
+  bienvenida reescrito a la app actual. Commits `dc9efef`, `f24f693`.
+
+### Los 2 elementos bloqueados por dato (Fase 2, no reskin)
 - **"Desafío del día" de Inicio** (rival sugerido + "+30 PTS" + head-to-head, como en
   `docs/design/reference/inicio.png`): `src/hooks/useMatchOfTheWeek.ts` es **stub**
   (`items: []`), así que `MatchOfTheWeekCard` no renderiza. Hace falta un RPC/hook que
@@ -82,19 +95,34 @@ necesitan datos que hoy NO existen. Solo se cablean en Fase 2; no son reskin.
   "destacado". Para el lockup por evento y el tag DESTACADO hay que extender el RPC.
   El lockup general (`SponsorLockup scope="discover"`) y los tags Abierto/En vivo sí están.
 
-**Todo lo demás del handoff sí está homologado** (CoinHud doble moneda, insignia `.arena`
-con anillo volt, botones oro en Tienda, cabecera de Perfil, Liquid Glass por tema, FAB
-naranja). Ver commits `7e2ae73`…`33fcee5`.
+---
+
+## 4. Tienda y Espacios — RESKIN PARCIAL (dependencia de cableado, no bug)
+
+**Estado:** la **presentación** está homologada al sistema Arena, pero ambas pantallas
+muestran **datos vacíos** porque cuelgan de hooks en **stub**. No es un bug del reskin: es
+una **dependencia** del cableado de la estructura competitiva / vitrina de torneos.
+
+- **Tienda:** la grilla, los botones oro y el HUD de Fichas están reskineados. El catálogo
+  real de canjes depende de los datos de Fichas/beneficios que aún no se exponen por completo.
+- **Espacios:** la pantalla y la navegación (5º destino) están reskineadas, pero el listado
+  de torneos/categorías queda vacío por los hooks en stub descritos en el **punto 1**
+  (`useTournamentsList`, `useTournamentDetailEnriched`, `useMyOperatorTournaments`, etc.).
+
+**Cuándo se completa:** al cablear la **vitrina de torneos / estructura competitiva** (punto 1).
+Hasta entonces se quedan en reskin parcial **por diseño**, no por defecto pendiente.
 
 ---
 
-## 4. Decisión de diseño pendiente — fondo navy vs cálido
+## 5. Fondo del tema Arena — DECIDIDO: NAVY `#070B16`
 
-**Estado:** abierta, requiere decisión del cliente.
+**Estado:** ✅ **DECIDIDO y cerrado** (2026-06-24). Cierra la antigua "decisión de fondo
+navy vs cálido".
 
-- Las 4 referencias PNG (`docs/design/reference/*.png`) muestran un **fondo oscuro cálido
-  (naranja)**, pero el token `--bg` del CSS de diseño (`docs/design/tokens/aceplay-arena.css`)
-  es **navy `#070B16`**. El README dice "tokens manda", así que la app usa **navy**.
-- Si se quiere el fondo cálido de los PNG, es un cambio de la **superficie del tema Arena**
-  (`--background`/`--arena-grad`) que además debe coordinarse con el **sistema estacional K**
-  (Cemento navy-azul / Arcilla cálido / Pasto verde) para no solapar Arena con Arcilla.
+- El fondo por defecto del tema Arena es **navy `#070B16`**, alineado al token `--bg` del CSS
+  de diseño (`docs/design/tokens/aceplay-arena.css`). Se mantiene el principio "tokens manda".
+- Se descarta el fondo cálido (naranja) que insinuaban las referencias PNG
+  (`docs/design/reference/*.png`); esas referencias se interpretan como ambientación, no como
+  superficie. Decisión confirmada por el cliente.
+- Coherente con el **sistema estacional K** (Cemento navy-azul / Arcilla cálido / Pasto verde /
+  Arena navy): no se solapa Arena con Arcilla.

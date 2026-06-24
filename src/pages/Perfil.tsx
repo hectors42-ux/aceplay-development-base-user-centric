@@ -132,7 +132,9 @@ const Perfil = () => {
               <p className="mt-0.5 text-xs text-muted-foreground">
                 {ext.handle ? `@${ext.handle}` : ""}
                 {ext.handle && summary?.profile?.member_since ? " · " : ""}
-                {summary?.profile?.member_since ? `miembro desde ${summary.profile.member_since}` : ""}
+                {summary?.profile?.member_since
+                  ? `miembro desde ${new Date(summary.profile.member_since).toLocaleDateString("es-CL", { month: "short", year: "numeric" })}`
+                  : ""}
               </p>
             )}
           </section>

@@ -30,7 +30,7 @@ export function InicioNotifications() {
   if (!reto && !overdue && !call) return null;
 
   return (
-    <section className="space-y-3 px-5" aria-label="Notificaciones de la cancha">
+    <section className="flex flex-col gap-3 px-5" aria-label="Notificaciones de la cancha">
       {/* RETO RECIBIDO · naranja */}
       {reto && (
         <article className="rounded-2xl border border-action/40 bg-action/[0.06] p-4 shadow-card">
@@ -87,9 +87,9 @@ export function InicioNotifications() {
         </article>
       )}
 
-      {/* CARGA TU RESULTADO · oro */}
+      {/* CARGA TU RESULTADO · oro — acción primaria (va arriba de todo). */}
       {overdue && (
-        <article className="rounded-2xl border border-fichas/40 bg-fichas/[0.06] p-4 shadow-card">
+        <article className="order-first rounded-2xl border border-fichas/40 bg-fichas/[0.06] p-4 shadow-card">
           <p className="mb-3 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-fichas">
             Tu partido ya pasó · falta el resultado
           </p>

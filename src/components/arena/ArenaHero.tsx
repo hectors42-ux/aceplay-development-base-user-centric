@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useArenaMotion } from "./motion";
@@ -7,12 +8,16 @@ export interface ArenaHeroProps {
   categoria: string;   // p.ej. "Tercera" / "A"
   sport?: string;      // "Pádel" / "Tenis"
   className?: string;
+  /** Slot opcional ARRIBA (p.ej. avatar Rally). Solo el Inicio lo usa. */
+  avatar?: ReactNode;
+  /** Slot opcional ABAJO, dentro del hero (p.ej. el camino de ascenso). */
+  footer?: ReactNode;
 }
 
 // Arena Hero — la insignia de CATEGORÍA como trofeo (capa HABILIDAD), con el
 // ANILLO VOLT (conic-gradient enmascarado) y la categoría en volt con glow,
 // según docs/design/tokens/aceplay-arena.css (`.arena` + `.ring` + `.cat`).
-export function ArenaHero({ nivel, categoria, sport, className }: ArenaHeroProps) {
+export function ArenaHero({ nivel, categoria, sport, className, avatar, footer }: ArenaHeroProps) {
   const { reveal } = useArenaMotion();
   return (
     <motion.div
@@ -23,6 +28,7 @@ export function ArenaHero({ nivel, categoria, sport, className }: ArenaHeroProps
         className,
       )}
     >
+      {avatar && <div className="mb-3 flex justify-center">{avatar}</div>}
       <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
         Categoría actual{sport ? ` · ${sport}` : ""}
       </p>
@@ -35,6 +41,7 @@ export function ArenaHero({ nivel, categoria, sport, className }: ArenaHeroProps
       <p className="mt-2 text-[13px] font-semibold text-muted-foreground">
         Nivel <span className="tabular-nums text-foreground">{Number(nivel).toFixed(1)}</span> / 7.0
       </p>
+      {footer && <div className="mt-4 border-t border-border/60 pt-4 text-left">{footer}</div>}
     </motion.div>
   );
 }

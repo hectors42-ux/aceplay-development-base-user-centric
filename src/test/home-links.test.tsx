@@ -286,6 +286,7 @@ const renderHome = async () => {
           <Route path="/reservar" element={<RouteSpy label="reservar" />} />
           <Route path="/torneos" element={<RouteSpy label="torneos" />} />
           <Route path="/ranking" element={<RouteSpy label="ranking" />} />
+          <Route path="/cancha" element={<RouteSpy label="cancha" />} />
           <Route path="/perfil" element={<RouteSpy label="perfil" />} />
           <Route path="/clases" element={<RouteSpy label="clases" />} />
         </Routes>
@@ -325,29 +326,21 @@ describe("Home — enlaces y navegación", () => {
     expect(link).toHaveAttribute("href", "/mis-reservas");
   });
 
-  it("PlayerRatingCard (compact) navega a /perfil al hacer click", async () => {
+  // Rediseño del Inicio (Épica M): el hero de identidad + ascenso enruta a /cancha
+  // (tab Progreso), no a /perfil. El Inicio resume y enruta a Cancha.
+  it("El hero de identidad + ascenso navega a /cancha", async () => {
     await renderHome();
-    const ratingLink = await screen.findByRole("link", { name: /tu nivel/i });
-    expect(ratingLink).toHaveAttribute("href", "/perfil");
+    const heroLink = await screen.findByRole("link", { name: /cancha · progreso/i });
+    expect(heroLink).toHaveAttribute("href", "/cancha");
   });
 
-  it("QuickActions: cada botón apunta a su ruta", async () => {
+  it("El CTA primario 'Competir' navega a /cancha (sin Resultado/Torneos como CTA)", async () => {
     await renderHome();
-    // Acotamos al <section aria-labelledby="acciones-titulo"> para evitar
-    // colisiones con los enlaces homónimos de BottomNav (Torneos, Ranking, etc.).
-    const titulo = await screen.findByText("¿Qué quieres hacer hoy?");
-    const section = titulo.closest("section") as HTMLElement;
-    const within = await import("@testing-library/react").then((m) => m.within);
-    const w = within(section);
-    const hrefs = Array.from(section.querySelectorAll("a")).map((a) => a.getAttribute("href"));
-    // Reservas y Clases son módulos dormidos → fuera de las acciones rápidas.
-    expect(hrefs).not.toContain("/reservar");
-    expect(hrefs).not.toContain("/clases");
-    expect(hrefs).toContain("/cargar");
-    expect(hrefs).toContain("/torneos");
-    expect(hrefs.some((h) => h?.startsWith("/ranking"))).toBe(true);
-    // Sanity: la acción principal ahora es "Competir"
-    expect(w.getByText(/^competir$/i)).toBeInTheDocument();
+    const competir = await screen.findByText(/^competir$/i);
+    const link = competir.closest("a") as HTMLAnchorElement;
+    expect(link).toHaveAttribute("href", "/cancha");
+    // Los CTA hermanos del Inicio antiguo ya no existen como acciones primarias.
+    expect(screen.queryByText("¿Qué quieres hacer hoy?")).toBeNull();
   });
 
   it("BottomNav: cada tab apunta a su ruta", async () => {
@@ -366,13 +359,10 @@ describe("Home — enlaces y navegación", () => {
     expect(hrefs).toContain("/perfil");
   });
 
-  it("HomeRecentMatchesCard expone el botón 'Ver historial'", async () => {
-    // El render del sheet con su contenido se cubre en match-history-variants.test.tsx.
-    // Aquí solo validamos que el CTA exista (el click dispara setState y se prueba allí).
+  // El bloque de "pulso ligero" (racha · liga · XP) enruta a /cancha (tab Subir).
+  it("El pulso ligero (racha/liga/XP) navega a /cancha", async () => {
     await renderHome();
-    const verHistorial = await screen.findByRole("button", {
-      name: /ver historial completo de partidos/i,
-    });
-    expect(verHistorial).toBeInTheDocument();
+    const pulse = await screen.findByRole("link", { name: /cancha · subir/i });
+    expect(pulse).toHaveAttribute("href", "/cancha");
   });
 });

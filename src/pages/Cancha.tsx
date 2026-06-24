@@ -140,7 +140,7 @@ const Cancha = () => {
           <TabsContent value="conexion" className="mt-4 space-y-4">
             {/* Accesos rápidos (Invitaciones / Agenda). Las pantallas son de M5. */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="flex items-center gap-2 rounded-2xl border border-border bg-card p-4 opacity-90 shadow-card" title="Bandeja completa en M5">
+              <Link to="/invitaciones" className="flex items-center gap-2 rounded-2xl border border-border bg-card p-4 shadow-card transition-smooth hover:bg-muted">
                 <Mail className="h-5 w-5 text-action" />
                 <span>
                   <span className="block text-sm font-bold text-foreground">Invitaciones</span>
@@ -148,14 +148,14 @@ const Cancha = () => {
                     {inviteCount > 0 ? `${inviteCount} en agenda` : "sin pendientes"}
                   </span>
                 </span>
-              </div>
-              <div className="flex items-center gap-2 rounded-2xl border border-border bg-card p-4 opacity-90 shadow-card" title="Calendario completo en M5">
+              </Link>
+              <Link to="/agenda" className="flex items-center gap-2 rounded-2xl border border-border bg-card p-4 shadow-card transition-smooth hover:bg-muted">
                 <Calendar className="h-5 w-5 text-info" />
                 <span>
                   <span className="block text-sm font-bold text-foreground">Agenda</span>
                   <span className="block text-xs text-muted-foreground">{agenda.length} partidos</span>
                 </span>
-              </div>
+              </Link>
             </div>
 
             {/* Llamados abiertos de la comunidad (M4). */}

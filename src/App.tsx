@@ -43,6 +43,10 @@ const JugadorPublico = lazy(() => import("./pages/JugadorPublico.tsx"));
 const EnviarReto = lazy(() => import("./pages/EnviarReto.tsx"));
 const LanzarDisponibilidad = lazy(() => import("./pages/LanzarDisponibilidad.tsx"));
 const Llamados = lazy(() => import("./pages/Llamados.tsx"));
+const Invitaciones = lazy(() => import("./pages/Invitaciones.tsx"));
+const Agenda = lazy(() => import("./pages/Agenda.tsx"));
+const CargarResultadoReto = lazy(() => import("./pages/CargarResultadoReto.tsx"));
+const Victoria = lazy(() => import("./pages/Victoria.tsx"));
 const CargarResultado = lazy(() => import("./pages/CargarResultado.tsx"));
 const Escalerilla = lazy(() => import("./pages/Escalerilla.tsx"));
 const Descubrir = lazy(() => import("./pages/Descubrir.tsx"));
@@ -268,6 +272,39 @@ const App = () => (
                     element={
                       <ProtectedRoute>
                         <Llamados />
+                      </ProtectedRoute>
+                    }
+                  />
+                  {/* Cierre del loop (M5): invitaciones · agenda · cargar resultado · badge. */}
+                  <Route
+                    path="/invitaciones"
+                    element={
+                      <ProtectedRoute>
+                        <Invitaciones />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/agenda"
+                    element={
+                      <ProtectedRoute>
+                        <Agenda />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/resultado/cargar/:matchId"
+                    element={
+                      <ProtectedRoute>
+                        <CargarResultadoReto />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/victoria/:matchId"
+                    element={
+                      <ProtectedRoute>
+                        <Victoria />
                       </ProtectedRoute>
                     }
                   />

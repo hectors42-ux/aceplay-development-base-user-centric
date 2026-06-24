@@ -254,11 +254,12 @@ export const useWithdrawAvailability = () => {
 export const useRespondChallenge = () => {
   const refresh = useCanchaRefresh();
   return useMutation({
-    mutationFn: async (vars: { id: string; action: "accept" | "reject" | "propose"; slot?: string }) => {
+    mutationFn: async (vars: { id: string; action: "accept" | "reject" | "propose"; slot?: string; slots?: string[] }) => {
       const { error } = await supabase.rpc("respond_challenge", {
         _challenge_id: vars.id,
         _action: vars.action,
         _slot: vars.slot ?? null,
+        _slots: vars.slots ?? null,
       });
       if (error) throw error;
     },
@@ -349,6 +350,126 @@ export const useSendChallenge = () => {
       toast.success("Reto enviado · queda pendiente de su respuesta");
     },
     onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "No se pudo enviar el reto"),
+  });
+};
+
+// ── Retos enviados (para la bandeja /invitaciones · pestaña Enviadas) ─────────
+export interface SentChallenge {
+  id: string;
+  sport: string;
+  proposed_slots: string[];
+  agreed_slot: string | null;
+  status: string;
+  note: string | null;
+  match_id: string | null;
+  created_at: string;
+  to_profile: ProfileMini | null;
+  space: { name: string | null } | null;
+}
+export const useSentChallenges = () => {
+  const { user } = useAuth();
+  return useQuery<SentChallenge[]>({
+    queryKey: ["sent-challenges", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("challenges")
+        .select(
+          "id, sport, proposed_slots, agreed_slot, status, note, match_id, created_at, " +
+            "to_profile:profiles!challenges_to_user_fkey(id, display_name, avatar_url, avatar_kind, avatar_look), " +
+            "space:space!challenges_space_id_fkey(name)",
+        )
+        .eq("from_user", user!.id)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data as unknown as SentChallenge[]) ?? [];
+    },
+  });
+};
+
+// ── Un reto puntual (para la pantalla de cargar resultado) ────────────────────
+export interface ChallengeDetail {
+  id: string;
+  from_user: string;
+  to_user: string;
+  sport: string;
+  space_id: string | null;
+  agreed_slot: string | null;
+  status: string;
+  match_id: string | null;
+  from_profile: ProfileMini | null;
+  to_profile: ProfileMini | null;
+  space: { name: string | null } | null;
+}
+export const useChallenge = (id: string | undefined) => {
+  const { user } = useAuth();
+  return useQuery<ChallengeDetail | null>({
+    queryKey: ["challenge", id, user?.id],
+    enabled: !!user && !!id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("challenges")
+        .select(
+          "id, from_user, to_user, sport, space_id, agreed_slot, status, match_id, " +
+            "from_profile:profiles!challenges_from_user_fkey(id, display_name, avatar_url, avatar_kind, avatar_look), " +
+            "to_profile:profiles!challenges_to_user_fkey(id, display_name, avatar_url, avatar_kind, avatar_look), " +
+            "space:space!challenges_space_id_fkey(name)",
+        )
+        .eq("id", id!)
+        .maybeSingle();
+      if (error) throw error;
+      return (data as unknown as ChallengeDetail) ?? null;
+    },
+  });
+};
+
+// ── Cargar resultado de un reto: materializa el partido con el MOTOR (record_match)
+//    y enlaza challenge.match_id. El rating se mueve después, al confirmar. ──────
+export const useRecordChallengeResult = () => {
+  const refresh = useCanchaRefresh();
+  return useMutation({
+    mutationFn: async (vars: { challengeId: string; winnerIsMe: boolean; sets: { a: number; b: number }[] }) => {
+      const { data, error } = await supabase.rpc("record_challenge_result", {
+        _challenge_id: vars.challengeId,
+        _winner_is_me: vars.winnerIsMe,
+        _sets: vars.sets.map((s) => ({ games_a: s.a, games_b: s.b })),
+      });
+      if (error) throw error;
+      return data as string; // match id
+    },
+    onSuccess: () => {
+      refresh();
+      toast.success("Resultado cargado · espera la confirmación de tu rival");
+    },
+    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "No se pudo cargar el resultado"),
+  });
+};
+
+// ── Datos del badge de victoria (match_victory_card · solo lectura) ────────────
+export interface VictoryCard {
+  opponent_id: string;
+  opponent_name: string | null;
+  opponent_avatar_url: string | null;
+  opponent_avatar_kind: string | null;
+  opponent_avatar_look: string | null;
+  i_won: boolean;
+  confirmed: boolean;
+  sets: { me: number; opp: number }[];
+  pts_delta: number | null;
+  xp_delta: number | null;
+  space_name: string | null;
+  club_name: string | null;
+}
+export const useVictoryCard = (matchId: string | undefined) => {
+  const { user } = useAuth();
+  return useQuery<VictoryCard | null>({
+    queryKey: ["victory-card", matchId, user?.id],
+    enabled: !!user && !!matchId,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("match_victory_card", { _match_id: matchId });
+      if (error) throw error;
+      return (data as VictoryCard[] | null)?.[0] ?? null;
+    },
   });
 };
 

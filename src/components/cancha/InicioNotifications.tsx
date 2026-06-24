@@ -116,7 +116,7 @@ export function InicioNotifications() {
             size="lg"
             className="mt-3 w-full gap-1 border border-fichas/40 bg-fichas text-[#211803] shadow-card hover:bg-fichas/90"
           >
-            <Link to="/cargar">
+            <Link to={`/resultado/cargar/${overdue.ref_id}`}>
               Cargar resultado <ArrowUp className="h-4 w-4" />
             </Link>
           </Button>

@@ -423,8 +423,9 @@ export const useChallenge = (id: string | undefined) => {
   });
 };
 
-// ── Cargar resultado de un reto: materializa el partido con el MOTOR (record_match)
-//    y enlaza challenge.match_id. El rating se mueve después, al confirmar. ──────
+// ── Cargar resultado de un reto: materializa el partido con el MOTOR existente de
+//    resultados (vía record_challenge_result) y enlaza challenge.match_id. El rating
+//    se mueve después, al confirmar (doble confirmación del motor). ───────────────
 export const useRecordChallengeResult = () => {
   const refresh = useCanchaRefresh();
   return useMutation({

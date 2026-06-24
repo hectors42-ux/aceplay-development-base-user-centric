@@ -25,7 +25,8 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import { BottomNav } from "@/components/BottomNav";
 import { ThemePicker } from "@/components/ThemePicker";
 import { CoinHud } from "@/components/home/CoinHud";
-import { PlayerProfileCard } from "@/components/profile/PlayerProfileCard";
+import { UserAvatar } from "@/components/avatar/UserAvatar";
+import { getLevelBand } from "@/lib/rating-utils";
 import { BadgesGrid } from "@/components/profile/BadgesGrid";
 import { ProfileEditDialog } from "@/components/profile/ProfileEditDialog";
 
@@ -107,9 +108,33 @@ const Perfil = () => {
       </header>
 
       <main className="mx-auto max-w-md space-y-4 pb-24 pt-3">
+        {/* Cabecera de identidad (diseño perfil.png): avatar con anillo volt +
+            insignia de categoría + nombre grande + handle/antigüedad. */}
         {user && (
-          <section className="px-5">
-            <PlayerProfileCard userId={user.id} mode="own" />
+          <section className="px-5 pt-1 text-center">
+            <span className="mx-auto block w-fit rounded-full" style={{ boxShadow: "0 0 0 2.5px hsl(var(--skill))" }}>
+              <UserAvatar
+                kind={profile?.avatar_kind}
+                look={profile?.avatar_look}
+                url={profile?.avatar_url}
+                name={memberName}
+                className="h-24 w-24"
+              />
+            </span>
+            {summary?.rating?.level != null && (
+              <span className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.1em] text-foreground">
+                <span aria-hidden className="h-2.5 w-2.5 rotate-45 rounded-[2px] bg-skill" />
+                {getLevelBand(summary.rating.level).label}
+              </span>
+            )}
+            <h1 className="mt-2 font-display text-3xl font-black uppercase tracking-tight text-foreground">{memberName}</h1>
+            {(ext.handle || summary?.profile?.member_since) && (
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                {ext.handle ? `@${ext.handle}` : ""}
+                {ext.handle && summary?.profile?.member_since ? " · " : ""}
+                {summary?.profile?.member_since ? `miembro desde ${summary.profile.member_since}` : ""}
+              </p>
+            )}
           </section>
         )}
 

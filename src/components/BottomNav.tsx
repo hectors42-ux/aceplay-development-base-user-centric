@@ -57,8 +57,10 @@ export const BottomNav = () => {
               <li key={item.id} className="flex-1">
                 <NavLink to={item.to} aria-current={active ? "page" : undefined}
                   aria-label="Cancha" className="flex flex-col items-center gap-1">
-                  <span className={cn(
-                    "relative -mt-6 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-clay text-primary-foreground shadow-clay ring-4 ring-background transition-transform",
+                  <span
+                    style={{ boxShadow: "0 14px 28px -8px rgba(236,110,46,.42), inset 0 1px 0 rgba(255,255,255,.35)" }}
+                    className={cn(
+                    "relative -mt-[30px] flex h-[60px] w-[60px] items-center justify-center rounded-[20px] bg-gradient-clay text-primary-foreground transition-transform",
                     active ? "scale-105" : "hover:scale-105",
                   )}>
                     <Icon className="h-6 w-6" strokeWidth={2.4} />

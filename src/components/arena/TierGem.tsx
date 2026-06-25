@@ -12,12 +12,14 @@ const TIER_LABEL: Record<Tier, string> = {
 // Metales de RANGO (capa enganche/liga). Deliberadamente BAJA saturación para no
 // confundirse con los roles vivos (skill/fichas/etc.) — un medallero, no un dato.
 // Overridable por CSS var `--tier-<id>` para que la Épica K re-tinte por tema.
+// Hex exactos de la guía §1.3 (Madera→Platino), expresados en HSL para el token.
+//   madera #9A6A43 · bronce #D08338 · plata #C7D0E0 · oro #FFC53D · platino #A9ECFF
 const TIER_HSL: Record<Tier, string> = {
-  madera: "28 30% 40%",
-  bronce: "24 48% 48%",
-  plata: "220 10% 68%",
-  oro: "40 52% 54%",
-  platino: "205 22% 82%",
+  madera: "27 40% 43%",
+  bronce: "31 62% 52%",
+  plata: "218 29% 83%",
+  oro: "42 100% 62%",
+  platino: "193 100% 83%",
 };
 
 const SIZE = { sm: 20, md: 32, lg: 48 } as const;

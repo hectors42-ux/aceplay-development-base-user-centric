@@ -33,7 +33,17 @@ export function CoinPill({ kind, value, delta, onClick, className }: CoinPillPro
       {isFichas ? (
         <Coins className="h-3.5 w-3.5" aria-hidden />
       ) : (
-        <span className="text-[10px] font-extrabold tracking-tight opacity-80">PTS</span>
+        // Rating = ESCUDO con gradiente volt (§5.1). Firewall visual: volt/escudo
+        // para habilidad; oro/moneda para Fichas. Nunca se mezclan.
+        <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
+          <defs>
+            <linearGradient id="ace-volt-shield" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="hsl(var(--skill))" />
+              <stop offset="100%" stopColor="hsl(var(--skill-deep))" />
+            </linearGradient>
+          </defs>
+          <path d="M12 2 3.5 5.2v6.1c0 5.05 3.6 8.4 8.5 10.2 4.9-1.8 8.5-5.15 8.5-10.2V5.2L12 2Z" fill="url(#ace-volt-shield)" />
+        </svg>
       )}
       <span>{value}</span>
       {typeof delta === "number" && delta !== 0 && (

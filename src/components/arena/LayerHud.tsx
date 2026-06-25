@@ -43,7 +43,7 @@ export function LayerHud({
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto]">
         {/* CAPA ENGANCHE */}
         <section aria-label="Constancia y enganche" className="rounded-2xl border border-border bg-card/60 p-3">
-          <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+          <p className="mb-2 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
             Constancia · enganche
           </p>
           <div className="flex flex-wrap items-center gap-2">
@@ -56,7 +56,7 @@ export function LayerHud({
         {/* CAPA PREMIO */}
         <section aria-label="Premio" className="flex items-center justify-center rounded-2xl border border-border bg-card/60 p-3">
           <div className="text-center">
-            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Premio</p>
+            <p className="mb-2 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Premio</p>
             <CoinPill kind="fichas" value={fichas} onClick={onFichas} />
           </div>
         </section>

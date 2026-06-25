@@ -29,7 +29,7 @@ export function ArenaHero({ nivel, categoria, sport, className, avatar, footer }
       )}
     >
       {avatar && <div className="mb-3 flex justify-center">{avatar}</div>}
-      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+      <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
         Categoría actual{sport ? ` · ${sport}` : ""}
       </p>
       <p

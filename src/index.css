@@ -127,7 +127,8 @@
 
     --radius: 0.625rem;
 
-    --font-display: 'Cormorant Garamond', Georgia, serif;
+    /* Displays en Archivo (§12); Cormorant queda reservado al wordmark (font-cormorant). */
+    --font-display: 'Archivo', system-ui, -apple-system, sans-serif;
     --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
 
     --gradient-clay: linear-gradient(135deg, hsl(16 62% 44%), hsl(18 70% 54%));
@@ -717,7 +718,8 @@
 
     --radius: 0.5rem;
 
-    --font-display: 'Cormorant Garamond', Georgia, serif;
+    /* Displays en Archivo (§12); Cormorant queda reservado al wordmark (font-cormorant). */
+    --font-display: 'Archivo', system-ui, -apple-system, sans-serif;
     --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 
     --gradient-clay: linear-gradient(135deg, hsl(154 60% 21%), hsl(259 48% 35%));
@@ -949,7 +951,7 @@
 
   /* Editorial label uppercase con letterspacing */
   .label-eyebrow {
-    @apply text-[11px] font-medium uppercase tracking-[0.2em] text-clay-deep;
+    @apply font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-clay-deep;
   }
 
   /* Línea de cancha decorativa */

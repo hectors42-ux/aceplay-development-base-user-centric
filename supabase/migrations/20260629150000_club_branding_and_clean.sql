@@ -18,7 +18,7 @@ begin
   end if;
   if _stade is not null then
     insert into public.club_profile (space_id, branding)
-    values (_stade, jsonb_build_object('logo_url', null, 'primary', '#1e3a6f', 'initials', 'SF'))
+    values (_stade, jsonb_build_object('logo_url', '/stade-francais.webp', 'primary', '#1e3a6f', 'initials', 'SF'))
     on conflict (space_id) do update set branding = excluded.branding;
   end if;
 

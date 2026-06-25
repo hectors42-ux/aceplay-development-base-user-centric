@@ -18,6 +18,10 @@ export interface MySpace {
   live: boolean;
   pendingTotal: number;
   competitions: SpaceCompetition[];
+  // Marca del club (club_profile.branding): el club expone su identidad aquí.
+  logoUrl: string | null;
+  brandColor: string | null;
+  initials: string | null;
 }
 
 interface SpaceRow {
@@ -58,16 +62,21 @@ export function useMySpaces() {
     enabled: !!user,
     queryFn: async () => {
       const uid = user!.id;
-      const [spacesRes, escRes, catRes, memRes, matchRes] = await Promise.all([
+      const [spacesRes, escRes, catRes, memRes, matchRes, brandRes] = await Promise.all([
         supabase.from("space").select("id, name, type, parent_space_id, sport, slug").in("type", ["club", "escalerilla", "tournament", "category"]),
         supabase.rpc("list_escalerillas"),
         supabase.rpc("list_tournament_categories"),
         supabase.from("space_membership").select("space_id").eq("player_id", uid).eq("status", "active"),
         supabase.from("matches").select("space_id").eq("confirmation_status", "pending").or(`side_a.cs.{${uid}},side_b.cs.{${uid}}`),
+        supabase.from("club_profile").select("space_id, branding"),
       ]);
 
       const spaces = (spacesRes.data as SpaceRow[] | null) ?? [];
       const byId = new Map(spaces.map((s) => [s.id, s]));
+      const brandById = new Map<string, { logo_url?: string | null; primary?: string | null; initials?: string | null }>();
+      for (const b of ((brandRes.data as { space_id: string; branding: Record<string, unknown> | null }[] | null) ?? [])) {
+        if (b.branding) brandById.set(b.space_id, b.branding as { logo_url?: string | null; primary?: string | null; initials?: string | null });
+      }
       const myClubIds = new Set(
         (((memRes.data as { space_id: string }[] | null) ?? [])
           .map((m) => byId.get(m.space_id))
@@ -85,6 +94,7 @@ export function useMySpaces() {
         if (!cs) return null;
         let c = clubs.get(clubId);
         if (!c) {
+          const brand = brandById.get(clubId);
           c = {
             clubId,
             clubName: cs.name,
@@ -93,6 +103,9 @@ export function useMySpaces() {
             live: false,
             pendingTotal: 0,
             competitions: [],
+            logoUrl: brand?.logo_url ?? null,
+            brandColor: brand?.primary ?? null,
+            initials: brand?.initials ?? null,
           };
           clubs.set(clubId, c);
         }

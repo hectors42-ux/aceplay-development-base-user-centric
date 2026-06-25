@@ -42,6 +42,8 @@ export const CreateSpaceDialog = ({ kind, open, onOpenChange, onCreated }: Props
   const [visibility, setVisibility] = useState("public");
   const [motor, setMotor] = useState("round_robin");
   const [categoryLabel, setCategoryLabel] = useState("Categoría OPEN");
+  const [logoUrl, setLogoUrl] = useState("");
+  const [brandColor, setBrandColor] = useState("#EC6E2E");
   const [busy, setBusy] = useState(false);
 
   const submit = async () => {
@@ -52,6 +54,10 @@ export const CreateSpaceDialog = ({ kind, open, onOpenChange, onCreated }: Props
       : await supabase.rpc("create_tournament", {
           _name: name.trim(), _sport: sport, _visibility: visibility, _motor: motor, _category_label: categoryLabel.trim(),
         });
+    // Marca del club (opcional): la expone en Espacios/Descubrir. Solo si se indicó.
+    if (!error && (logoUrl.trim() || brandColor)) {
+      await supabase.rpc("set_club_branding", { _logo_url: logoUrl.trim() || null, _primary: brandColor || null });
+    }
     setBusy(false);
     if (error) { toast.error(error.message); return; }
     toast.success(kind === "escalerilla" ? "Escalerilla creada." : "Torneo creado.");
@@ -99,6 +105,16 @@ export const CreateSpaceDialog = ({ kind, open, onOpenChange, onCreated }: Props
               </div>
             </>
           )}
+          {/* Marca del club (opcional): logo + color con que el club se expone en Espacios. */}
+          <div className="space-y-1.5 rounded-2xl border border-border bg-muted/30 p-3">
+            <Label className="text-xs text-muted-foreground">Marca de tu club (opcional)</Label>
+            <Input value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="URL del logo (https://…)" />
+            <div className="flex items-center gap-2">
+              <input type="color" value={brandColor} onChange={(e) => setBrandColor(e.target.value)} aria-label="Color del club" className="h-9 w-12 cursor-pointer rounded-lg border border-border bg-transparent" />
+              <span className="text-[11px] text-muted-foreground">Color del club · se ve en su tarjeta de Espacios.</span>
+            </div>
+          </div>
+
           <div className="space-y-1.5">
             <Label>Visibilidad</Label>
             <div className="space-y-2">

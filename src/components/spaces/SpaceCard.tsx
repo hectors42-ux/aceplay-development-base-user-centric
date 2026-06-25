@@ -7,13 +7,28 @@ import { type MySpace, sportLabel } from "@/hooks/useMySpaces";
 // detalle existente (su escalera / su cuadro). Colores: volt=mi posición,
 // naranja=pendientes, oro=torneo/próximo.
 export function SpaceCard({ space }: { space: MySpace }) {
+  const brand = space.brandColor ?? undefined;
+  const initials = space.initials ?? space.clubName.split(" ").map((w) => w[0]).filter(Boolean).slice(0, 2).join("").toUpperCase();
   return (
-    <article className="overflow-hidden rounded-3xl border border-border bg-card shadow-card">
+    <article
+      className="overflow-hidden rounded-3xl border border-border bg-card shadow-card"
+      // Acento de marca del club: borde superior en su color primario.
+      style={brand ? { borderTopWidth: 3, borderTopColor: brand } : undefined}
+    >
       {/* Identidad del club */}
       <div className="flex items-center gap-3 p-4">
-        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-border bg-muted/40 text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
-          Logo
-        </span>
+        {space.logoUrl ? (
+          <span className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-2xl border border-border bg-white">
+            <img src={space.logoUrl} alt="" aria-hidden className="h-full w-full object-contain" />
+          </span>
+        ) : (
+          <span
+            className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl text-sm font-black text-white"
+            style={{ background: brand ?? "hsl(var(--muted))" }}
+          >
+            {initials}
+          </span>
+        )}
         <div className="min-w-0 flex-1">
           <p className="truncate font-display text-base font-bold text-foreground">{space.clubName}</p>
           <p className="text-xs text-muted-foreground">

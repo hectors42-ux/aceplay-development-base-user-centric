@@ -7,7 +7,7 @@ interface Props {
   className?: string;
 }
 
-/** Watermark para share cards: `[bandera] aceplay × stade français` */
+/** Watermark para share cards: `[bandera] aceplay × {nombre del club}` */
 export function CobrandFooter({ cobrand, className }: Props) {
   if (!cobrand) return null;
   return (

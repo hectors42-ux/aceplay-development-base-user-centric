@@ -25,11 +25,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "@/hooks/use-toast";
 import {
-  COBRAND_REGISTRY,
   buildGradient,
   contrastRatio,
   sanitizePlain,
 } from "@/lib/cobrand-registry";
+import { useCobrandPresets } from "@/hooks/useCobrandPresets";
 import { useTournamentCobrand } from "@/hooks/useTournamentCobrand";
 import { CobrandHero } from "@/components/tournaments/cobrand/CobrandHero";
 import { StreamSettingsSection } from "./StreamSettingsSection";
@@ -74,6 +74,7 @@ const COUNTRIES: { code: string; label: string }[] = [
 
 export function CobrandTab({ tournamentId, tournamentName }: Props) {
   const { cobrand, loading } = useTournamentCobrand(tournamentId);
+  const { presets } = useCobrandPresets();
   const [form, setForm] = useState<FormState>(EMPTY);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -111,7 +112,7 @@ export function CobrandTab({ tournamentId, tournamentName }: Props) {
       setForm((prev) => ({ ...prev, brand_key: "custom" }));
       return;
     }
-    const preset = COBRAND_REGISTRY[key];
+    const preset = presets.find((p) => p.brand_key === key);
     if (!preset) return;
     setForm({
       brand_key: preset.brand_key,
@@ -208,7 +209,7 @@ export function CobrandTab({ tournamentId, tournamentName }: Props) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {Object.values(COBRAND_REGISTRY).map((p) => (
+                {presets.map((p) => (
                   <SelectItem key={p.brand_key} value={p.brand_key}>
                     {p.display_name}
                   </SelectItem>
@@ -224,7 +225,7 @@ export function CobrandTab({ tournamentId, tournamentName }: Props) {
               id="display_name"
               value={form.display_name}
               onChange={(e) => setForm((f) => ({ ...f, display_name: e.target.value }))}
-              placeholder="Stade Français"
+              placeholder="Nombre del club o sponsor"
               maxLength={60}
             />
           </div>
@@ -254,7 +255,7 @@ export function CobrandTab({ tournamentId, tournamentName }: Props) {
                 id="lockup"
                 value={form.lockup_text}
                 onChange={(e) => setForm((f) => ({ ...f, lockup_text: e.target.value }))}
-                placeholder="ACEPLAY × STADE FRANÇAIS"
+                placeholder="ACEPLAY × TU CLUB"
                 maxLength={80}
               />
             </div>
@@ -266,7 +267,7 @@ export function CobrandTab({ tournamentId, tournamentName }: Props) {
               id="eyebrow"
               value={form.eyebrow_text}
               onChange={(e) => setForm((f) => ({ ...f, eyebrow_text: e.target.value }))}
-              placeholder="Te invita Stade Français"
+              placeholder="Te invita tu club"
               maxLength={120}
             />
           </div>
@@ -337,7 +338,7 @@ export function CobrandTab({ tournamentId, tournamentName }: Props) {
               id="rights"
               value={form.rights_text}
               onChange={(e) => setForm((f) => ({ ...f, rights_text: e.target.value }))}
-              placeholder="Stade Français es sponsor oficial — usa el material institucional…"
+              placeholder="Tu club es sponsor oficial — usa el material institucional…"
               rows={3}
               maxLength={500}
             />

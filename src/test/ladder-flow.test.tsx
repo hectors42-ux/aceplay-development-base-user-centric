@@ -19,7 +19,7 @@ import { generateIcsContent } from "@/lib/ics";
 
 const DEMO_ID = "demo-uuid-0000-0000-0000-000000000011";
 const HECTOR_ID = "hect-uuid-0000-0000-0000-000000000006";
-const TENANT_ID = "tenant-stade-francais";
+const TENANT_ID = "tenant-demo-club";
 const LADDER_ID = "ladder-piramide-verano-2026";
 const COURT_ID = "court-1";
 
@@ -232,7 +232,7 @@ describe("Ladder E2E: Demo (#11) vs Héctor (#6)", () => {
     const ics = generateIcsContent({
       title: "Pirámide vs Héctor Smith",
       description: "Desafío Pirámide Verano 2026 · #11 vs #6",
-      location: "Cancha 1 · Stade Français",
+      location: "Cancha 1 · Club demo",
       startsAt,
       endsAt,
     });
@@ -245,7 +245,7 @@ describe("Ladder E2E: Demo (#11) vs Héctor (#6)", () => {
     expect(ics).toContain("DTEND;TZID=America/Santiago:20260501T150000");
     expect(ics).toContain("BEGIN:VALARM");
     expect(ics).toContain("TRIGGER:-PT60M");
-    expect(ics).toContain("LOCATION:Cancha 1 · Stade Français");
+    expect(ics).toContain("LOCATION:Cancha 1 · Club demo");
   });
 
   it("6 + 7) Demo carga resultado, Héctor confirma → estadísticas actualizadas (sin swap)", async () => {

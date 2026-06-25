@@ -1,6 +1,8 @@
 /**
- * Presets de co-marca por torneo. Cada preset es punto de partida —
- * el admin puede sobrescribir cualquier campo en `tournament_cobrand`.
+ * Co-marca por torneo: SOLO interfaz + helpers de color. Los presets (datos de
+ * cada club/sponsor) viven en la tabla `cobrand_presets`, no en código — se leen
+ * con el hook `useCobrandPresets` / `useCobrandPreset`. Este archivo no contiene
+ * ningún nombre de cliente: agregar un club es agregar datos, no editar código.
  */
 
 export interface CobrandPreset {
@@ -14,36 +16,8 @@ export interface CobrandPreset {
   gradient_css: string;
   logo_url?: string | null;
   rights_text?: string | null;
+  active?: boolean;
 }
-
-export const COBRAND_REGISTRY: Record<string, CobrandPreset> = {
-  stade_francais: {
-    brand_key: "stade_francais",
-    display_name: "Stade Français",
-    eyebrow_text: "Te invita Stade Français",
-    lockup_text: "ACEPLAY × STADE FRANÇAIS",
-    flag_country: "fr",
-    primary_hex: "#14213D",
-    accent_hex: "#C8102E",
-    gradient_css:
-      "linear-gradient(155deg, #14213D 10%, #1E3160 50%, #6a2050 110%)",
-    rights_text:
-      "Stade Français es sponsor oficial. Usa el material institucional al compartir resultados.",
-  },
-  pro_trainer: {
-    brand_key: "pro_trainer",
-    display_name: "Pro Trainer",
-    eyebrow_text: "Powered by Pro Trainer",
-    lockup_text: "ACEPLAY × PRO TRAINER",
-    flag_country: "cl",
-    primary_hex: "#0B3D2E",
-    accent_hex: "#E0A800",
-    gradient_css:
-      "linear-gradient(155deg, #0B3D2E 10%, #155840 55%, #7a5a10 110%)",
-  },
-};
-
-export const COBRAND_PRESET_KEYS = Object.keys(COBRAND_REGISTRY);
 
 export function buildGradient(primaryHex: string, accentHex: string): string {
   return `linear-gradient(155deg, ${primaryHex} 10%, ${mixHex(primaryHex, accentHex, 0.5)} 55%, ${accentHex} 110%)`;

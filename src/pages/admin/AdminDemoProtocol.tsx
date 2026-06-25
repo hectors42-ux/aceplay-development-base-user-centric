@@ -258,7 +258,7 @@ export default function AdminDemoProtocol() {
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
             <Trophy className="h-4 w-4" />
-            Pádel Americano · Stade Français
+            Pádel Americano · Torneo demo
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">

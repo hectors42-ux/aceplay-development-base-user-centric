@@ -17,10 +17,10 @@ export function TournamentCard({ tournament: t }: { tournament: TournamentListIt
   const disciplineLabel = cats[0]
     ? DISCIPLINE_LABEL[cats[0].discipline]
     : "Tenis";
-  const days = differenceInCalendarDays(
-    parseISO(t.registration_closes_at),
-    new Date(),
-  );
+  // El motor puede no exponer la fecha de cierre → ocultamos el countdown si falta.
+  const days = t.registration_closes_at
+    ? differenceInCalendarDays(parseISO(t.registration_closes_at), new Date())
+    : null;
   const isOpen = t.status === "inscripciones_abiertas";
   const pct =
     t.capacity > 0 ? Math.min(100, Math.round((t.enrolled_count / t.capacity) * 100)) : 0;
@@ -45,7 +45,7 @@ export function TournamentCard({ tournament: t }: { tournament: TournamentListIt
           </p>
         </div>
         <div className="flex shrink-0 flex-col items-end gap-1">
-          {isOpen && <CountdownBadge days={days} />}
+          {isOpen && days != null && <CountdownBadge days={days} />}
           {t.user_registration && (
             <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold text-primary">
               Inscrito
@@ -82,10 +82,12 @@ export function TournamentCard({ tournament: t }: { tournament: TournamentListIt
           <span className="text-[11px] text-muted-foreground">Sin inscritos aún</span>
         )}
         <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-          <span>
-            {format(parseISO(t.starts_at), "d MMM", { locale: es })} –{" "}
-            {format(parseISO(t.ends_at), "d MMM", { locale: es })}
-          </span>
+          {t.starts_at && t.ends_at && (
+            <span>
+              {format(parseISO(t.starts_at), "d MMM", { locale: es })} –{" "}
+              {format(parseISO(t.ends_at), "d MMM", { locale: es })}
+            </span>
+          )}
           <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
         </div>
       </div>

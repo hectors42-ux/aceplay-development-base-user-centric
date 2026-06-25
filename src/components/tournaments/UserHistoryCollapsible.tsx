@@ -45,7 +45,7 @@ export function UserHistoryCollapsible({
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium">{t.name}</p>
                   <p className="text-[11px] text-muted-foreground">
-                    {format(parseISO(t.starts_at), "MMM yyyy", { locale: es })}
+                    {t.starts_at ? format(parseISO(t.starts_at), "MMM yyyy", { locale: es }) : "Torneo"}
                     {t.user_past_result ? ` · ${t.user_past_result}` : ""}
                   </p>
                 </div>

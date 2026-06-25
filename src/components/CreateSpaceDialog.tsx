@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { useRef, useState } from "react";
+import { Loader2, ImagePlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { compressImage } from "@/lib/image-utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -45,6 +46,34 @@ export const CreateSpaceDialog = ({ kind, open, onOpenChange, onCreated }: Props
   const [logoUrl, setLogoUrl] = useState("");
   const [brandColor, setBrandColor] = useState("#EC6E2E");
   const [busy, setBusy] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  // Subir el logo del club al bucket (carpeta {club_id}); el organizador gestiona su marca.
+  const handleLogo = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) { toast.error("Sube una imagen."); return; }
+    if (file.size > 10 * 1024 * 1024) { toast.error("Máx. 10MB."); return; }
+    setUploading(true);
+    try {
+      const { data: clubId } = await supabase.rpc("my_organizer_club");
+      if (!clubId) { toast.error("Necesitas ser organizador/admin de un club."); return; }
+      const compressed = await compressImage(file, { maxSize: 512, quality: 0.9 });
+      const path = `${clubId}/logo-${Date.now()}.jpg`;
+      const { error } = await supabase.storage.from("club-logos").upload(path, compressed, {
+        cacheControl: "31536000", upsert: false, contentType: "image/jpeg",
+      });
+      if (error) throw error;
+      const { data: pub } = supabase.storage.from("club-logos").getPublicUrl(path);
+      setLogoUrl(pub.publicUrl);
+      toast.success("Logo subido.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "No se pudo subir el logo.");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const submit = async () => {
     if (!name.trim()) { toast.error("Ponle un nombre"); return; }
@@ -106,9 +135,20 @@ export const CreateSpaceDialog = ({ kind, open, onOpenChange, onCreated }: Props
             </>
           )}
           {/* Marca del club (opcional): logo + color con que el club se expone en Espacios. */}
-          <div className="space-y-1.5 rounded-2xl border border-border bg-muted/30 p-3">
+          <div className="space-y-2 rounded-2xl border border-border bg-muted/30 p-3">
             <Label className="text-xs text-muted-foreground">Marca de tu club (opcional)</Label>
-            <Input value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="URL del logo (https://…)" />
+            <div className="flex items-center gap-3">
+              <span className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-2xl border border-border bg-white"
+                style={!logoUrl ? { background: brandColor } : undefined}>
+                {logoUrl
+                  ? <img src={logoUrl} alt="" className="h-full w-full object-contain" />
+                  : <ImagePlus className="h-5 w-5 text-white/80" />}
+              </span>
+              <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleLogo} />
+              <Button type="button" variant="outline" size="sm" disabled={uploading} onClick={() => fileRef.current?.click()}>
+                {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : logoUrl ? "Cambiar logo" : "Subir logo"}
+              </Button>
+            </div>
             <div className="flex items-center gap-2">
               <input type="color" value={brandColor} onChange={(e) => setBrandColor(e.target.value)} aria-label="Color del club" className="h-9 w-12 cursor-pointer rounded-lg border border-border bg-transparent" />
               <span className="text-[11px] text-muted-foreground">Color del club · se ve en su tarjeta de Espacios.</span>

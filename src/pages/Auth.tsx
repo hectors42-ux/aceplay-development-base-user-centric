@@ -294,27 +294,33 @@ const Auth = () => {
             <div className="h-px flex-1 bg-border" />
           </div>
 
-          {/* OAuth solo-icono (se sobreentiende que son botones de acceso) */}
+          {/* OAuth solo-icono — Google/Apple aún sin configurar: visibles pero
+              atenuados para sugerir "próximamente". */}
           <div className="flex items-center justify-center gap-3">
             <button
               type="button"
-              onClick={handleGoogle}
-              disabled={submitting}
-              aria-label="Continuar con Google"
-              className="grid h-12 w-12 place-items-center rounded-2xl border border-border bg-background transition-smooth hover:bg-muted disabled:opacity-50"
+              disabled
+              aria-disabled="true"
+              title="Próximamente"
+              aria-label="Continuar con Google (próximamente)"
+              className="grid h-12 w-12 cursor-not-allowed place-items-center rounded-2xl border border-border bg-background opacity-40 grayscale"
             >
               <GoogleIcon className="h-5 w-5" />
             </button>
             <button
               type="button"
-              onClick={handleApple}
-              disabled={submitting}
-              aria-label="Continuar con Apple"
-              className="grid h-12 w-12 place-items-center rounded-2xl border border-border bg-background text-foreground transition-smooth hover:bg-muted disabled:opacity-50"
+              disabled
+              aria-disabled="true"
+              title="Próximamente"
+              aria-label="Continuar con Apple (próximamente)"
+              className="grid h-12 w-12 cursor-not-allowed place-items-center rounded-2xl border border-border bg-background text-foreground opacity-40 grayscale"
             >
               <AppleIcon className="h-5 w-5" />
             </button>
           </div>
+          <p className="mt-2 text-center text-[10px] uppercase tracking-wider text-muted-foreground">
+            Google y Apple · próximamente
+          </p>
         </div>
 
         <p className="text-center font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground/70">

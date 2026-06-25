@@ -199,7 +199,9 @@ const TorneoDetalle = () => {
 
           <p className="mt-1.5 text-[12px] opacity-85">
             {[disciplineLabel, `${categories.length} categorías`, surfaceLabel,
-              formatDateRange(tournament.starts_at, tournament.ends_at)]
+              tournament.starts_at && tournament.ends_at
+                ? formatDateRange(tournament.starts_at, tournament.ends_at)
+                : null]
               .filter(Boolean)
               .join(" · ")}
           </p>

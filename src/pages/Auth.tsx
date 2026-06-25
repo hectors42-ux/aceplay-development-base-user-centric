@@ -4,7 +4,6 @@ import { z } from "zod";
 import { Loader2 } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -184,10 +183,16 @@ const Auth = () => {
     }
   };
 
+  // OAuth nativo de Supabase (agnóstico al host). Requiere que el proveedor esté
+  // habilitado en Supabase → Auth → Providers y la URL de redirect permitida.
+  // signInWithOAuth redirige el navegador al proveedor; solo manejamos el error.
   const handleGoogle = async () => {
     setSubmitting(true);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: `${window.location.origin}/` });
-    if (result.error) {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: `${window.location.origin}/` },
+    });
+    if (error) {
       toast.error("No se pudo iniciar sesión con Google");
       setSubmitting(false);
     }
@@ -195,8 +200,11 @@ const Auth = () => {
 
   const handleApple = async () => {
     setSubmitting(true);
-    const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: `${window.location.origin}/` });
-    if (result.error) {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "apple",
+      options: { redirectTo: `${window.location.origin}/` },
+    });
+    if (error) {
       toast.error("No se pudo iniciar sesión con Apple");
       setSubmitting(false);
     }
@@ -247,7 +255,7 @@ const Auth = () => {
                   <PasswordInput id="signin-password" name="password" autoComplete="current-password" required />
                 </div>
                 <Button type="submit" variant="clay" size="lg" className="w-full" disabled={submitting}>
-                  {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Entrar a la arena"}
+                  {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Entrar a la cancha"}
                 </Button>
               </form>
             </TabsContent>

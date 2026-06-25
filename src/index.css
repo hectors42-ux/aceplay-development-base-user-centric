@@ -53,6 +53,13 @@
     --glass-bg: rgba(16, 23, 40, 0.55);
     --glass-brd: rgba(255, 255, 255, 0.14);
     --glass-hi: rgba(255, 255, 255, 0.18);
+
+    /* Atmósfera Arena (§3) — sustrato global. Por defecto SIN gradiente (temas
+       light caen a --background sólido); cada tema oscuro activa su --bg-grad/--ambient.
+       --texture (diagonal) es constante. */
+    --bg-grad: none;
+    --ambient: transparent;
+    --texture: rgba(255, 255, 255, 0.012);
   }
 
   /* ============================================================
@@ -225,8 +232,8 @@
      ============================================================ */
   :root.theme-arena,
   :root.theme-arena.dark {
-    /* Superficies — navy profundo. */
-    --background: 224 32% 7%;
+    /* Superficies — navy profundo (§1.1 --bg #070B16). */
+    --background: 222 52% 6%;
     --foreground: 220 28% 96%;
 
     --card: 224 28% 11%;
@@ -301,6 +308,8 @@
     --sidebar-border: 223 16% 20%;
     --sidebar-ring: 20 83% 55%;
     --glass-bg: rgba(16, 23, 40, 0.55);
+    --bg-grad: radial-gradient(120% 90% at 50% -10%, #16213C 0%, #0A1020 42%, #070B16 100%);
+    --ambient: rgba(198, 255, 26, 0.06);
   }
 
   /* ============================================================
@@ -362,6 +371,8 @@
     --sidebar-border: 216 24% 20%;
     --sidebar-ring: 20 83% 55%;
     --glass-bg: rgba(12, 34, 58, 0.52);
+    --bg-grad: radial-gradient(120% 90% at 50% -10%, #123A63 0%, #0B2138 44%, #08111F 100%);
+    --ambient: rgba(62, 143, 224, 0.12);
   }
 
   /* ============================================================
@@ -422,6 +433,8 @@
     --sidebar-border: 18 22% 20%;
     --sidebar-ring: 20 83% 55%;
     --glass-bg: rgba(46, 22, 12, 0.52);
+    --bg-grad: radial-gradient(120% 90% at 50% -10%, #6E3017 0%, #38180D 44%, #1A0E08 100%);
+    --ambient: rgba(224, 122, 69, 0.16);
   }
 
   /* ============================================================
@@ -482,6 +495,8 @@
     --sidebar-border: 150 20% 18%;
     --sidebar-ring: 20 83% 55%;
     --glass-bg: rgba(10, 38, 22, 0.52);
+    --bg-grad: radial-gradient(120% 90% at 50% -10%, #14502B 0%, #0A2D17 44%, #061509 100%);
+    --ambient: rgba(63, 180, 106, 0.13);
   }
 
   /* ============================================================
@@ -816,9 +831,20 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply text-foreground antialiased;
     font-family: var(--font-sans);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    /* Sustrato Arena global (§3): el contenido scrollea sobre una atmósfera FIJA =
+       glow ambiente (radial 60%×40% arriba) + textura diagonal 115° + gradiente base
+       (var(--bg-grad) sobre var(--background)). Cambia por tema vía --bg-grad/--ambient. */
+    min-height: 100vh;
+    background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(60% 40% at 50% 0%, var(--ambient), transparent 70%),
+      repeating-linear-gradient(115deg, var(--texture) 0 2px, transparent 2px 9px),
+      var(--bg-grad);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
   }
 
   h1, h2, h3, h4, h5 {
@@ -875,6 +901,14 @@
   .scrollbar-none::-webkit-scrollbar {
     display: none;
   }
+  /* Sustrato de página: las pantallas usan `min-h-screen bg-background` como fondo
+     full-bleed. Para que la atmósfera global (§3, en body) se vea en TODAS, ese
+     sustrato se vuelve transparente. Selector de doble clase → solo afecta al fondo
+     de página completa, no a los `bg-background` pequeños (chips, inputs, etc.). */
+  .min-h-screen.bg-background {
+    background-color: transparent;
+  }
+
   /* Contenedor estándar de la app: centrado en mobile, ancho aprovechado en desktop */
   .app-container {
     @apply mx-auto w-full px-4 sm:px-5 md:px-6 lg:px-8;

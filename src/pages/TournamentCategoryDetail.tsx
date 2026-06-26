@@ -16,6 +16,8 @@ import { BracketTabs } from "@/components/tournaments/BracketTabs";
 import { MatchList } from "@/components/tournaments/MatchList";
 import { RegistrationList } from "@/components/tournaments/RegistrationList";
 import { RoundRobinStandings } from "@/components/tournaments/RoundRobinStandings";
+import { WeightedStandings } from "@/components/tournaments/WeightedStandings";
+import { H2HMatrix } from "@/components/tournaments/H2HMatrix";
 import { RoundRobinOpponents } from "@/components/tournaments/RoundRobinOpponents";
 import { GroupsView } from "@/components/tournaments/GroupsView";
 import { AmericanoRoundsView } from "@/components/tournaments/AmericanoRoundsView";
@@ -68,6 +70,14 @@ const TournamentCategoryDetail = () => {
   } = useCategoryBundle(catId);
   const { canManage } = useCanManageSpace(catId);
   const [generating, setGenerating] = useState(false);
+  // Categoría round-robin de roster (Fase A): muestra la tabla PONDERADA + H2H.
+  const [isRosterRR, setIsRosterRR] = useState(false);
+  useEffect(() => {
+    if (!catId) return;
+    void supabase.rpc("round_robin_participants", { _category_id: catId }).then(({ data }) => {
+      setIsRosterRR(Array.isArray(data) && data.length > 0);
+    });
+  }, [catId]);
 
   // Generar la llave (motor vivo): solo organizador/admin, vía wrapper org_generate_bracket.
   const handleGenerate = async () => {
@@ -413,13 +423,24 @@ const TournamentCategoryDetail = () => {
                   </p>
                 )}
               </TabsContent>
-              <TabsContent value="table" className="mt-4">
-                <RoundRobinStandings
-                  category={category}
-                  registrations={registrations}
-                  players={players}
-                  highlightUserId={user?.id}
-                />
+              <TabsContent value="table" className="mt-4 space-y-4">
+                {isRosterRR ? (
+                  <>
+                    {/* Reglamento (Fase A): tabla PONDERADA + matriz H2H, no el conteo simple. */}
+                    <WeightedStandings categoryId={category.id} />
+                    <div>
+                      <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Enfrentamientos (H2H)</p>
+                      <H2HMatrix categoryId={category.id} />
+                    </div>
+                  </>
+                ) : (
+                  <RoundRobinStandings
+                    category={category}
+                    registrations={registrations}
+                    players={players}
+                    highlightUserId={user?.id}
+                  />
+                )}
               </TabsContent>
             </>
           ) : isMultiBracket ? (

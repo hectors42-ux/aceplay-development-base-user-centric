@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { WeightedStandings } from "@/components/tournaments/WeightedStandings";
+import { H2HMatrix } from "@/components/tournaments/H2HMatrix";
 import { useTournamentDetailEnriched } from "@/hooks/useTournamentDetailEnriched";
 import { useCanManageSpace } from "@/hooks/useCanManageSpace";
 import { cn } from "@/lib/utils";
@@ -26,7 +28,6 @@ interface Slot {
   winner: string | null; status: string; match_id: string | null;
 }
 interface RosterP { roster_player_id: string; display_name: string; source: string; claimed: boolean }
-interface Standing { display_name: string; partidos_ganados: number; sets_ganados: number; juegos_ganados: number; puntos_st: number; puntaje: number }
 
 const STATUS_LABEL: Record<string, string> = {
   played: "Jugado", played_pending: "Esperando confirmación", bye: "Bye", playable: "Por jugar", pending: "Pendiente",
@@ -69,8 +70,8 @@ function CategoryAdmin({ catId, name }: { catId: string; name: string }) {
   const [roster, setRoster] = useState<RosterP[]>([]);
   const [isRoster, setIsRoster] = useState(false);
   const [slots, setSlots] = useState<Slot[]>([]);
-  const [standings, setStandings] = useState<Standing[]>([]);
   const [busy, setBusy] = useState(false);
+  const [refresh, setRefresh] = useState(0); // remonta tabla/H2H tras cargar un resultado
   // diálogo de resultado (motor)
   const [slotResult, setSlotResult] = useState<Slot | null>(null);
   const [winnerSide, setWinnerSide] = useState<"a" | "b">("a");
@@ -86,10 +87,7 @@ function CategoryAdmin({ catId, name }: { catId: string; name: string }) {
     const roster = rosterRows.length > 0;
     setRoster(rosterRows);
     setIsRoster(roster);
-    if (roster) {
-      const { data: st } = await supabase.rpc("round_robin_standings", { _category_id: catId });
-      setStandings((st as Standing[] | null) ?? []);
-    } else {
+    if (!roster) {
       const { data: bk } = await supabase.rpc("bracket_view", { _category_id: catId });
       setSlots((bk as Slot[] | null) ?? []);
     }
@@ -129,7 +127,8 @@ function CategoryAdmin({ catId, name }: { catId: string; name: string }) {
     });
     setBusy(false);
     if (error) { toast.error(error.message); return; }
-    toast.success("Resultado cargado."); setPa(""); setPb(""); setRosterSets(emptySets()); await load();
+    toast.success("Resultado cargado."); setPa(""); setPb(""); setRosterSets(emptySets());
+    setRefresh((x) => x + 1); await load();
   };
 
   if (loading) return <Skeleton className="h-32 w-full rounded-2xl" />;
@@ -213,20 +212,15 @@ function CategoryAdmin({ catId, name }: { catId: string; name: string }) {
             </Button>
           </section>
 
-          <section className="overflow-hidden rounded-2xl border border-border bg-card">
-            <div className="grid grid-cols-[1fr_28px_28px_36px_44px] gap-1 border-b border-border px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-              <span>Jugador</span><span className="text-center">PG</span><span className="text-center">S</span><span className="text-center">J</span><span className="text-center">Pts</span>
-            </div>
-            {standings.map((r, i) => (
-              <div key={i} className="grid grid-cols-[1fr_28px_28px_36px_44px] gap-1 px-3 py-1.5 text-sm">
-                <span className="truncate">{r.display_name}</span>
-                <span className="text-center tabular-nums">{r.partidos_ganados}</span>
-                <span className="text-center tabular-nums text-muted-foreground">{r.sets_ganados}</span>
-                <span className="text-center tabular-nums text-muted-foreground">{r.juegos_ganados}</span>
-                <span className="text-center font-display font-bold tabular-nums">{r.puntaje}</span>
-              </div>
-            ))}
-          </section>
+          {/* Tabla PONDERADA del reglamento (Fase A) + matriz H2H. */}
+          <div>
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Tabla ponderada</p>
+            <WeightedStandings categoryId={catId} key={`st-${refresh}`} />
+          </div>
+          <div>
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Enfrentamientos (H2H)</p>
+            <H2HMatrix categoryId={catId} key={`h2h-${refresh}`} />
+          </div>
         </>
       )}
 

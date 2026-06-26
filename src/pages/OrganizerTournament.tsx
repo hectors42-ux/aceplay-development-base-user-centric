@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Loader2, Trophy, Users, Wand2, Settings2, Plus } from "lucide-react";
+import { ArrowLeft, Loader2, Trophy, Users, Wand2, Settings2, Plus, Lock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { WeightedStandings } from "@/components/tournaments/WeightedStandings";
 import { H2HMatrix } from "@/components/tournaments/H2HMatrix";
+import { FrozenTableAnimation } from "@/components/tournaments/admin/FrozenTableAnimation";
 import { useTournamentDetailEnriched } from "@/hooks/useTournamentDetailEnriched";
 import { useCanManageSpace } from "@/hooks/useCanManageSpace";
 import { cn } from "@/lib/utils";
@@ -79,14 +80,24 @@ function CategoryAdmin({ catId, name }: { catId: string; name: string }) {
   // form de resultado (roster)
   const [pa, setPa] = useState(""); const [pb, setPb] = useState(""); const [pwin, setPwin] = useState<"a" | "b">("a");
   const [rosterSets, setRosterSets] = useState<SetRow[]>(emptySets());
+  const [dominante, setDominante] = useState(false); // #5 · partido interrumpido (regla del Jugador Dominante)
+  // #6 · cierre
+  const [closed, setClosed] = useState(false);
+  const [closing, setClosing] = useState(false);
+  const [podium, setPodium] = useState<{ gold?: string; silver?: string; bronze?: string }>({});
+  const [showPodium, setShowPodium] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
-    const { data: parts } = await supabase.rpc("round_robin_participants", { _category_id: catId });
+    const [{ data: parts }, { data: cat }] = await Promise.all([
+      supabase.rpc("round_robin_participants", { _category_id: catId }),
+      supabase.from("space").select("status").eq("id", catId).maybeSingle(),
+    ]);
     const rosterRows = (parts as RosterP[] | null) ?? [];
     const roster = rosterRows.length > 0;
     setRoster(rosterRows);
     setIsRoster(roster);
+    setClosed((cat as { status: string } | null)?.status === "finished");
     if (!roster) {
       const { data: bk } = await supabase.rpc("bracket_view", { _category_id: catId });
       setSlots((bk as Slot[] | null) ?? []);
@@ -127,8 +138,25 @@ function CategoryAdmin({ catId, name }: { catId: string; name: string }) {
     });
     setBusy(false);
     if (error) { toast.error(error.message); return; }
-    toast.success("Resultado cargado."); setPa(""); setPb(""); setRosterSets(emptySets());
+    toast.success(dominante ? "Marcador del Jugador Dominante cargado." : "Resultado cargado.");
+    setPa(""); setPb(""); setRosterSets(emptySets()); setDominante(false);
     setRefresh((x) => x + 1); await load();
+  };
+
+  // #6 · cierre de la categoría (motor vivo). Congela el standings y arma el podio.
+  const cerrar = async () => {
+    if (!window.confirm("¿Cerrar la categoría? Se congela el standings final y no se podrán cargar más resultados.")) return;
+    setClosing(true);
+    const { error } = await supabase.rpc("close_category", { _category_id: catId });
+    if (error) { setClosing(false); toast.error(error.message); return; }
+    // podio = top 3 de la tabla ponderada (jerarquía de desempate del RPC).
+    const { data: st } = await supabase.rpc("round_robin_standings", { _category_id: catId });
+    const top = ((st as { display_name: string }[] | null) ?? []).slice(0, 3).map((r) => r.display_name);
+    setPodium({ gold: top[0], silver: top[1], bronze: top[2] });
+    setClosing(false);
+    setClosed(true);
+    setShowPodium(true);
+    await load();
   };
 
   if (loading) return <Skeleton className="h-32 w-full rounded-2xl" />;
@@ -190,27 +218,46 @@ function CategoryAdmin({ catId, name }: { catId: string; name: string }) {
       {/* ROSTER (Fase A): cargar resultado + tabla ponderada */}
       {isRoster && (
         <>
-          <section className="space-y-2 rounded-2xl border border-border bg-card p-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Cargar resultado</p>
-            <div className="grid grid-cols-2 gap-2">
-              <Select value={pa} onValueChange={setPa}>
-                <SelectTrigger><SelectValue placeholder="Jugador A" /></SelectTrigger>
-                <SelectContent>{roster.map((p) => <SelectItem key={p.roster_player_id} value={p.roster_player_id}>{p.display_name}</SelectItem>)}</SelectContent>
+          {closed ? (
+            <section className="rounded-2xl border border-confirm/40 bg-confirm/5 p-3 text-center">
+              <p className="text-sm font-semibold text-confirm">Categoría cerrada · standings congelado</p>
+              {podium.gold && (
+                <p className="mt-1 text-xs text-muted-foreground">
+                  🥇 {podium.gold}{podium.silver ? ` · 🥈 ${podium.silver}` : ""}{podium.bronze ? ` · 🥉 ${podium.bronze}` : ""}
+                </p>
+              )}
+            </section>
+          ) : (
+            <section className="space-y-2 rounded-2xl border border-border bg-card p-3">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Cargar resultado</p>
+              <div className="grid grid-cols-2 gap-2">
+                <Select value={pa} onValueChange={setPa}>
+                  <SelectTrigger><SelectValue placeholder="Jugador A" /></SelectTrigger>
+                  <SelectContent>{roster.map((p) => <SelectItem key={p.roster_player_id} value={p.roster_player_id}>{p.display_name}</SelectItem>)}</SelectContent>
+                </Select>
+                <Select value={pb} onValueChange={setPb}>
+                  <SelectTrigger><SelectValue placeholder="Jugador B" /></SelectTrigger>
+                  <SelectContent>{roster.map((p) => <SelectItem key={p.roster_player_id} value={p.roster_player_id}>{p.display_name}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <Select value={pwin} onValueChange={(v) => setPwin(v as "a" | "b")}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent><SelectItem value="a">Gana Jugador A</SelectItem><SelectItem value="b">Gana Jugador B</SelectItem></SelectContent>
               </Select>
-              <Select value={pb} onValueChange={setPb}>
-                <SelectTrigger><SelectValue placeholder="Jugador B" /></SelectTrigger>
-                <SelectContent>{roster.map((p) => <SelectItem key={p.roster_player_id} value={p.roster_player_id}>{p.display_name}</SelectItem>)}</SelectContent>
-              </Select>
-            </div>
-            <Select value={pwin} onValueChange={(v) => setPwin(v as "a" | "b")}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent><SelectItem value="a">Gana Jugador A</SelectItem><SelectItem value="b">Gana Jugador B</SelectItem></SelectContent>
-            </Select>
-            <SetsEditor rows={rosterSets} onChange={setRosterSets} />
-            <Button onClick={submitRoster} disabled={busy} className="w-full bg-action text-action-foreground hover:bg-action/90">
-              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Cargar resultado"}
-            </Button>
-          </section>
+              <SetsEditor rows={rosterSets} onChange={setRosterSets} />
+              {/* #5 · Regla del Jugador Dominante: marcador derivado MANUAL. */}
+              <label className="flex items-start gap-2 rounded-xl border border-border bg-muted/20 p-2 text-[11px] text-muted-foreground">
+                <input type="checkbox" className="mt-0.5" checked={dominante} onChange={(e) => setDominante(e.target.checked)} />
+                <span>
+                  <span className="font-semibold text-foreground">Partido interrumpido · regla del Jugador Dominante.</span>{" "}
+                  Ingresa manualmente el marcador final derivado según el anexo; el sistema solo lo acepta y valida.
+                </span>
+              </label>
+              <Button onClick={submitRoster} disabled={busy} className="w-full bg-action text-action-foreground hover:bg-action/90">
+                {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : dominante ? "Cargar marcador derivado" : "Cargar resultado"}
+              </Button>
+            </section>
+          )}
 
           {/* Tabla PONDERADA del reglamento (Fase A) + matriz H2H. */}
           <div>
@@ -221,6 +268,16 @@ function CategoryAdmin({ catId, name }: { catId: string; name: string }) {
             <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Enfrentamientos (H2H)</p>
             <H2HMatrix categoryId={catId} key={`h2h-${refresh}`} />
           </div>
+
+          {/* #6 · Cerrar categoría (motor vivo). El podio sale del top-3 de la tabla. */}
+          {!closed && (
+            <Button onClick={cerrar} disabled={closing} variant="outline" className="w-full">
+              {closing ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Lock className="mr-1 h-4 w-4" /> Cerrar categoría</>}
+            </Button>
+          )}
+          {showPodium && (
+            <FrozenTableAnimation podiumNames={podium} onComplete={() => setShowPodium(false)} />
+          )}
         </>
       )}
 

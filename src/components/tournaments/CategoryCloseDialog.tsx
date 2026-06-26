@@ -75,11 +75,9 @@ export const CategoryCloseDialog = ({
       //    rr_record_result) es la Fase B.1 #6. Aquí solo evitamos la RPC muerta sin romper.
       const toClose = pendingMatches.filter((m) => decisions[m.id]?.include);
 
-      // 2. Marcar la categoría como finalizada
-      const { error: catErr } = await supabase
-        .from("tournament_categories")
-        .update({ status: "finalizado" })
-        .eq("id", categoryId);
+      // 2. Cerrar la categoría sobre el motor VIVO (space), NO la tabla muerta
+      //    tournament_categories. close_category gatea al organizador y congela el standings.
+      const { error: catErr } = await supabase.rpc("close_category", { _category_id: categoryId });
       if (catErr) throw new Error(catErr.message);
 
       toast({

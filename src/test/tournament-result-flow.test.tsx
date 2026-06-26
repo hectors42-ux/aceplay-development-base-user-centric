@@ -12,7 +12,7 @@
  *     - "Esperando llave" real (categoría sin matches)
  *     - lastResult cuando ya jugó
  *
- *  B) ResultDialog + RPC submit_match_result:
+ *  B) ResultDialog + RPC org_record_bracket_result:
  *     - score válido infiere ganador y llama RPC
  *     - score inválido → toast destructive sin RPC
  *     - walkover requiere ganador
@@ -349,7 +349,7 @@ describe.skip("Hero: useUserActiveTournament + ActiveTournamentHero", () => {
 });
 
 // =====================================================================
-// B) ResultDialog + RPC submit_match_result
+// B) ResultDialog + RPC org_record_bracket_result
 // =====================================================================
 
 const players = new Map<string, Player>([
@@ -407,13 +407,13 @@ const renderDialog = (onSubmitted = vi.fn()) => {
 };
 
 describe.skip("ResultDialog: reporte de resultado", () => {
-  it("score válido infiere ganador y llama submit_match_result con _score correcto", async () => {
+  it("score válido infiere ganador y llama org_record_bracket_result con _score correcto", async () => {
     renderDialog();
     fireEvent.change(screen.getByPlaceholderText(/6-4 6-3/i), { target: { value: "6-4 6-3" } });
     fireEvent.click(screen.getByRole("button", { name: /Enviar resultado/i }));
 
     await waitFor(() => {
-      const call = rpcCalls.find((c) => c.name === "submit_match_result");
+      const call = rpcCalls.find((c) => c.name === "org_record_bracket_result");
       expect(call).toBeTruthy();
       const args = call!.args as {
         _winner_registration_id: string;
@@ -444,7 +444,7 @@ describe.skip("ResultDialog: reporte de resultado", () => {
         expect.objectContaining({ title: "Score inválido", variant: "destructive" }),
       );
     });
-    expect(rpcCalls.find((c) => c.name === "submit_match_result")).toBeUndefined();
+    expect(rpcCalls.find((c) => c.name === "org_record_bracket_result")).toBeUndefined();
   });
 
   it("walkover sin ganador seleccionado pide selección", async () => {
@@ -457,7 +457,7 @@ describe.skip("ResultDialog: reporte de resultado", () => {
         expect.objectContaining({ title: expect.stringMatching(/W\.O\./) }),
       );
     });
-    expect(rpcCalls.find((c) => c.name === "submit_match_result")).toBeUndefined();
+    expect(rpcCalls.find((c) => c.name === "org_record_bracket_result")).toBeUndefined();
   });
 
   it("walkover con ganador llama RPC con _walkover=true y _score=null", async () => {
@@ -470,7 +470,7 @@ describe.skip("ResultDialog: reporte de resultado", () => {
     fireEvent.click(screen.getByRole("button", { name: /Enviar resultado/i }));
 
     await waitFor(() => {
-      const call = rpcCalls.find((c) => c.name === "submit_match_result");
+      const call = rpcCalls.find((c) => c.name === "org_record_bracket_result");
       expect(call).toBeTruthy();
       const args = call!.args as { _walkover: boolean; _score: unknown; _winner_registration_id: string };
       expect(args._walkover).toBe(true);
@@ -488,7 +488,7 @@ describe.skip("ResultDialog: reporte de resultado", () => {
     fireEvent.click(screen.getByRole("button", { name: /Enviar resultado/i }));
 
     await waitFor(() => {
-      const call = rpcCalls.find((c) => c.name === "submit_match_result");
+      const call = rpcCalls.find((c) => c.name === "org_record_bracket_result");
       expect(call).toBeTruthy();
       const args = call!.args as { _retired: boolean; _score: unknown[]; _winner_registration_id: string };
       expect(args._retired).toBe(true);
@@ -510,7 +510,7 @@ describe.skip("ResultDialog: reporte de resultado", () => {
         expect.objectContaining({ title: "Selecciona el ganador" }),
       );
     });
-    expect(rpcCalls.find((c) => c.name === "submit_match_result")).toBeUndefined();
+    expect(rpcCalls.find((c) => c.name === "org_record_bracket_result")).toBeUndefined();
   });
 
   it("RPC devuelve {status:'propuesto'} → toast 'Resultado propuesto · esperando confirmación'", async () => {
@@ -553,7 +553,7 @@ describe.skip("ResultDialog: reporte de resultado", () => {
     fireEvent.click(screen.getByRole("button", { name: /Enviar resultado/i }));
 
     await waitFor(() => {
-      const call = rpcCalls.find((c) => c.name === "submit_match_result");
+      const call = rpcCalls.find((c) => c.name === "org_record_bracket_result");
       expect(call).toBeTruthy();
       const args = call!.args as { _score: Array<{ a: number; b: number; tb?: number }> };
       expect(args._score[0]).toEqual({ a: 7, b: 6, tb: 5 });
@@ -566,7 +566,7 @@ describe.skip("ResultDialog: reporte de resultado", () => {
 // C) Permisos / errores server-side (validados vía RPC mock)
 // =====================================================================
 
-describe.skip("submit_match_result: rechazos server-side reflejados en cliente", () => {
+describe.skip("org_record_bracket_result: rechazos server-side reflejados en cliente", () => {
   it("usuario no participante → mensaje 'No tienes permiso'", async () => {
     rpcResponder = () => ({ data: null, error: { message: "No tienes permiso para registrar este resultado" } });
     renderDialog();

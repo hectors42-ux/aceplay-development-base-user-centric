@@ -11,7 +11,6 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
-import { useCelebrate } from "@/hooks/useCelebrate";
 import { useAuth } from "@/components/providers/AuthProvider";
 import {
   Match,
@@ -54,7 +53,6 @@ export const ResultDialog = ({
 }: ResultDialogProps) => {
   const [value, setValue] = useState<ScoreboardEditorValue>(emptyScoreboardValue());
   const [submitting, setSubmitting] = useState(false);
-  const celebrate = useCelebrate();
   const { user } = useAuth();
   // Sólo aplicamos el profile cuando la página explícitamente pasó la categoría;
   // así los flujos legacy (y tests) no son afectados.
@@ -99,43 +97,39 @@ export const ResultDialog = ({
     }
 
     setSubmitting(true);
-    const { data, error } = await supabase.rpc("submit_match_result", {
-      _match_id: match.id,
-      _winner_registration_id: value.winnerId,
-      _score: (isWalkover ? null : sets) as never,
-      _walkover: isWalkover,
-      _retired: isRetired,
-    });
+    // RPC VIVO (submit_match_result está MUERTA). Brackets/grupos/americano/RR-del-motor:
+    //  · si quien carga ES jugador del partido → play_bracket_match (_winner_is_me).
+    //  · si es el ORGANIZADOR (no juega) → org_record_bracket_result (_winner_side, gateado).
+    // En ambos el match queda 'pending' y el rating/avance del cuadro ocurren al CONFIRMARSE
+    // (no se bypassa el firewall). La carga de round-robin roster (Fase A) vive en la casa del
+    // organizador (rr_record_result); ese caso no llega aquí (no genera Match en el bundle).
+    const winnerReg = value.winnerId === regA.id ? regA : regB;
+    const liveSets = (isWalkover ? [] : sets).map((s) => ({
+      games_a: s.a,
+      games_b: s.b,
+      is_tiebreak: s.kind === "super_tb" || typeof s.tb === "number",
+    }));
+    const meInMatch =
+      !!user?.id &&
+      [regA.player1_user_id, regA.player2_user_id, regB.player1_user_id, regB.player2_user_id].includes(user.id);
+
+    let error;
+    if (meInMatch) {
+      const winnerIsMe = winnerReg.player1_user_id === user!.id || winnerReg.player2_user_id === user!.id;
+      ({ error } = await supabase.rpc("play_bracket_match", {
+        _slot_id: match.id, _winner_is_me: winnerIsMe, _sets: liveSets as never,
+      }));
+    } else {
+      ({ error } = await supabase.rpc("org_record_bracket_result", {
+        _slot_id: match.id, _winner_side: value.winnerId === regA.id ? "a" : "b", _sets: liveSets as never,
+      }));
+    }
     setSubmitting(false);
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
       return;
     }
-    const result = data as { status?: string } | null;
-    toast({
-      title:
-        result?.status === "confirmado"
-          ? "Resultado registrado"
-          : result?.status === "propuesto"
-            ? "Resultado propuesto · esperando confirmación"
-            : "Resultado enviado",
-    });
-
-    // PRD 1 · disparador `minor` — el usuario actual ganó y el resultado quedó
-    // confirmado (no solo propuesto). Coexiste con el toast informativo.
-    const winnerReg = value.winnerId === regA.id ? regA : regB;
-    const loserReg = value.winnerId === regA.id ? regB : regA;
-    const meWonAsPlayer =
-      !!user?.id &&
-      (winnerReg.player1_user_id === user.id || winnerReg.player2_user_id === user.id);
-    if (result?.status === "confirmado" && meWonAsPlayer) {
-      celebrate({
-        kind: "minor",
-        title: `Ganaste a ${registrationLabel(loserReg, players)}`,
-        subtitle: "Resultado confirmado · suma a tu standings",
-        pill: "+1 PG",
-      });
-    }
+    toast({ title: "Resultado cargado · esperando confirmación" });
 
     reset();
     onOpenChange(false);

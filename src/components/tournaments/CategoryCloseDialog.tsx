@@ -69,28 +69,11 @@ export const CategoryCloseDialog = ({
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
-      // 1. Enviar W.O. para los partidos marcados
+      // 1. Cierre por W.O. de partidos pendientes → DIFERIDO al flujo de cierre vivo (#6).
+      //    Ya NO se llama submit_match_result (RPC MUERTA). Los partidos marcados quedan
+      //    pendientes; el cierre real con W.O. sobre el motor vivo (org_record_bracket_result /
+      //    rr_record_result) es la Fase B.1 #6. Aquí solo evitamos la RPC muerta sin romper.
       const toClose = pendingMatches.filter((m) => decisions[m.id]?.include);
-      for (const m of toClose) {
-        const winner = decisions[m.id]?.winnerRegId;
-        if (!winner) {
-          toast({
-            title: "Selecciona ganador",
-            description: "Elige quién avanza por W.O. en cada partido marcado.",
-            variant: "destructive",
-          });
-          setSubmitting(false);
-          return;
-        }
-        const { error } = await supabase.rpc("submit_match_result", {
-          _match_id: m.id,
-          _winner_registration_id: winner,
-          _score: null as never,
-          _walkover: true,
-          _retired: false,
-        });
-        if (error) throw new Error(error.message);
-      }
 
       // 2. Marcar la categoría como finalizada
       const { error: catErr } = await supabase
@@ -103,7 +86,7 @@ export const CategoryCloseDialog = ({
         title: "Categoría finalizada",
         description:
           toClose.length > 0
-            ? `Se cerraron ${toClose.length} partido(s) por W.O. y se marcó la categoría como finalizada.`
+            ? `Categoría marcada como finalizada. ${toClose.length} partido(s) pendiente(s) se resolverán en el cierre (próximamente).`
             : "La categoría quedó marcada como finalizada.",
       });
       onOpenChange(false);

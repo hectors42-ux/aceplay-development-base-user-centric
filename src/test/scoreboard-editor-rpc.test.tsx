@@ -85,7 +85,8 @@ beforeEach(() => {
 });
 
 // =====================================================================
-// 1. TORNEOS — submit_match_result
+// 1. TORNEOS — RPC vivo por quién carga (submit_match_result está MUERTA):
+//    jugador del partido → play_bracket_match · organizador → org_record_bracket_result
 // =====================================================================
 
 describe("ScoreboardEditor · Torneos", () => {
@@ -116,30 +117,44 @@ describe("ScoreboardEditor · Torneos", () => {
     status: "pendiente",
   } as unknown as Match;
 
-  it("cargar 6-4 6-3 llama submit_match_result con ganador inferido y flags en false", async () => {
+  it("jugador del partido: 6-4 6-3 llama play_bracket_match (slot + winner_is_me + sets vivos)", async () => {
+    currentUser = { id: "user-a" }; // el ganador es Ana (user-a) → es jugador y ganó
     render(
-      <ResultDialog
-        open
-        onOpenChange={vi.fn()}
-        match={match}
-        registrations={[regA, regB]}
-        players={players}
-        onSubmitted={vi.fn()}
-      />,
+      <ResultDialog open onOpenChange={vi.fn()} match={match} registrations={[regA, regB]} players={players} onSubmitted={vi.fn()} />,
     );
-
     fillTwoSetWin("Ana Pérez", "Bruno Soto");
     fireEvent.click(screen.getByRole("button", { name: /Enviar resultado/i }));
 
     await waitFor(() => {
-      const call = rpcCalls.find((c) => c.name === "submit_match_result");
+      const call = rpcCalls.find((c) => c.name === "play_bracket_match");
       expect(call).toBeTruthy();
-      expect(call!.args._winner_registration_id).toBe("reg-a");
-      expect(call!.args._walkover).toBe(false);
-      expect(call!.args._retired).toBe(false);
-      expect(call!.args._score).toEqual([
-        { a: 6, b: 4 },
-        { a: 6, b: 3 },
+      expect(rpcCalls.find((c) => c.name === "submit_match_result")).toBeUndefined(); // RPC muerta no se llama
+      expect(call!.args._slot_id).toBe("match-1");
+      expect(call!.args._winner_is_me).toBe(true);
+      expect(call!.args._sets).toEqual([
+        { games_a: 6, games_b: 4, is_tiebreak: false },
+        { games_a: 6, games_b: 3, is_tiebreak: false },
+      ]);
+    });
+  });
+
+  it("organizador (no juega el partido): llama org_record_bracket_result con winner_side explícito", async () => {
+    currentUser = { id: "user-me" }; // no es ni user-a ni user-b → organizador
+    render(
+      <ResultDialog open onOpenChange={vi.fn()} match={match} registrations={[regA, regB]} players={players} onSubmitted={vi.fn()} />,
+    );
+    fillTwoSetWin("Ana Pérez", "Bruno Soto");
+    fireEvent.click(screen.getByRole("button", { name: /Enviar resultado/i }));
+
+    await waitFor(() => {
+      const call = rpcCalls.find((c) => c.name === "org_record_bracket_result");
+      expect(call).toBeTruthy();
+      expect(rpcCalls.find((c) => c.name === "submit_match_result")).toBeUndefined();
+      expect(call!.args._slot_id).toBe("match-1");
+      expect(call!.args._winner_side).toBe("a"); // ganó reg-a
+      expect(call!.args._sets).toEqual([
+        { games_a: 6, games_b: 4, is_tiebreak: false },
+        { games_a: 6, games_b: 3, is_tiebreak: false },
       ]);
     });
   });

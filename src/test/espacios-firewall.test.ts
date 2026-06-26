@@ -23,3 +23,12 @@ describe("Firewall Espacios: useMySpaces solo lee", () => {
     expect(code).not.toMatch(/create table/i);
   });
 });
+
+describe("Espacios respeta el deporte activo global", () => {
+  it("consume el SportProvider (useActiveSport)", () => {
+    expect(code).toContain("useActiveSport");
+  });
+  it("mapea el deporte español al inglés de la BD ('tennis')", () => {
+    expect(code).toContain('"tennis"');
+  });
+});

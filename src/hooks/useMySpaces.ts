@@ -5,6 +5,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { useActiveSport } from "@/components/providers/SportProvider";
+
+// El SportProvider usa español ("tenis"/"padel"); space.sport y los RPC usan
+// inglés ("tennis"/"padel"). Mapeamos al inglés ANTES de filtrar o nada matchea.
+const toDbSport = (s: "tenis" | "padel"): "tennis" | "padel" => (s === "padel" ? "padel" : "tennis");
 
 export type SpaceCompetition =
   | { type: "ladder"; spaceId: string; name: string; myRank: number | null; pending: number; route: string }
@@ -57,8 +62,11 @@ const phaseLabel = (motor: string) =>
 
 export function useMySpaces() {
   const { user } = useAuth();
+  const { sport } = useActiveSport();
+  const dbSport = toDbSport(sport); // "tennis" | "padel" — el valor de space.sport / RPC.
   const query = useQuery<MySpace[]>({
-    queryKey: ["my-spaces", user?.id],
+    // El deporte va en la queryKey: cache correcta por deporte y re-filtra en vivo al togglear.
+    queryKey: ["my-spaces", user?.id, dbSport],
     enabled: !!user,
     queryFn: async () => {
       const uid = user!.id;
@@ -119,6 +127,7 @@ export function useMySpaces() {
         const clubId = esc?.parent_space_id;
         if (!clubId) continue;
         const sport = e.sport === "padel" ? "padel" : "tennis";
+        if (sport !== dbSport) continue; // respeta el deporte activo global
         const c = ensureClub(clubId, sport);
         if (!c) continue;
         const pending = pendingBySpace.get(e.space_id) ?? 0;
@@ -134,6 +143,7 @@ export function useMySpaces() {
         const clubId = tourSpace?.parent_space_id;
         if (!tourSpace || !clubId) continue;
         const sport = cat.sport === "padel" ? "padel" : "tennis";
+        if (sport !== dbSport) continue; // respeta el deporte activo global
         const c = ensureClub(clubId, sport);
         if (!c) continue;
         const pending = pendingBySpace.get(cat.category_id) ?? 0;
@@ -149,7 +159,9 @@ export function useMySpaces() {
         c.pendingTotal += pending;
       }
 
-      const list = [...clubs.values()].map((c) => ({ ...c, live: c.pendingTotal > 0 }));
+      const list = [...clubs.values()]
+        .filter((c) => c.competitions.length > 0) // sin competencias del deporte activo → fuera
+        .map((c) => ({ ...c, live: c.pendingTotal > 0 }));
       // Accionable primero: pendientes/vivo desc, luego con más competencias.
       list.sort((a, b) => b.pendingTotal - a.pendingTotal || b.competitions.length - a.competitions.length);
       return list;

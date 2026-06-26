@@ -26,7 +26,6 @@ const AdminMembers = lazy(() => import("./pages/AdminMembers.tsx"));
 const AdminCourts = lazy(() => import("./pages/AdminCourts.tsx"));
 const Reservar = lazy(() => import("./pages/Reservar.tsx"));
 const MisReservas = lazy(() => import("./pages/MisReservas.tsx"));
-const Torneos = lazy(() => import("./pages/Torneos.tsx"));
 const TorneoDetalle = lazy(() => import("./pages/TorneoDetalle.tsx"));
 const SharePage = lazy(() => import("./pages/SharePage.tsx"));
 const AdminTorneos = lazy(() => import("./pages/AdminTorneos.tsx"));
@@ -169,14 +168,9 @@ const App = () => (
                       </ProtectedRoute>
                     }
                   />
-                  <Route
-                    path="/torneos"
-                    element={
-                      <ProtectedRoute>
-                        <Torneos />
-                      </ProtectedRoute>
-                    }
-                  />
+                  {/* Lista vieja de Torneos ELIMINADA: Espacios ya lista por club y
+                      Descubrir lista los abiertos. Redirect para no romper links. */}
+                  <Route path="/torneos" element={<Navigate to="/espacios" replace />} />
                   <Route
                     path="/torneos/:slug"
                     element={

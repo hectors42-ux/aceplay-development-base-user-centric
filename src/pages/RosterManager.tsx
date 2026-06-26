@@ -69,7 +69,7 @@ const RosterManager = () => {
       <div className="min-h-screen bg-gradient-warm pb-20">
         <header className="border-b border-border bg-background/85 px-5 py-4">
           <div className="mx-auto flex max-w-md items-center gap-3">
-            <Link to="/torneos" className="flex h-9 w-9 items-center justify-center rounded-2xl border border-border bg-card text-muted-foreground hover:text-foreground" aria-label="Volver">
+            <Link to="/espacios" className="flex h-9 w-9 items-center justify-center rounded-2xl border border-border bg-card text-muted-foreground hover:text-foreground" aria-label="Volver">
               <ArrowLeft className="h-4 w-4" />
             </Link>
             <div>

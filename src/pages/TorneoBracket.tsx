@@ -47,7 +47,7 @@ const TorneoBracket = () => {
   const { user } = useAuth();
   const location = useLocation();
   // Atrás determinístico: origen en state, si no el hub de torneos.
-  const backTo = (location.state as { from?: string } | null)?.from ?? "/torneos";
+  const backTo = (location.state as { from?: string } | null)?.from ?? "/espacios";
   const { canCreate } = useCanCreate();
   const [createOpen, setCreateOpen] = useState(false);
   const [cats, setCats] = useState<CategoryRow[]>([]);

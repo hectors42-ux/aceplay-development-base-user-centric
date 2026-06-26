@@ -196,11 +196,14 @@ const TournamentCategoryDetail = () => {
           </span>
         </div>
         <div className="mx-auto flex max-w-md flex-wrap items-center gap-2 px-5 pb-3 text-xs text-muted-foreground">
-          <span>{DISCIPLINE_LABEL[category.discipline]}</span>
-          <span>·</span>
-          <span>{GENDER_LABEL[category.gender]}</span>
-          <span>·</span>
-          <span>cupo {category.max_participants}</span>
+          {/* Solo meta con dato: evita los separadores huérfanos (". . cupo"). */}
+          <span>
+            {[
+              DISCIPLINE_LABEL[category.discipline],
+              GENDER_LABEL[category.gender],
+              category.max_participants ? `cupo ${category.max_participants}` : null,
+            ].filter(Boolean).join(" · ")}
+          </span>
           {isLive && (
             <LiveIndicator
               lastUpdatedAt={lastUpdatedAt}

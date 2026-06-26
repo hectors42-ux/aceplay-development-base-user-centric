@@ -154,7 +154,9 @@ export function useMySpaces() {
           phase: phaseLabel(cat.motor),
           hasNext: pending > 0,
           pending,
-          route: `/torneos/${tourSpace.slug ?? tourSpace.id}/cat/${cat.category_id}`,
+          // Jerarquía correcta: la fila de torneo lleva al HERO del torneo (no a la
+          // llave). Desde el hero → tab Categorías → categoría → llave.
+          route: `/torneos/${tourSpace.slug ?? tourSpace.id}`,
         });
         c.pendingTotal += pending;
       }

@@ -42,8 +42,9 @@ const TorneoDetalle = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  // Atrás determinístico: vuelve al origen si vino en state, si no al hub de torneos.
-  const backTo = (location.state as { from?: string } | null)?.from ?? "/torneos";
+  // Atrás determinístico: vuelve al origen si vino en state, si no a Espacios
+  // (la lista vieja de Torneos ya no existe).
+  const backTo = (location.state as { from?: string } | null)?.from ?? "/espacios";
 
   const {
     tournament,
@@ -118,7 +119,7 @@ const TorneoDetalle = () => {
       <AppShell>
       <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-gradient-warm">
         <p className="text-sm text-muted-foreground">Torneo no encontrado</p>
-        <Link to="/torneos" className="text-sm text-primary underline">
+        <Link to="/espacios" className="text-sm text-primary underline">
           Volver
         </Link>
       </div>
@@ -178,18 +179,25 @@ const TorneoDetalle = () => {
           </div>
 
           {cobrand && (
-            <div className="mt-4 flex flex-col gap-1">
-              <div className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.32em] text-white/85">
-                <Flag countryCode={cobrand.flag_country} size={14} />
-                <span>
-                  {cobrand.lockup_text ?? `ACEPLAY × ${cobrand.display_name.toUpperCase()}`}
+            <div className="mt-4 flex items-center gap-3">
+              {cobrand.logo_url && (
+                <span className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-xl bg-white/95 p-1">
+                  <img src={cobrand.logo_url} alt="" aria-hidden className="h-full w-full object-contain" />
                 </span>
-              </div>
-              {cobrand.eyebrow_text && (
-                <p className="font-display text-xs italic text-white/80">
-                  {cobrand.eyebrow_text}
-                </p>
               )}
+              <div className="flex min-w-0 flex-col gap-1">
+                <div className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.32em] text-white/85">
+                  {cobrand.flag_country && <Flag countryCode={cobrand.flag_country} size={14} />}
+                  <span className="truncate">
+                    {cobrand.lockup_text ?? `ACEPLAY × ${cobrand.display_name.toUpperCase()}`}
+                  </span>
+                </div>
+                {cobrand.eyebrow_text && (
+                  <p className="font-display text-xs italic text-white/80">
+                    {cobrand.eyebrow_text}
+                  </p>
+                )}
+              </div>
             </div>
           )}
 
@@ -233,9 +241,12 @@ const TorneoDetalle = () => {
           </div>
 
           {!isClosed && (
+            // GUARDA DE COLOR: el CTA de acción de AcePlay es NARANJA (#EC6E2E),
+            // aunque el hero esté tintado con el color del club. El branding del
+            // club no pisa los tokens de acción.
             <Button
               onClick={handlePrimaryCta}
-              className="mt-3 w-full bg-white text-clay-deep hover:bg-white/90"
+              className="mt-3 w-full bg-action text-action-foreground shadow-clay hover:bg-action/90"
             >
               {isEnrolled ? "Ver mi categoría" : "Inscribirme"}
             </Button>

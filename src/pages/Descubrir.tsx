@@ -74,7 +74,8 @@ const Descubrir = () => {
     if (error) { toast.error(error.message); return; }
     toast.success(`Inscrito en ${o.name}. Tu rating global cuenta aquí, sin hacerte socio del club.`);
     setItems((prev) => prev.map((x) => (x.space_id === o.space_id ? { ...x, enrolled: true, players: x.players + 1 } : x)));
-    setTimeout(() => navigate(o.kind === "torneo" ? "/torneo" : "/escalerilla"), 900);
+    // Torneo → HERO del torneo (por space_id); escalerilla → su pantalla.
+    setTimeout(() => navigate(o.kind === "torneo" ? `/torneos/${o.space_id}` : "/escalerilla", { state: { from: "/descubrir" } }), 900);
   };
 
   return (

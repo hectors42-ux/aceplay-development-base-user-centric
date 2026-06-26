@@ -61,11 +61,13 @@ export function useTournamentDetailEnriched(slug: string | undefined): EnrichedS
     queryKey: ["tournament-detail", slug, user?.id],
     enabled: !!slug,
     queryFn: async () => {
+      // Resuelve por slug O por id (Espacios pasa slug; Descubrir pasa el space_id).
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug ?? "");
       const { data: tourRows } = await supabase
         .from("space")
         .select("id, name, slug, status")
         .eq("type", "tournament")
-        .eq("slug", slug!)
+        .or(isUuid ? `slug.eq.${slug},id.eq.${slug}` : `slug.eq.${slug}`)
         .limit(1);
       const tour = (tourRows as { id: string; name: string; slug: string; status: string | null }[] | null)?.[0];
       if (!tour) {

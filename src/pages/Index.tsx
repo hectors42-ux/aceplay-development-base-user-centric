@@ -79,12 +79,14 @@ const Index = () => {
         {/* BLOQUE 3 · CTA PRIMARIO "COMPETIR" → /cancha (secundario si ya hay 'cargar' arriba). */}
         <div className="px-5">
           {hasOverdue ? (
-            <Link to="/cancha" className="flex items-center justify-between rounded-2xl border border-border bg-card px-4 py-3 shadow-card transition-smooth hover:bg-muted">
+            <Link to="/cancha" className="flex items-center justify-between rounded-2xl border border-action/40 bg-action/5 px-4 py-3 shadow-card transition-smooth hover:bg-action/10">
               <span className="flex items-center gap-2">
-                <Swords className="h-4 w-4 text-action" />
+                <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-action/15 text-action">
+                  <Swords className="h-4 w-4" />
+                </span>
                 <span className="text-sm font-semibold text-foreground">Competir · desafíos, escalerilla y partners</span>
               </span>
-              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              <ChevronRight className="h-4 w-4 text-action" />
             </Link>
           ) : (
             <Link to="/cancha" className="flex items-center justify-between rounded-3xl bg-gradient-clay p-5 text-primary-foreground shadow-clay transition-transform hover:scale-[1.01]">

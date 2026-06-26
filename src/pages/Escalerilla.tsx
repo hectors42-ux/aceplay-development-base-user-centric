@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, Loader2, Swords, ChevronsUp, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { useActiveSport } from "@/components/providers/SportProvider";
 import { useCanCreate } from "@/hooks/useCanCreate";
 import { CreateSpaceDialog } from "@/components/CreateSpaceDialog";
 import { UserAvatar } from "@/components/avatar/UserAvatar";
@@ -32,6 +33,10 @@ interface StandingRow { local_rank: number; user_id: string; name: string | null
 
 const Escalerilla = () => {
   const { user } = useAuth();
+  const { sport } = useActiveSport();
+  // El selector solo muestra escalerillas del deporte activo (tenis/pádel no se cruzan).
+  // SportProvider usa español; space.sport / la RPC usan inglés.
+  const dbSport = sport === "padel" ? "padel" : "tennis";
   const { canCreate } = useCanCreate();
   const [escalerillas, setEscalerillas] = useState<EscalerillaRow[]>([]);
   const [escId, setEscId] = useState<string>("");
@@ -57,13 +62,13 @@ const Escalerilla = () => {
   useEffect(() => {
     if (!user) return;
     void (async () => {
-      const { data } = await supabase.rpc("list_escalerillas");
+      const { data } = await supabase.rpc("list_escalerillas", { _sport: dbSport });
       const rows = (data as EscalerillaRow[] | null) ?? [];
       setEscalerillas(rows);
-      if (rows.length) setEscId(rows[0].space_id);
-      else setLoading(false);
+      setEscId(rows.length ? rows[0].space_id : "");
+      if (!rows.length) setLoading(false);
     })();
-  }, [user]);
+  }, [user, dbSport]);
 
   useEffect(() => { if (escId) void loadStandings(escId); }, [escId, loadStandings]);
 
@@ -169,7 +174,7 @@ const Escalerilla = () => {
         onOpenChange={setCreateOpen}
         onCreated={(id) => {
           void (async () => {
-            const { data } = await supabase.rpc("list_escalerillas");
+            const { data } = await supabase.rpc("list_escalerillas", { _sport: dbSport });
             setEscalerillas((data as EscalerillaRow[] | null) ?? []);
             setEscId(id);
           })();

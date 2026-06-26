@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ArrowLeft, BarChart3, CalendarRange, Layers, Trophy, Users } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { AppShell } from "@/components/AppShell";
 import { BottomNav } from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -36,8 +37,17 @@ import { useMyPath } from "@/components/tournaments/bracket/useMyPath";
 const TournamentCategoryDetail = () => {
   const { slug, catId } = useParams<{ slug: string; catId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, isAdmin } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
+  // Atrás determinístico: origen en state, si no el torneo padre.
+  const backTo = (location.state as { from?: string } | null)?.from ?? `/torneos/${slug}`;
+  // Set helper: preserva los demás params al cambiar uno de los tabs en la URL.
+  const setParam = (key: string, value: string) => {
+    const next = new URLSearchParams(searchParams);
+    next.set(key, value);
+    setSearchParams(next);
+  };
   const {
     tournament,
     category,
@@ -88,6 +98,7 @@ const TournamentCategoryDetail = () => {
 
   if (loading) {
     return (
+      <AppShell>
       <div className="min-h-screen bg-gradient-warm pb-28">
         <header className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-xl">
           <div className="mx-auto flex max-w-md items-center gap-3 px-5 py-4">
@@ -105,17 +116,20 @@ const TournamentCategoryDetail = () => {
         </main>
         <BottomNav />
       </div>
+      </AppShell>
     );
   }
 
   if (!tournament || !category) {
     return (
+      <AppShell>
       <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-gradient-warm">
         <p className="text-sm text-muted-foreground">Categoría no encontrada</p>
         <Link to={`/torneos/${slug}`} className="text-sm text-primary underline">
           Volver
         </Link>
       </div>
+      </AppShell>
     );
   }
 
@@ -159,12 +173,13 @@ const TournamentCategoryDetail = () => {
   })();
 
   return (
+    <AppShell>
     <div className="min-h-screen bg-gradient-warm pb-28">
       <header className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-xl">
         <div className="mx-auto flex max-w-md items-center gap-3 px-5 py-4">
           <button
             type="button"
-            onClick={() => navigate(`/torneos/${slug}`)}
+            onClick={() => navigate(backTo)}
             className="flex h-9 w-9 items-center justify-center rounded-2xl border border-border bg-card text-muted-foreground hover:text-foreground"
             aria-label="Volver"
           >
@@ -211,7 +226,10 @@ const TournamentCategoryDetail = () => {
           </div>
         )}
 
-        <Tabs defaultValue={category.status === "finalizado" ? "stats" : myMatches.length > 0 ? "mine" : isRoundRobin ? "table" : "bracket"}>
+        <Tabs
+          value={searchParams.get("tab") ?? (category.status === "finalizado" ? "stats" : myMatches.length > 0 ? "mine" : isRoundRobin ? "table" : "bracket")}
+          onValueChange={(v) => setParam("tab", v)}
+        >
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="mine" className="text-[10px]">
               <Trophy className="mr-1 h-3 w-3" /> Míos
@@ -285,7 +303,11 @@ const TournamentCategoryDetail = () => {
             </TabsContent>
           ) : isGroupsPlayoff ? (
             <TabsContent value="bracket" className="mt-4 space-y-3">
-              <Tabs defaultValue={playoffGenerated ? "playoff" : "groups"} className="w-full">
+              <Tabs
+                value={searchParams.get("phase") ?? (playoffGenerated ? "playoff" : "groups")}
+                onValueChange={(v) => setParam("phase", v)}
+                className="w-full"
+              >
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="groups" className="text-xs">Grupos</TabsTrigger>
                   <TabsTrigger value="playoff" className="text-xs">Playoff</TabsTrigger>
@@ -468,6 +490,7 @@ const TournamentCategoryDetail = () => {
 
       <BottomNav />
     </div>
+    </AppShell>
   );
 };
 

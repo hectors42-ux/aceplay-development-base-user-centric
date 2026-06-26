@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ArrowLeft, BarChart3, BookOpen, CalendarRange, ChevronRight, Layers, Share2 } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
+import { AppShell } from "@/components/AppShell";
 import { BottomNav } from "@/components/BottomNav";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -39,7 +40,11 @@ const formatDateRange = (start: string, end: string) => {
 const TorneoDetalle = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  // Atrás determinístico: vuelve al origen si vino en state, si no al hub de torneos.
+  const backTo = (location.state as { from?: string } | null)?.from ?? "/torneos";
+
   const {
     tournament,
     categories,
@@ -91,6 +96,7 @@ const TorneoDetalle = () => {
 
   if (loading) {
     return (
+      <AppShell>
       <div className="min-h-screen bg-gradient-warm pb-28">
         <div className="bg-gradient-clay-deep px-5 pb-10 pt-12">
           <Skeleton className="h-6 w-40 bg-white/20" />
@@ -103,17 +109,20 @@ const TorneoDetalle = () => {
         </main>
         <BottomNav />
       </div>
+      </AppShell>
     );
   }
 
   if (!tournament) {
     return (
+      <AppShell>
       <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-gradient-warm">
         <p className="text-sm text-muted-foreground">Torneo no encontrado</p>
         <Link to="/torneos" className="text-sm text-primary underline">
           Volver
         </Link>
       </div>
+      </AppShell>
     );
   }
 
@@ -132,6 +141,7 @@ const TorneoDetalle = () => {
   };
 
   return (
+    <AppShell>
     <div className="min-h-screen bg-gradient-warm pb-28">
       {/* HERO */}
       <header
@@ -151,7 +161,7 @@ const TorneoDetalle = () => {
           <div className="flex items-center justify-between">
             <button
               type="button"
-              onClick={() => navigate("/torneos")}
+              onClick={() => navigate(backTo)}
               className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 backdrop-blur-md transition hover:bg-white/20"
               aria-label="Volver"
             >
@@ -242,7 +252,10 @@ const TorneoDetalle = () => {
           <HowItWorks steps={howItWorksSteps} accentColor={cobrand?.primary_hex || undefined} />
         )}
 
-        <Tabs defaultValue="categories">
+        <Tabs
+          value={searchParams.get("tab") ?? "categories"}
+          onValueChange={(v) => setSearchParams({ tab: v })}
+        >
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="categories" className="text-xs">
               <Layers className="mr-1 h-3.5 w-3.5" /> Categorías
@@ -342,6 +355,7 @@ const TorneoDetalle = () => {
         slug={tournament.slug}
       />
     </div>
+    </AppShell>
   );
 };
 

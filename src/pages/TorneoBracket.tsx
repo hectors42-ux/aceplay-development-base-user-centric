@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ArrowLeft, Loader2, Trophy, Play, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { AppShell } from "@/components/AppShell";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useCanCreate } from "@/hooks/useCanCreate";
 import { CreateSpaceDialog } from "@/components/CreateSpaceDialog";
@@ -44,6 +45,9 @@ const STATUS_LABEL: Record<string, string> = {
 
 const TorneoBracket = () => {
   const { user } = useAuth();
+  const location = useLocation();
+  // Atrás determinístico: origen en state, si no el hub de torneos.
+  const backTo = (location.state as { from?: string } | null)?.from ?? "/torneos";
   const { canCreate } = useCanCreate();
   const [createOpen, setCreateOpen] = useState(false);
   const [cats, setCats] = useState<CategoryRow[]>([]);
@@ -240,9 +244,10 @@ const TorneoBracket = () => {
   const amLeader = isAmericano && amStands.length && amStands[0].played > 0 ? amStands[0] : null;
 
   return (
+    <AppShell>
     <div className="mx-auto max-w-md px-5 py-6">
       <div className="mb-5 flex items-center gap-3">
-        <Link to="/" className="flex h-9 w-9 items-center justify-center rounded-2xl border border-border bg-card text-muted-foreground">
+        <Link to={backTo} className="flex h-9 w-9 items-center justify-center rounded-2xl border border-border bg-card text-muted-foreground">
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <div>
@@ -410,6 +415,7 @@ const TorneoBracket = () => {
         </DialogContent>
       </Dialog>
     </div>
+    </AppShell>
   );
 };
 

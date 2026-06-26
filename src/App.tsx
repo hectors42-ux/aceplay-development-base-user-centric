@@ -35,6 +35,7 @@ const MisTorneos = lazy(() => import("./pages/MisTorneos.tsx"));
 const AdminCategoryDetail = lazy(() => import("./pages/AdminCategoryDetail.tsx"));
 const AdminCategoryPairs = lazy(() => import("./pages/AdminCategoryPairs.tsx"));
 const TournamentCategoryDetail = lazy(() => import("./pages/TournamentCategoryDetail.tsx"));
+const RosterManager = lazy(() => import("./pages/RosterManager.tsx"));
 const OperatorLiveBoard = lazy(() => import("./pages/OperatorLiveBoard.tsx"));
 const ResultadoPendiente = lazy(() => import("./pages/ResultadoPendiente.tsx"));
 const Cancha = lazy(() => import("./pages/Cancha.tsx"));
@@ -189,6 +190,14 @@ const App = () => (
                     element={
                       <ProtectedRoute>
                         <TournamentCategoryDetail />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/torneos/cat/:catId/roster"
+                    element={
+                      <ProtectedRoute>
+                        <RosterManager />
                       </ProtectedRoute>
                     }
                   />

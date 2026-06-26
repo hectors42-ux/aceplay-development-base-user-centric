@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/components/providers/AuthProvider";
 import { cn } from "@/lib/utils";
 
 // Tabla PONDERADA del reglamento (Fase A · round_robin_standings, SOLO LECTURA).
@@ -20,12 +21,22 @@ interface Row {
 }
 
 export function WeightedStandings({ categoryId, className }: { categoryId: string; className?: string }) {
+  const { user } = useAuth();
   const { data, isLoading } = useQuery<Row[]>({
     queryKey: ["rr-weighted-standings", categoryId],
     enabled: !!categoryId,
     queryFn: async () => {
       const { data } = await supabase.rpc("round_robin_standings", { _category_id: categoryId });
       return (data as Row[] | null) ?? [];
+    },
+  });
+  // roster_player(s) del usuario actual → para resaltar SU fila (volt) si participa.
+  const { data: myRosterIds } = useQuery<Set<string>>({
+    queryKey: ["my-roster-ids", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data } = await supabase.from("roster_players").select("id").eq("claimed_by", user!.id);
+      return new Set(((data as { id: string }[] | null) ?? []).map((r) => r.id));
     },
   });
 
@@ -49,17 +60,20 @@ export function WeightedStandings({ categoryId, className }: { categoryId: strin
         <span className="text-center" title="Puntos super tie-break">ST</span>
         <span className="text-center" title="Puntaje ponderado">Pts</span>
       </div>
-      {data.map((r, i) => (
+      {data.map((r, i) => {
+        const isMe = !!myRosterIds?.has(r.player);
+        return (
         <div
           key={r.player}
           className={cn(
             "grid grid-cols-[24px_1fr_28px_28px_28px_32px_32px_52px] items-center gap-1 px-3 py-1.5 text-sm",
-            i === 0 && "bg-skill/5",
+            isMe ? "bg-skill/15 ring-1 ring-inset ring-skill/40" : i === 0 && "bg-skill/5",
           )}
         >
-          <span className="tabular-nums text-muted-foreground">{i + 1}</span>
+          <span className={cn("tabular-nums", isMe ? "font-bold text-skill" : "text-muted-foreground")}>{i + 1}</span>
           <span className="flex items-center gap-1 truncate">
-            <span className="truncate">{r.display_name}</span>
+            <span className={cn("truncate", isMe && "font-semibold text-skill")}>{r.display_name}</span>
+            {isMe && <span className="shrink-0 text-[9px] font-bold uppercase text-skill">· tú</span>}
             {r.source !== "self" && r.source !== "claimed" && (
               <span className="shrink-0 rounded-full border border-border px-1 text-[8px] uppercase text-muted-foreground">inv</span>
             )}
@@ -71,7 +85,8 @@ export function WeightedStandings({ categoryId, className }: { categoryId: strin
           <span className="text-center tabular-nums text-muted-foreground">{r.puntos_st}</span>
           <span className="text-center font-display font-bold tabular-nums text-skill">{r.puntaje}</span>
         </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

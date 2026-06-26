@@ -268,7 +268,7 @@ const TorneoDetalle = () => {
             <Button
               size="sm"
               variant="outline"
-              onClick={() => setSearchParams({ tab: "categories" })}
+              onClick={() => navigate(`/torneos/${slug}/gestionar`)}
             >
               Gestionar torneo
             </Button>

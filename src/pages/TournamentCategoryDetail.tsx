@@ -234,8 +234,13 @@ const TournamentCategoryDetail = () => {
         {/* Gestión del organizador (motor vivo). El jugador no ve nada de esto. */}
         {canManage && (
           <div className="space-y-3 rounded-2xl border border-info/40 bg-info/5 p-3">
-            <div className="flex items-center gap-2 text-xs font-semibold text-info">
-              <Settings2 className="h-4 w-4" /> Gestión de la categoría · organizador
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 text-xs font-semibold text-info">
+                <Settings2 className="h-4 w-4" /> Gestión de la categoría · organizador
+              </div>
+              <Link to={`/torneos/${slug}/gestionar`} className="text-[11px] font-medium text-info underline underline-offset-2">
+                Panel del torneo →
+              </Link>
             </div>
             {matches.length === 0 ? (
               <div className="space-y-2">

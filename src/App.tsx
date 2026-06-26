@@ -35,6 +35,7 @@ const AdminCategoryDetail = lazy(() => import("./pages/AdminCategoryDetail.tsx")
 const AdminCategoryPairs = lazy(() => import("./pages/AdminCategoryPairs.tsx"));
 const TournamentCategoryDetail = lazy(() => import("./pages/TournamentCategoryDetail.tsx"));
 const RosterManager = lazy(() => import("./pages/RosterManager.tsx"));
+const OrganizerTournament = lazy(() => import("./pages/OrganizerTournament.tsx"));
 const OperatorLiveBoard = lazy(() => import("./pages/OperatorLiveBoard.tsx"));
 const ResultadoPendiente = lazy(() => import("./pages/ResultadoPendiente.tsx"));
 const Cancha = lazy(() => import("./pages/Cancha.tsx"));
@@ -55,7 +56,6 @@ const Showcase = lazy(() => import("./pages/Showcase.tsx"));
 const Tienda = lazy(() => import("./pages/Tienda.tsx"));
 const TiendaItem = lazy(() => import("./pages/TiendaItem.tsx"));
 const MisCanjes = lazy(() => import("./pages/MisCanjes.tsx"));
-const TorneoBracket = lazy(() => import("./pages/TorneoBracket.tsx"));
 const AdminLadder = lazy(() => import("./pages/AdminLadder.tsx"));
 const AdminLadderDetail = lazy(() => import("./pages/AdminLadderDetail.tsx"));
 const Onboarding = lazy(() => import("./pages/Onboarding.tsx"));
@@ -184,6 +184,14 @@ const App = () => (
                     element={
                       <ProtectedRoute>
                         <TournamentCategoryDetail />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/torneos/:slug/gestionar"
+                    element={
+                      <ProtectedRoute>
+                        <OrganizerTournament />
                       </ProtectedRoute>
                     }
                   />
@@ -380,11 +388,7 @@ const App = () => (
                   />
                   <Route
                     path="/torneo"
-                    element={
-                      <ProtectedRoute>
-                        <TorneoBracket />
-                      </ProtectedRoute>
-                    }
+                    element={<Navigate to="/espacios" replace />}
                   />
                   <Route
                     path="/perfil"

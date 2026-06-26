@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { ArrowLeft, BarChart3, BookOpen, CalendarRange, ChevronRight, Layers, Share2 } from "lucide-react";
+import { ArrowLeft, BarChart3, BookOpen, CalendarRange, ChevronRight, Layers, Settings2, Share2 } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
 import { AppShell } from "@/components/AppShell";
@@ -19,6 +19,7 @@ import {
 } from "@/lib/tournament-utils";
 import { useTournamentDetailEnriched } from "@/hooks/useTournamentDetailEnriched";
 import { useTournamentCobrand } from "@/hooks/useTournamentCobrand";
+import { useCanManageSpace } from "@/hooks/useCanManageSpace";
 import { useTournamentRules } from "@/hooks/useTournamentRules";
 import { parsePlayerSteps } from "@/lib/rules-markdown";
 import { HowItWorks } from "@/components/tournaments/HowItWorks";
@@ -58,6 +59,7 @@ const TorneoDetalle = () => {
     loading,
   } = useTournamentDetailEnriched(slug);
   const { cobrand } = useTournamentCobrand(tournament?.id);
+  const { canManage } = useCanManageSpace(tournament?.id);
   const { rules } = useTournamentRules(tournament?.id);
   const [shareOpen, setShareOpen] = useState(false);
   const howItWorksSteps = useMemo(
@@ -255,6 +257,23 @@ const TorneoDetalle = () => {
       </header>
 
       <main className="mx-auto max-w-md space-y-4 px-5 pt-4">
+        {/* Entrada del organizador (motor vivo). El jugador no ve esto. */}
+        {canManage && (
+          <div className="flex items-center justify-between gap-3 rounded-2xl border border-info/40 bg-info/5 p-3">
+            <div className="flex items-center gap-2 text-xs text-info">
+              <Settings2 className="h-4 w-4 shrink-0" />
+              <span className="font-semibold">Eres el organizador</span>
+              <span className="text-muted-foreground">· gestiona cada categoría</span>
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setSearchParams({ tab: "categories" })}
+            >
+              Gestionar torneo
+            </Button>
+          </div>
+        )}
         {tournament.description && (
           <p className="text-sm text-muted-foreground">{tournament.description}</p>
         )}

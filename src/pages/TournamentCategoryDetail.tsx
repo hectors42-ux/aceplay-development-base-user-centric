@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { ArrowLeft, BarChart3, CalendarRange, Layers, Trophy, Users } from "lucide-react";
+import { ArrowLeft, BarChart3, CalendarRange, Layers, Loader2, Settings2, Trophy, Users, Wand2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { useCanManageSpace } from "@/hooks/useCanManageSpace";
 import { AppShell } from "@/components/AppShell";
 import { BottomNav } from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
@@ -63,6 +66,19 @@ const TournamentCategoryDetail = () => {
     refreshing,
     isLive,
   } = useCategoryBundle(catId);
+  const { canManage } = useCanManageSpace(catId);
+  const [generating, setGenerating] = useState(false);
+
+  // Generar la llave (motor vivo): solo organizador/admin, vía wrapper org_generate_bracket.
+  const handleGenerate = async () => {
+    if (!catId) return;
+    setGenerating(true);
+    const { error } = await supabase.rpc("org_generate_bracket", { _category_id: catId });
+    setGenerating(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Llave generada.");
+    await reload();
+  };
 
   const [registerOpen, setRegisterOpen] = useState(false);
   const [resultMatch, setResultMatch] = useState<Match | null>(null);
@@ -215,6 +231,26 @@ const TournamentCategoryDetail = () => {
       </header>
 
       <main className="mx-auto max-w-md space-y-4 px-5 pt-4">
+        {/* Gestión del organizador (motor vivo). El jugador no ve nada de esto. */}
+        {canManage && (
+          <div className="space-y-3 rounded-2xl border border-info/40 bg-info/5 p-3">
+            <div className="flex items-center gap-2 text-xs font-semibold text-info">
+              <Settings2 className="h-4 w-4" /> Gestión de la categoría · organizador
+            </div>
+            {matches.length === 0 ? (
+              <div className="space-y-2">
+                <p className="text-xs text-muted-foreground">
+                  La llave aún no se ha generado. Genérala para crear los partidos del formato.
+                </p>
+                <Button onClick={handleGenerate} disabled={generating} className="w-full bg-action text-action-foreground hover:bg-action/90">
+                  {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Wand2 className="mr-1 h-4 w-4" /> Generar llave</>}
+                </Button>
+              </div>
+            ) : (
+              <p className="text-xs text-muted-foreground">Llave generada · {matches.length} partidos.</p>
+            )}
+          </div>
+        )}
         {canRegister && (
           <Button className="w-full" onClick={() => setRegisterOpen(true)}>
             Inscribirme

@@ -4,6 +4,7 @@ import { ArrowLeft, ListOrdered, Trophy, ChevronRight, Flag } from "lucide-react
 import { CoinHud } from "@/components/home/CoinHud";
 import { BottomNav } from "@/components/BottomNav";
 import { useMySpaces, type MySpace, type SpaceCompetition, sportLabel } from "@/hooks/useMySpaces";
+import { ClubHistory } from "@/components/spaces/ClubHistory";
 import { cn } from "@/lib/utils";
 
 // NIVEL 2 · Casa del club: el jugador entra al club. Identidad + selector
@@ -143,12 +144,19 @@ const ClubHouse = () => {
               ))}
             </div>
 
+            {/* PASADOS = "Mi historia en el club": evolución del Nivel + stats, arriba
+                de las competencias terminadas. */}
+            {showPast && clubId && <ClubHistory clubId={clubId} />}
+
             {comps.length === 0 ? (
               <p className="rounded-2xl border border-dashed border-border bg-card/50 p-8 text-center text-sm text-muted-foreground">
                 {showPast ? "Aún no tienes competencias terminadas en este club." : "No tienes competencias activas en este club."}
               </p>
             ) : (
               <div className="space-y-5">
+                {showPast && (
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Competencias terminadas</p>
+                )}
                 <Group title="Torneos" icon={Trophy} comps={torneos} past={showPast} />
                 <Group title="Escalerillas" icon={ListOrdered} comps={ladders} past={showPast} />
               </div>

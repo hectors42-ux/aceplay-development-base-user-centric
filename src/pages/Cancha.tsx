@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Swords, Trophy, ChevronRight, Calendar, Mail, MapPin, Zap, Megaphone } from "lucide-react";
 import { CoinHud } from "@/components/home/CoinHud";
 import { SportSwitcher } from "@/components/SportSwitcher";
@@ -16,7 +15,10 @@ import { useActiveSport } from "@/components/providers/SportProvider";
 import { useUserProfileSummary } from "@/hooks/useUserProfileSummary";
 import { useClubRanking } from "@/hooks/useClubRanking";
 import { useSuggestedPartners, useMatchAgenda } from "@/hooks/useCancha";
+import { GeneralRankingTab } from "@/components/ranking/GeneralRankingTab";
 import { RATING_SPORT_LABEL } from "@/lib/rating-utils";
+
+const TABS = ["progreso", "subir", "conexion", "ranking"] as const;
 
 const STATE_LABEL: Record<string, { label: string; cls: string }> = {
   por_jugar: { label: "Por jugar", cls: "text-info border-info/30 bg-info/10" },
@@ -32,7 +34,11 @@ const Cancha = () => {
   const { rows: ranking } = useClubRanking(sport);
   const { data: suggested = [] } = useSuggestedPartners(2);
   const { data: agenda = [] } = useMatchAgenda();
-  const [tab, setTab] = useState("progreso");
+  const [params, setParams] = useSearchParams();
+  const tabParam = params.get("tab");
+  const tab = (TABS as readonly string[]).includes(tabParam ?? "") ? (tabParam as string) : "progreso";
+  const setTab = (v: string) => setParams(v === "progreso" ? {} : { tab: v }, { replace: true });
+  const dbSport = sport === "padel" ? "padel" : "tennis";
 
   const nivel = summary?.rating?.level ?? null;
   const myRank = ranking.find((r) => r.user_id === user?.id)?.rank_position ?? null;
@@ -57,10 +63,11 @@ const Cancha = () => {
         </div>
 
         <Tabs value={tab} onValueChange={setTab} className="px-5">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="progreso">Progreso</TabsTrigger>
             <TabsTrigger value="subir">Subir</TabsTrigger>
             <TabsTrigger value="conexion">Conexión</TabsTrigger>
+            <TabsTrigger value="ranking">Ranking</TabsTrigger>
           </TabsList>
 
           {/* ───────────── PROGRESO ───────────── */}
@@ -225,6 +232,11 @@ const Cancha = () => {
                 );
               })}
             </section>
+          </TabsContent>
+
+          {/* ───────────── RANKING general (deporte + modalidad) ───────────── */}
+          <TabsContent value="ranking" className="mt-4">
+            <GeneralRankingTab dbSport={dbSport} />
           </TabsContent>
         </Tabs>
 

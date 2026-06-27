@@ -320,8 +320,9 @@ const App = () => (
                       </ProtectedRoute>
                     }
                   />
-                  {/* Decisión cerrada: /ranking y /ladder se absorben en /cancha. */}
-                  <Route path="/ranking" element={<Navigate to="/cancha" replace />} />
+                  {/* Decisión cerrada: /ranking y /ladder se absorben en /cancha.
+                      /ranking aterriza directo en el tab Ranking general. */}
+                  <Route path="/ranking" element={<Navigate to="/cancha?tab=ranking" replace />} />
                   <Route path="/ladder" element={<Navigate to="/cancha" replace />} />
                   <Route
                     path="/cargar"

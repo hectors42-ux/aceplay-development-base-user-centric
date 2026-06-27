@@ -334,9 +334,10 @@ describe("Home — enlaces y navegación", () => {
     expect(heroLink).toHaveAttribute("href", "/cancha");
   });
 
-  it("El CTA primario 'Competir' navega a /cancha (sin Resultado/Torneos como CTA)", async () => {
+  it("El acceso a Cancha (Competir, ahora secundario) navega a /cancha", async () => {
     await renderHome();
-    const competir = await screen.findByText(/^competir$/i);
+    // Rediseño "Te toca": Competir pasó a ser una puerta discreta al hub.
+    const competir = await screen.findByText(/ir a cancha · todo lo competitivo/i);
     const link = competir.closest("a") as HTMLAnchorElement;
     expect(link).toHaveAttribute("href", "/cancha");
     // Los CTA hermanos del Inicio antiguo ya no existen como acciones primarias.

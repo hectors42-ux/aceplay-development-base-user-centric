@@ -12,8 +12,8 @@ import { useActiveSport } from "@/components/providers/SportProvider";
 const toDbSport = (s: "tenis" | "padel"): "tennis" | "padel" => (s === "padel" ? "padel" : "tennis");
 
 export type SpaceCompetition =
-  | { type: "ladder"; spaceId: string; name: string; myRank: number | null; pending: number; route: string }
-  | { type: "tournament"; categoryId: string; sport: string; phase: string; hasNext: boolean; pending: number; route: string };
+  | { type: "ladder"; spaceId: string; name: string; myRank: number | null; pending: number; finished: boolean; route: string }
+  | { type: "tournament"; categoryId: string; tournamentName: string; categoryName: string; sport: string; phase: string; hasNext: boolean; pending: number; finished: boolean; route: string };
 
 export interface MySpace {
   clubId: string;
@@ -36,6 +36,7 @@ interface SpaceRow {
   parent_space_id: string | null;
   sport: string | null;
   slug: string | null;
+  status: string | null;
 }
 interface EscRow {
   space_id: string;
@@ -46,6 +47,7 @@ interface EscRow {
 }
 interface CatRow {
   category_id: string;
+  category_name: string;
   tournament_name: string;
   sport: string;
   enrolled: boolean;
@@ -71,7 +73,7 @@ export function useMySpaces() {
     queryFn: async () => {
       const uid = user!.id;
       const [spacesRes, escRes, catRes, memRes, matchRes, brandRes] = await Promise.all([
-        supabase.from("space").select("id, name, type, parent_space_id, sport, slug").in("type", ["club", "escalerilla", "tournament", "category"]),
+        supabase.from("space").select("id, name, type, parent_space_id, sport, slug, status").in("type", ["club", "escalerilla", "tournament", "category"]),
         supabase.rpc("list_escalerillas"),
         supabase.rpc("list_tournament_categories"),
         supabase.from("space_membership").select("space_id").eq("player_id", uid).eq("status", "active"),
@@ -131,7 +133,10 @@ export function useMySpaces() {
         const c = ensureClub(clubId, sport);
         if (!c) continue;
         const pending = pendingBySpace.get(e.space_id) ?? 0;
-        c.competitions.push({ type: "ladder", spaceId: e.space_id, name: e.name, myRank: e.my_rank, pending, route: "/escalerilla" });
+        c.competitions.push({
+          type: "ladder", spaceId: e.space_id, name: e.name, myRank: e.my_rank, pending,
+          finished: esc?.status === "finished", route: "/escalerilla",
+        });
         c.pendingTotal += pending;
       }
 
@@ -150,10 +155,13 @@ export function useMySpaces() {
         c.competitions.push({
           type: "tournament",
           categoryId: cat.category_id,
+          tournamentName: tourSpace.name,
+          categoryName: cat.category_name,
           sport,
           phase: phaseLabel(cat.motor),
           hasNext: pending > 0,
           pending,
+          finished: catSpace?.status === "finished",
           // Jerarquía correcta: la fila de torneo lleva al HERO del torneo (no a la
           // llave). Desde el hero → tab Categorías → categoría → llave.
           route: `/torneos/${tourSpace.slug ?? tourSpace.id}`,

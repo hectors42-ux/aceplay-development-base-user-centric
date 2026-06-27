@@ -36,6 +36,7 @@ const AdminCategoryPairs = lazy(() => import("./pages/AdminCategoryPairs.tsx"));
 const TournamentCategoryDetail = lazy(() => import("./pages/TournamentCategoryDetail.tsx"));
 const RosterManager = lazy(() => import("./pages/RosterManager.tsx"));
 const OrganizerTournament = lazy(() => import("./pages/OrganizerTournament.tsx"));
+const ClubHouse = lazy(() => import("./pages/ClubHouse.tsx"));
 const OperatorLiveBoard = lazy(() => import("./pages/OperatorLiveBoard.tsx"));
 const ResultadoPendiente = lazy(() => import("./pages/ResultadoPendiente.tsx"));
 const Cancha = lazy(() => import("./pages/Cancha.tsx"));
@@ -351,6 +352,14 @@ const App = () => (
                     element={
                       <ProtectedRoute>
                         <Espacios />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/clubes/:clubId"
+                    element={
+                      <ProtectedRoute>
+                        <ClubHouse />
                       </ProtectedRoute>
                     }
                   />

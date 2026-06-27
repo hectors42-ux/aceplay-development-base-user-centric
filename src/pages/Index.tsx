@@ -5,7 +5,7 @@ import { CoinHud } from "@/components/home/CoinHud";
 import { SportSwitcher } from "@/components/SportSwitcher";
 import { BottomNav } from "@/components/BottomNav";
 import { AppFooter } from "@/components/AppFooter";
-import { InicioNotifications } from "@/components/cancha/InicioNotifications";
+import { TeToca } from "@/components/home/TeToca";
 import { HeroAscension } from "@/components/home/HeroAscension";
 import { SponsorLockup } from "@/components/SponsorLockup";
 import { ArenaHero } from "@/components/arena";
@@ -13,7 +13,6 @@ import { UserAvatar } from "@/components/avatar/UserAvatar";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useActiveSport } from "@/components/providers/SportProvider";
 import { useUserProfileSummary } from "@/hooks/useUserProfileSummary";
-import { useMatchAgenda } from "@/hooks/useCancha";
 import { useXP, useLeague, useStreak, tierName } from "@/hooks/useEconomy";
 import { RATING_SPORT_LABEL } from "@/lib/rating-utils";
 import { prefetchAppRoutes } from "@/lib/prefetch-routes";
@@ -25,7 +24,6 @@ const Index = () => {
   const { user, profile } = useAuth();
   const { ratingSport } = useActiveSport();
   const { data: summary, loading } = useUserProfileSummary(user?.id ?? null, ratingSport);
-  const { data: agenda = [] } = useMatchAgenda();
   const { data: xp } = useXP();
   const { data: league = [] } = useLeague();
   const { data: streak } = useStreak();
@@ -73,30 +71,23 @@ const Index = () => {
           <div className="mx-5 h-64 animate-pulse rounded-[28px] border border-border bg-card/60" aria-hidden />
         )}
 
-        {/* BLOQUE 2 · "TE TOCA" (condicional; prioriza Cargar resultado · no renderiza si vacío). */}
-        <InicioNotifications />
+        {/* BLOQUE 2 · "TE TOCA": CTA contextual inteligente (UNA acción, la de mayor
+            prioridad: cargar resultado · aceptar reto · retar en escalerilla · buscar).
+            Es el PRIMARIO visual de la pantalla. */}
+        <TeToca />
 
-        {/* BLOQUE 3 · CTA PRIMARIO "COMPETIR" → /cancha (secundario si ya hay 'cargar' arriba). */}
+        {/* BLOQUE 3 · COMPETIR → /cancha. SECUNDARIO: puerta discreta al hub completo,
+            no compite con el CTA contextual de arriba. */}
         <div className="px-5">
-          {hasOverdue ? (
-            <Link to="/cancha" className="flex items-center justify-between rounded-2xl border border-action/40 bg-action/5 px-4 py-3 shadow-card transition-smooth hover:bg-action/10">
-              <span className="flex items-center gap-2">
-                <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-action/15 text-action">
-                  <Swords className="h-4 w-4" />
-                </span>
-                <span className="text-sm font-semibold text-foreground">Competir · desafíos, escalerilla y partners</span>
+          <Link to="/cancha" className="flex items-center justify-between rounded-2xl border border-border bg-card/60 px-4 py-3 shadow-card transition-smooth hover:bg-muted">
+            <span className="flex items-center gap-2">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-muted text-muted-foreground">
+                <Swords className="h-4 w-4" />
               </span>
-              <ChevronRight className="h-4 w-4 text-action" />
-            </Link>
-          ) : (
-            <Link to="/cancha" className="flex items-center justify-between rounded-3xl bg-gradient-clay p-5 text-primary-foreground shadow-clay transition-transform hover:scale-[1.01]">
-              <span className="text-left">
-                <span className="block font-display text-xl font-black">Competir</span>
-                <span className="block text-sm text-primary-foreground/85">Desafíos, escalerilla y partners</span>
-              </span>
-              <ChevronRight className="h-6 w-6" />
-            </Link>
-          )}
+              <span className="text-sm font-semibold text-foreground">Ir a Cancha · todo lo competitivo</span>
+            </span>
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          </Link>
         </div>
 
         {/* BLOQUE 4 · PULSO LIGERO (estado, no hero): racha · liga · XP → /cancha (Subir). */}

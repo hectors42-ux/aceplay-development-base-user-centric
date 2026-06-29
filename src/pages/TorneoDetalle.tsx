@@ -17,6 +17,8 @@ import {
   TOURNAMENT_STATUS_LABEL,
   type TournamentStatus,
 } from "@/lib/tournament-utils";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { useTournamentDetailEnriched } from "@/hooks/useTournamentDetailEnriched";
 import { useTournamentCobrand } from "@/hooks/useTournamentCobrand";
 import { useCanManageSpace } from "@/hooks/useCanManageSpace";
@@ -61,6 +63,37 @@ const TorneoDetalle = () => {
   const { cobrand } = useTournamentCobrand(tournament?.id);
   const { canManage } = useCanManageSpace(tournament?.id);
   const { rules } = useTournamentRules(tournament?.id);
+
+  // Torneos de roster (Fase A): los participantes viven en rr_participant, no en
+  // inscripciones del motor. Contamos roster por categoría + corte (settings) para
+  // que el hero y cada categoría muestren datos reales (no 0/0).
+  const catIds = useMemo(() => categories.map((c) => c.id), [categories]);
+  const { data: rosterAgg } = useQuery({
+    queryKey: ["tourn-roster-agg", slug, catIds.join(",")],
+    enabled: catIds.length > 0,
+    queryFn: async () => {
+      const [{ data: rp }, { data: sp }] = await Promise.all([
+        supabase.from("rr_participant").select("category_id").in("category_id", catIds),
+        supabase.from("space").select("id, settings").in("id", catIds),
+      ]);
+      const countByCat = new Map<string, number>();
+      for (const r of (rp as { category_id: string }[] | null) ?? []) {
+        countByCat.set(r.category_id, (countByCat.get(r.category_id) ?? 0) + 1);
+      }
+      let closesAt: string | null = null;
+      for (const s of (sp as { settings: { closes_at?: string } | null }[] | null) ?? []) {
+        if (s.settings?.closes_at) closesAt = s.settings.closes_at;
+      }
+      const total = [...countByCat.values()].reduce((a, b) => a + b, 0);
+      return { countByCat, total, closesAt };
+    },
+  });
+  const isRosterTourn = (rosterAgg?.total ?? 0) > 0;
+  const heroEnrolled = isRosterTourn ? rosterAgg!.total : totalEnrolled;
+  const heroCapacityLabel = isRosterTourn ? "—" : String(totalCapacity);
+  const heroDays = isRosterTourn
+    ? (rosterAgg?.closesAt ? Math.max(0, Math.ceil((new Date(rosterAgg.closesAt).getTime() - Date.now()) / 86_400_000)) : null)
+    : daysToClose;
   const [shareOpen, setShareOpen] = useState(false);
   const howItWorksSteps = useMemo(
     () => parsePlayerSteps(rules?.player_guide_md).slice(0, 3),
@@ -227,18 +260,18 @@ const TorneoDetalle = () => {
           </p>
 
           <div className="mt-3.5 grid grid-cols-3 gap-2 border-y border-white/15 py-3">
-            <Stat value={String(totalEnrolled)} label="Inscritos" />
-            <Stat value={String(totalCapacity)} label="Cupos" />
+            <Stat value={String(heroEnrolled)} label="Inscritos" />
+            <Stat value={heroCapacityLabel} label="Cupos" />
             <Stat
               value={
-                daysToClose === null
+                heroDays === null
                   ? "—"
-                  : daysToClose === 0
+                  : heroDays === 0
                   ? "Cerrado"
-                  : `${daysToClose}d`
+                  : `${heroDays}d`
               }
               label="Cierre"
-              highlight={daysToClose !== null && daysToClose <= 7 && daysToClose > 0}
+              highlight={heroDays !== null && heroDays <= 7 && heroDays > 0}
             />
           </div>
 
@@ -310,7 +343,8 @@ const TorneoDetalle = () => {
               <div className="space-y-2">
                 {categories.map((c, idx) => {
                   const color = CATEGORY_COLOR_VARS[idx % CATEGORY_COLOR_VARS.length];
-                  const enrolled = enrolledByCat[c.id] ?? 0;
+                  const rosterN = rosterAgg?.countByCat.get(c.id) ?? 0;
+                  const enrolled = rosterN > 0 ? rosterN : (enrolledByCat[c.id] ?? 0);
                   const capacity = c.max_participants ?? 0;
                   const pct = capacity > 0 ? Math.min(100, (enrolled / capacity) * 100) : 0;
                   return (
@@ -332,7 +366,7 @@ const TorneoDetalle = () => {
                             </span>
                           </div>
                           <p className="mt-0.5 text-[11px] text-muted-foreground">
-                            {DISCIPLINE_LABEL[c.discipline]} · {enrolled}/{capacity} cupos
+                            {DISCIPLINE_LABEL[c.discipline]} · {capacity > 0 ? `${enrolled}/${capacity} cupos` : `${enrolled} inscritos`}
                           </p>
                           <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-muted">
                             <div

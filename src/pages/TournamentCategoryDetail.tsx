@@ -19,6 +19,7 @@ import { RoundRobinStandings } from "@/components/tournaments/RoundRobinStanding
 import { WeightedStandings } from "@/components/tournaments/WeightedStandings";
 import { H2HMatrix } from "@/components/tournaments/H2HMatrix";
 import { RRProgressCard } from "@/components/tournaments/RRProgressCard";
+import { RosterRRView } from "@/components/tournaments/RosterRRView";
 import { useRRProgress, useRRPending } from "@/hooks/useRoundRobinExtras";
 import { RoundRobinOpponents } from "@/components/tournaments/RoundRobinOpponents";
 import { GroupsView } from "@/components/tournaments/GroupsView";
@@ -285,6 +286,9 @@ const TournamentCategoryDetail = () => {
           </div>
         )}
 
+        {isRosterRR ? (
+          <RosterRRView categoryId={category.id} slug={slug} canManage={canManage} />
+        ) : (
         <Tabs
           value={searchParams.get("tab") ?? (category.status === "finalizado" ? "stats" : myMatches.length > 0 ? "mine" : isRoundRobin ? "table" : "bracket")}
           onValueChange={(v) => setParam("tab", v)}
@@ -536,6 +540,7 @@ const TournamentCategoryDetail = () => {
             </TabsContent>
           )}
         </Tabs>
+        )}
       </main>
 
       <RegisterDialog

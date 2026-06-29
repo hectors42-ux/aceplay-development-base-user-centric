@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { ArrowLeft, BarChart3, CalendarRange, Layers, Loader2, Settings2, Trophy, Users, Wand2 } from "lucide-react";
+import { ArrowLeft, BarChart3, CalendarRange, Layers, Loader2, Settings2, Swords, Trophy, Users, Wand2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -18,6 +18,8 @@ import { RegistrationList } from "@/components/tournaments/RegistrationList";
 import { RoundRobinStandings } from "@/components/tournaments/RoundRobinStandings";
 import { WeightedStandings } from "@/components/tournaments/WeightedStandings";
 import { H2HMatrix } from "@/components/tournaments/H2HMatrix";
+import { RRProgressCard } from "@/components/tournaments/RRProgressCard";
+import { useRRProgress, useRRPending } from "@/hooks/useRoundRobinExtras";
 import { RoundRobinOpponents } from "@/components/tournaments/RoundRobinOpponents";
 import { GroupsView } from "@/components/tournaments/GroupsView";
 import { AmericanoRoundsView } from "@/components/tournaments/AmericanoRoundsView";
@@ -78,6 +80,9 @@ const TournamentCategoryDetail = () => {
       setIsRosterRR(Array.isArray(data) && data.length > 0);
     });
   }, [catId]);
+  // Avance/corte/zonas + "a quién reto" (solo si es RR de roster).
+  const { data: rrProgress } = useRRProgress(isRosterRR ? catId : undefined);
+  const { data: rrPending = [] } = useRRPending(isRosterRR ? catId : undefined);
 
   // Generar la llave (motor vivo): solo organizador/admin, vía wrapper org_generate_bracket.
   const handleGenerate = async () => {
@@ -426,8 +431,24 @@ const TournamentCategoryDetail = () => {
               <TabsContent value="table" className="mt-4 space-y-4">
                 {isRosterRR ? (
                   <>
+                    {/* Avance del torneo + corte + zonas premio/asado. */}
+                    <RRProgressCard categoryId={category.id} />
+                    {/* "A quién reto": rivales que aún no enfrento (auto-agenda del RR). */}
+                    {rrPending.length > 0 && (
+                      <div className="rounded-2xl border border-action/30 bg-action/[0.05] p-4">
+                        <p className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-action">
+                          <Swords className="h-3.5 w-3.5" /> A quién reto · {rrPending.length} por jugar
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {rrPending.slice(0, 12).map((o) => (
+                            <span key={o.roster_player_id} className="rounded-full border border-border bg-card px-2.5 py-1 text-xs text-foreground">{o.display_name}</span>
+                          ))}
+                          {rrPending.length > 12 && <span className="px-1 py-1 text-xs text-muted-foreground">+{rrPending.length - 12} más</span>}
+                        </div>
+                      </div>
+                    )}
                     {/* Reglamento (Fase A): tabla PONDERADA + matriz H2H, no el conteo simple. */}
-                    <WeightedStandings categoryId={category.id} />
+                    <WeightedStandings categoryId={category.id} prizeTop={rrProgress?.prize_top ?? 0} asadoBottom={rrProgress?.asado_bottom ?? 0} />
                     <div>
                       <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Enfrentamientos (H2H)</p>
                       <H2HMatrix categoryId={category.id} />

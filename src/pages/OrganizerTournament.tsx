@@ -11,6 +11,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { WeightedStandings } from "@/components/tournaments/WeightedStandings";
 import { H2HMatrix } from "@/components/tournaments/H2HMatrix";
+import { RRProgressCard } from "@/components/tournaments/RRProgressCard";
+import { useRRProgress } from "@/hooks/useRoundRobinExtras";
+import { suggestDominantScore } from "@/lib/dominant-player";
 import { FrozenTableAnimation } from "@/components/tournaments/admin/FrozenTableAnimation";
 import { useTournamentDetailEnriched } from "@/hooks/useTournamentDetailEnriched";
 import { useCanManageSpace } from "@/hooks/useCanManageSpace";
@@ -81,6 +84,24 @@ function CategoryAdmin({ catId, name }: { catId: string; name: string }) {
   const [pa, setPa] = useState(""); const [pb, setPb] = useState(""); const [pwin, setPwin] = useState<"a" | "b">("a");
   const [rosterSets, setRosterSets] = useState<SetRow[]>(emptySets());
   const [dominante, setDominante] = useState(false); // #5 · partido interrumpido (regla del Jugador Dominante)
+  const [resultType, setResultType] = useState<"normal" | "retiro" | "walkover">("normal");
+  const { data: rrProgress } = useRRProgress(catId);
+
+  // Asistente del anexo: A (jugador A) es el dominante; rellena el marcador final sugerido.
+  const sugerirDominante = () => {
+    const s = suggestDominantScore({
+      set1A: Number(rosterSets[0]?.a || 0), set1B: Number(rosterSets[0]?.b || 0),
+      set2A: Number(rosterSets[1]?.a || 0), set2B: Number(rosterSets[1]?.b || 0),
+    });
+    if (!s.ok) { toast.error(s.reason ?? "No se cumplen las condiciones del Jugador Dominante."); return; }
+    setRosterSets([
+      { a: String(s.set1A), b: String(s.set1B), tb: false },
+      { a: String(s.set2A), b: String(s.set2B), tb: false },
+      { a: "", b: "", tb: false },
+    ]);
+    setPwin("a");
+    toast.success(`Sugerido: ${s.set1A}-${s.set1B}, ${s.set2A}-${s.set2B}. Revisa y carga.`);
+  };
   // #6 · cierre
   const [closed, setClosed] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -135,11 +156,12 @@ function CategoryAdmin({ catId, name }: { catId: string; name: string }) {
     const winner = pwin === "a" ? pa : pb;
     const { error } = await supabase.rpc("rr_record_result", {
       _category_id: catId, _player_a: pa, _player_b: pb, _winner: winner, _sets: buildSets(rosterSets),
+      _result_type: resultType,
     });
     setBusy(false);
     if (error) { toast.error(error.message); return; }
     toast.success(dominante ? "Marcador del Jugador Dominante cargado." : "Resultado cargado.");
-    setPa(""); setPb(""); setRosterSets(emptySets()); setDominante(false);
+    setPa(""); setPb(""); setRosterSets(emptySets()); setDominante(false); setResultType("normal");
     setRefresh((x) => x + 1); await load();
   };
 
@@ -218,6 +240,8 @@ function CategoryAdmin({ catId, name }: { catId: string; name: string }) {
       {/* ROSTER (Fase A): cargar resultado + tabla ponderada */}
       {isRoster && (
         <>
+          {/* Avance del torneo + corte + zonas (igual que la vista jugador). */}
+          <RRProgressCard categoryId={catId} />
           {closed ? (
             <section className="rounded-2xl border border-confirm/40 bg-confirm/5 p-3 text-center">
               <p className="text-sm font-semibold text-confirm">Categoría cerrada · standings congelado</p>
@@ -245,14 +269,28 @@ function CategoryAdmin({ catId, name }: { catId: string; name: string }) {
                 <SelectContent><SelectItem value="a">Gana Jugador A</SelectItem><SelectItem value="b">Gana Jugador B</SelectItem></SelectContent>
               </Select>
               <SetsEditor rows={rosterSets} onChange={setRosterSets} />
-              {/* #5 · Regla del Jugador Dominante: marcador derivado MANUAL. */}
+              {/* Tipo de resultado: normal / retiro / walkover (inconclusos del reglamento). */}
+              <Select value={resultType} onValueChange={(v) => setResultType(v as "normal" | "retiro" | "walkover")}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="normal">Resultado normal</SelectItem>
+                  <SelectItem value="retiro">Retiro (se pondera lo jugado)</SelectItem>
+                  <SelectItem value="walkover">Walkover (W.O.)</SelectItem>
+                </SelectContent>
+              </Select>
+              {/* #5 · Regla del Jugador Dominante: marcador derivado + asistente del anexo. */}
               <label className="flex items-start gap-2 rounded-xl border border-border bg-muted/20 p-2 text-[11px] text-muted-foreground">
                 <input type="checkbox" className="mt-0.5" checked={dominante} onChange={(e) => setDominante(e.target.checked)} />
                 <span>
                   <span className="font-semibold text-foreground">Partido interrumpido · regla del Jugador Dominante.</span>{" "}
-                  Ingresa manualmente el marcador final derivado según el anexo; el sistema solo lo acepta y valida.
+                  Ingresa el marcador al interrumpir (set 1 + set 2, con el <b>Jugador A</b> dominante) y usa el asistente del anexo.
                 </span>
               </label>
+              {dominante && (
+                <Button type="button" variant="outline" size="sm" className="w-full" onClick={sugerirDominante}>
+                  Sugerir marcador final (anexo)
+                </Button>
+              )}
               <Button onClick={submitRoster} disabled={busy} className="w-full bg-action text-action-foreground hover:bg-action/90">
                 {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : dominante ? "Cargar marcador derivado" : "Cargar resultado"}
               </Button>
@@ -262,7 +300,7 @@ function CategoryAdmin({ catId, name }: { catId: string; name: string }) {
           {/* Tabla PONDERADA del reglamento (Fase A) + matriz H2H. */}
           <div>
             <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Tabla ponderada</p>
-            <WeightedStandings categoryId={catId} key={`st-${refresh}`} />
+            <WeightedStandings categoryId={catId} key={`st-${refresh}`} prizeTop={rrProgress?.prize_top ?? 0} asadoBottom={rrProgress?.asado_bottom ?? 0} />
           </div>
           <div>
             <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Enfrentamientos (H2H)</p>

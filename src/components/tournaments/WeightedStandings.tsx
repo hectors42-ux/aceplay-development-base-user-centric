@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { Trophy, Flame } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/components/providers/AuthProvider";
@@ -20,7 +21,7 @@ interface Row {
   puntaje: number;
 }
 
-export function WeightedStandings({ categoryId, className }: { categoryId: string; className?: string }) {
+export function WeightedStandings({ categoryId, className, prizeTop = 0, asadoBottom = 0 }: { categoryId: string; className?: string; prizeTop?: number; asadoBottom?: number }) {
   const { user } = useAuth();
   const { data, isLoading } = useQuery<Row[]>({
     queryKey: ["rr-weighted-standings", categoryId],
@@ -62,16 +63,20 @@ export function WeightedStandings({ categoryId, className }: { categoryId: strin
       </div>
       {data.map((r, i) => {
         const isMe = !!myRosterIds?.has(r.player);
+        const isPrize = prizeTop > 0 && i < prizeTop;
+        const isAsado = asadoBottom > 0 && i >= data.length - asadoBottom;
         return (
         <div
           key={r.player}
           className={cn(
             "grid grid-cols-[24px_1fr_28px_28px_28px_32px_32px_52px] items-center gap-1 px-3 py-1.5 text-sm",
-            isMe ? "bg-skill/15 ring-1 ring-inset ring-skill/40" : i === 0 && "bg-skill/5",
+            isMe ? "bg-skill/15 ring-1 ring-inset ring-skill/40" : isPrize ? "bg-fichas/[0.06]" : isAsado ? "bg-action/[0.05]" : i === 0 && "bg-skill/5",
           )}
         >
           <span className={cn("tabular-nums", isMe ? "font-bold text-skill" : "text-muted-foreground")}>{i + 1}</span>
           <span className="flex items-center gap-1 truncate">
+            {isPrize && <Trophy className="h-3 w-3 shrink-0 text-fichas" aria-label="Zona premio" />}
+            {isAsado && !isPrize && <Flame className="h-3 w-3 shrink-0 text-action" aria-label="Zona asado" />}
             <span className={cn("truncate", isMe && "font-semibold text-skill")}>{r.display_name}</span>
             {isMe && <span className="shrink-0 text-[9px] font-bold uppercase text-skill">· tú</span>}
             {r.source !== "self" && r.source !== "claimed" && (

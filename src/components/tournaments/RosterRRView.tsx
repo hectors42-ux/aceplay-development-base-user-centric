@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Users, BarChart3, Swords, Trophy, ChevronDown, Check, Clock, CircleDot } from "lucide-react";
+import { Users, BarChart3, Swords, Trophy, ChevronDown, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { WeightedStandings } from "@/components/tournaments/WeightedStandings";
 import { H2HMatrix } from "@/components/tournaments/H2HMatrix";
 import { RRProgressCard } from "@/components/tournaments/RRProgressCard";
+import { RRChallenges } from "@/components/tournaments/RRChallenges";
 import { useRRProgress } from "@/hooks/useRoundRobinExtras";
 import { cn } from "@/lib/utils";
 
@@ -69,12 +70,6 @@ export function RosterRRView({ categoryId, slug, canManage }: { categoryId: stri
   const pending = rivals.filter((r) => !myEdge(r.roster_player_id));
   const played = rivals.filter((r) => myEdge(r.roster_player_id));
 
-  const CargaCTA = canManage && slug ? (
-    <Link to={`/torneos/${slug}/gestionar`} className="inline-flex items-center gap-1 rounded-lg border border-action/40 bg-action/10 px-2.5 py-1 text-xs font-semibold text-action transition-smooth hover:bg-action/20">
-      <Swords className="h-3 w-3" /> Cargar
-    </Link>
-  ) : null;
-
   return (
     <Tabs defaultValue="rivals" className="mt-3">
       <TabsList className="grid w-full grid-cols-3">
@@ -97,26 +92,13 @@ export function RosterRRView({ categoryId, slug, canManage }: { categoryId: stri
                 <span className="text-xs">Panel del organizador →</span>
               </Link>
             )}
-            {/* Por jugar */}
-            <section>
-              <p className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-action">
-                <Clock className="h-3.5 w-3.5" /> Por jugar · {pending.length}
-              </p>
-              {pending.length === 0 ? (
-                <p className="text-xs text-muted-foreground">Ya jugaste con todos tus rivales.</p>
-              ) : (
-                <div className="space-y-1.5">
-                  {pending.map((r) => (
-                    <div key={r.roster_player_id} className="flex items-center justify-between gap-2 rounded-xl border border-border bg-card px-3 py-2 shadow-card">
-                      <span className="flex items-center gap-2 truncate text-sm">
-                        <CircleDot className="h-3.5 w-3.5 shrink-0 text-action" /> {r.display_name}
-                      </span>
-                      {CargaCTA ?? <span className="text-[11px] text-muted-foreground">por coordinar</span>}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </section>
+            {/* Reto vivo: mis retos + retar (rivales con cuenta). Suma a la tabla, no al rating. */}
+            <RRChallenges
+              categoryId={categoryId}
+              myId={me.roster_player_id}
+              rivals={pending.map((r) => ({ id: r.roster_player_id, name: r.display_name, claimed: r.claimed }))}
+            />
+            {pending.length === 0 && <p className="text-xs text-muted-foreground">Ya jugaste con todos tus rivales.</p>}
             {/* Jugados */}
             {played.length > 0 && (
               <section>

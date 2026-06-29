@@ -87,7 +87,11 @@ const Descubrir = () => {
       <div className="safe-top sticky top-0 z-30 px-3 pt-2">
         <CoinHud className="mx-auto max-w-md" />
       </div>
-      <div className="mx-auto max-w-md px-5 py-6">
+      {/* Selector de deporte — posición/tamaño homologados en todas las pantallas */}
+      <div className="mx-auto flex max-w-md justify-center px-5 pt-3 pb-1">
+        <SportSwitcher />
+      </div>
+      <div className="mx-auto max-w-md px-5 pb-6 pt-2">
         <div className="mb-5 flex items-center gap-3">
           <Link to="/" className="flex h-9 w-9 items-center justify-center rounded-2xl border border-border bg-card text-muted-foreground">
             <ArrowLeft className="h-4 w-4" />
@@ -98,8 +102,6 @@ const Descubrir = () => {
               <Compass className="h-5 w-5 text-info" /> Descubrir
             </h1>
           </div>
-          {/* Deporte activo (global, igual que en Inicio). */}
-          <SportSwitcher compact />
         </div>
 
         <p className="mb-3 text-xs text-muted-foreground">

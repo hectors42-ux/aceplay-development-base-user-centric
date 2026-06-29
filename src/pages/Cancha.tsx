@@ -55,12 +55,13 @@ const Cancha = () => {
         />
       </div>
 
-      <main className="mx-auto max-w-md md:max-w-2xl space-y-4 px-0 pb-28 pt-3">
-        {/* Título + selector de deporte */}
-        <div className="flex items-center justify-center gap-3 px-5">
-          <h1 className="font-display text-lg font-bold tracking-tight text-foreground">Cancha</h1>
-          <SportSwitcher />
-        </div>
+      {/* Selector de deporte — posición/tamaño homologados en todas las pantallas */}
+      <div className="mx-auto flex max-w-md justify-center px-5 pt-3 pb-1">
+        <SportSwitcher />
+      </div>
+
+      <main className="mx-auto max-w-md md:max-w-2xl space-y-4 px-0 pb-28 pt-2">
+        <h1 className="px-5 text-center font-display text-lg font-bold tracking-tight text-foreground">Cancha</h1>
 
         <Tabs value={tab} onValueChange={setTab} className="px-5">
           <TabsList className="grid w-full grid-cols-4">

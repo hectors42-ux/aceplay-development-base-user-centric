@@ -80,8 +80,12 @@ const Perfil = () => {
           rating={summary?.rating?.level != null ? Number(summary.rating.level).toFixed(1) : undefined}
         />
       </div>
+      {/* Selector de deporte — posición/tamaño homologados en todas las pantallas */}
+      <div className="mx-auto flex max-w-md justify-center px-5 pt-3 pb-1">
+        <SportSwitcher />
+      </div>
       <header className="z-10">
-        <div className="mx-auto flex max-w-md items-center gap-3 px-5 pb-3 pt-3">
+        <div className="mx-auto flex max-w-md items-center gap-3 px-5 pb-3 pt-2">
           <Link
             to="/"
             className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-foreground transition-smooth hover:bg-muted/70"
@@ -97,8 +101,6 @@ const Perfil = () => {
               {memberName}
             </h1>
           </div>
-          {/* Deporte activo (global, igual que en Inicio). tenis/pádel no se cruzan. */}
-          <SportSwitcher compact />
           {profile && (
             <Button size="sm" variant="outline" onClick={() => setEditing(true)}>
               <Pencil className="mr-1 h-3 w-3" /> Editar

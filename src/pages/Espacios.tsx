@@ -17,23 +17,23 @@ const Espacios = () => {
       <div className="safe-top sticky top-0 z-30 px-3 pt-2">
         <CoinHud className="mx-auto max-w-md" />
       </div>
+      {/* Selector de deporte — posición/tamaño homologados en todas las pantallas */}
+      <div className="mx-auto flex max-w-md justify-center px-5 pt-3 pb-1">
+        <SportSwitcher />
+      </div>
 
-      <main className="mx-auto max-w-md space-y-4 px-5 py-4 md:max-w-2xl">
-        <header className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">Mi pertenencia activa</p>
-            <div className="flex items-baseline gap-3">
-              <h1 className="font-display text-3xl font-black tracking-tight text-foreground">Espacios</h1>
-              {spaces.length > 0 && (
-                <p className="text-xs text-muted-foreground">
-                  {spaces.length} {spaces.length === 1 ? "club" : "clubes"}
-                  {pendingTotal > 0 && <> · <span className="font-semibold text-action">{pendingTotal} pendientes</span></>}
-                </p>
-              )}
-            </div>
+      <main className="mx-auto max-w-md space-y-4 px-5 pb-4 pt-2 md:max-w-2xl">
+        <header>
+          <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">Mi pertenencia activa</p>
+          <div className="flex items-baseline gap-3">
+            <h1 className="font-display text-3xl font-black tracking-tight text-foreground">Espacios</h1>
+            {spaces.length > 0 && (
+              <p className="text-xs text-muted-foreground">
+                {spaces.length} {spaces.length === 1 ? "club" : "clubes"}
+                {pendingTotal > 0 && <> · <span className="font-semibold text-action">{pendingTotal} pendientes</span></>}
+              </p>
+            )}
           </div>
-          {/* Deporte activo (global, igual que en Inicio). tenis/pádel no se cruzan. */}
-          <SportSwitcher compact className="mt-1 shrink-0" />
         </header>
 
         {loading && <div className="h-40 animate-pulse rounded-3xl border border-border bg-card/60" aria-hidden />}

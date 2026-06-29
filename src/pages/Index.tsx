@@ -33,7 +33,6 @@ const Index = () => {
   }, []);
 
   const nivel = summary?.rating?.level ?? null;
-  const hasOverdue = agenda.some((a) => a.state === "vencido_sin_resultado");
   const myLeague = league.find((m) => m.is_me);
   const name = profile ? `${profile.first_name ?? ""} ${profile.last_name ?? ""}`.trim() : "";
 
@@ -44,10 +43,12 @@ const Index = () => {
         <CoinHud className="mx-auto max-w-md" rating={nivel != null ? Number(nivel).toFixed(1) : "—"} />
       </div>
 
-      <main className="mx-auto max-w-md space-y-4 px-0 pb-28 pt-3">
-        <div className="flex justify-center px-5">
-          <SportSwitcher />
-        </div>
+      {/* Selector de deporte — posición/tamaño homologados en todas las pantallas */}
+      <div className="mx-auto flex max-w-md justify-center px-5 pt-3 pb-1">
+        <SportSwitcher />
+      </div>
+
+      <main className="mx-auto max-w-md space-y-4 px-0 pb-28 pt-2">
 
         {/* BLOQUE 1 · HERO IDENTIDAD + ASCENSO (lo único "grande") → /cancha (Progreso). */}
         {nivel != null && (

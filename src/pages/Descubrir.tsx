@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Loader2, Compass, Building2, Users, Trophy, ListOrdered, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { useActiveSport } from "@/components/providers/SportProvider";
+import { SportSwitcher } from "@/components/SportSwitcher";
 import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -38,10 +40,12 @@ const fmtDate = (iso: string | null) =>
 const Descubrir = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  // Deporte = global (barra superior), no un filtro local. tenis/pádel no se cruzan.
+  const { sport } = useActiveSport();
+  const dbSport = sport === "padel" ? "padel" : "tennis";
   const [items, setItems] = useState<Opportunity[]>([]);
   const [loading, setLoading] = useState(true);
   const [enrolling, setEnrolling] = useState<string | null>(null);
-  const [sport, setSport] = useState("all");
   const [level, setLevel] = useState("all");
   const [status, setStatus] = useState("all");
 
@@ -61,10 +65,10 @@ const Descubrir = () => {
 
   const filtered = useMemo(
     () => items.filter((i) =>
-      (sport === "all" || i.sport === sport) &&
+      i.sport === dbSport &&
       (level === "all" || i.level_label === level) &&
       (status === "all" || i.status === status)),
-    [items, sport, level, status],
+    [items, dbSport, level, status],
   );
 
   const enroll = async (o: Opportunity) => {
@@ -88,12 +92,14 @@ const Descubrir = () => {
           <Link to="/" className="flex h-9 w-9 items-center justify-center rounded-2xl border border-border bg-card text-muted-foreground">
             <ArrowLeft className="h-4 w-4" />
           </Link>
-          <div>
+          <div className="min-w-0 flex-1">
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Red AcePlay</p>
             <h1 className="flex items-center gap-2 font-display text-xl font-semibold">
               <Compass className="h-5 w-5 text-info" /> Descubrir
             </h1>
           </div>
+          {/* Deporte activo (global, igual que en Inicio). */}
+          <SportSwitcher compact />
         </div>
 
         <p className="mb-3 text-xs text-muted-foreground">
@@ -101,16 +107,8 @@ const Descubrir = () => {
         </p>
         <SponsorLockup scope="discover" className="mx-0 mb-4" />
 
-        {/* Filtros */}
-        <div className="mb-4 grid grid-cols-3 gap-2">
-          <Select value={sport} onValueChange={setSport}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Deporte</SelectItem>
-              <SelectItem value="tennis">Tenis</SelectItem>
-              <SelectItem value="padel">Pádel</SelectItem>
-            </SelectContent>
-          </Select>
+        {/* Filtros (el deporte se controla arriba, en la barra superior) */}
+        <div className="mb-4 grid grid-cols-2 gap-2">
           <Select value={level} onValueChange={setLevel}>
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>

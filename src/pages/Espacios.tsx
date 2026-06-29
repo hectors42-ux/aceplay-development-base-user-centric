@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Compass } from "lucide-react";
 import { CoinHud } from "@/components/home/CoinHud";
+import { SportSwitcher } from "@/components/SportSwitcher";
 import { BottomNav } from "@/components/BottomNav";
 import { SpaceCard } from "@/components/spaces/SpaceCard";
 import { useMySpaces } from "@/hooks/useMySpaces";
@@ -18,17 +19,21 @@ const Espacios = () => {
       </div>
 
       <main className="mx-auto max-w-md space-y-4 px-5 py-4 md:max-w-2xl">
-        <header>
-          <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">Mi pertenencia activa</p>
-          <div className="flex items-baseline gap-3">
-            <h1 className="font-display text-3xl font-black tracking-tight text-foreground">Espacios</h1>
-            {spaces.length > 0 && (
-              <p className="text-xs text-muted-foreground">
-                {spaces.length} {spaces.length === 1 ? "club" : "clubes"}
-                {pendingTotal > 0 && <> · <span className="font-semibold text-action">{pendingTotal} pendientes</span></>}
-              </p>
-            )}
+        <header className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">Mi pertenencia activa</p>
+            <div className="flex items-baseline gap-3">
+              <h1 className="font-display text-3xl font-black tracking-tight text-foreground">Espacios</h1>
+              {spaces.length > 0 && (
+                <p className="text-xs text-muted-foreground">
+                  {spaces.length} {spaces.length === 1 ? "club" : "clubes"}
+                  {pendingTotal > 0 && <> · <span className="font-semibold text-action">{pendingTotal} pendientes</span></>}
+                </p>
+              )}
+            </div>
           </div>
+          {/* Deporte activo (global, igual que en Inicio). tenis/pádel no se cruzan. */}
+          <SportSwitcher compact className="mt-1 shrink-0" />
         </header>
 
         {loading && <div className="h-40 animate-pulse rounded-3xl border border-border bg-card/60" aria-hidden />}

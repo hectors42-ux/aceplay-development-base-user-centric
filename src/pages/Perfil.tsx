@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SportBadge } from "@/components/SportBadge";
+import { SportSwitcher } from "@/components/SportSwitcher";
 import {
   ArrowLeft,
   Pencil,
@@ -97,7 +97,8 @@ const Perfil = () => {
               {memberName}
             </h1>
           </div>
-          <SportBadge />
+          {/* Deporte activo (global, igual que en Inicio). tenis/pádel no se cruzan. */}
+          <SportSwitcher compact />
           {profile && (
             <Button size="sm" variant="outline" onClick={() => setEditing(true)}>
               <Pencil className="mr-1 h-3 w-3" /> Editar

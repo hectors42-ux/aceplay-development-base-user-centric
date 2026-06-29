@@ -1,4 +1,5 @@
-// TODO: cablear fase 2
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import type { FormatTableRow } from "@/lib/tournament-rule-templates";
 
 export interface TournamentRules {
@@ -22,12 +23,26 @@ export type RulesPayload = Omit<
   "id" | "tournament_id" | "version" | "is_current" | "created_at" | "updated_at"
 >;
 
-export const useTournamentRules = (_tournamentId: string | null | undefined) => {
-  // TODO: cablear fase 2
+export const useTournamentRules = (tournamentId: string | null | undefined) => {
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["tournament-rules", tournamentId],
+    enabled: !!tournamentId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("tournament_rules")
+        .select("*")
+        .eq("tournament_id", tournamentId as string)
+        .eq("is_current", true)
+        .order("version", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      return (data as TournamentRules | null) ?? null;
+    },
+  });
   return {
-    rules: null as TournamentRules | null,
-    loading: false,
-    reload: async () => {},
+    rules: data ?? null,
+    loading: isLoading,
+    reload: async () => { await refetch(); },
     saveDraft: async (_payload: RulesPayload) => {},
     publish: async () => {},
   };

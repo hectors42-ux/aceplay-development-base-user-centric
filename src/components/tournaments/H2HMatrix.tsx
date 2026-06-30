@@ -44,12 +44,12 @@ export function H2HMatrix({ categoryId, className }: { categoryId: string; class
 
   return (
     <div className={cn("overflow-x-auto rounded-2xl border border-border bg-card shadow-card", className)}>
-      <table className="w-full border-collapse text-[11px]">
+      <table className="border-collapse text-[11px]">
         <thead>
           <tr>
-            <th className="sticky left-0 z-10 bg-card p-2 text-left text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">vs</th>
+            <th className="sticky left-0 z-10 w-[112px] min-w-[112px] bg-card p-2 text-left text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">vs</th>
             {parts.map((p) => (
-              <th key={p.roster_player_id} className="p-1.5 text-center font-mono text-[10px] font-semibold text-muted-foreground" title={p.display_name}>
+              <th key={p.roster_player_id} className="w-[52px] min-w-[52px] border-l border-border/40 p-1.5 text-center font-mono text-[10px] font-semibold text-muted-foreground" title={p.display_name}>
                 {initials(p.display_name)}
               </th>
             ))}
@@ -58,16 +58,20 @@ export function H2HMatrix({ categoryId, className }: { categoryId: string; class
         <tbody>
           {parts.map((row) => (
             <tr key={row.roster_player_id} className="border-t border-border/60">
-              <td className="sticky left-0 z-10 max-w-[120px] truncate bg-card p-2 text-left font-medium">{row.display_name}</td>
+              <td className="sticky left-0 z-10 w-[112px] min-w-[112px] max-w-[112px] truncate bg-card p-2 text-left text-xs font-medium">{row.display_name}</td>
               {parts.map((col) => {
                 if (row.roster_player_id === col.roster_player_id) {
-                  return <td key={col.roster_player_id} className="bg-muted/30 p-1.5 text-center text-muted-foreground/40">—</td>;
+                  return <td key={col.roster_player_id} className="w-[52px] min-w-[52px] border-l border-border/40 bg-muted/30 text-center text-muted-foreground/40">—</td>;
                 }
                 const cell = result.get(row.roster_player_id)?.get(col.roster_player_id);
                 return (
-                  <td key={col.roster_player_id} className="p-1.5 text-center tabular-nums">
+                  <td key={col.roster_player_id} className="w-[52px] min-w-[52px] border-l border-border/40 px-1 py-1.5 text-center">
                     {cell?.score ? (
-                      <span className={cn(cell.rowWon ? "font-semibold text-confirm" : "text-muted-foreground")}>{cell.score}</span>
+                      <div className={cn("flex flex-col items-center gap-0.5 leading-none", cell.rowWon ? "font-semibold text-confirm" : "text-muted-foreground")}>
+                        {cell.score.split(" ").filter(Boolean).map((s, i) => (
+                          <span key={i} className="whitespace-nowrap tabular-nums text-[10px]">{s}</span>
+                        ))}
+                      </div>
                     ) : (
                       <span className="text-muted-foreground/30">·</span>
                     )}

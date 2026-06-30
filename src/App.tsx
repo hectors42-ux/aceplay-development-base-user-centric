@@ -22,6 +22,7 @@ import Auth from "./pages/Auth.tsx";
 // Resto: lazy para acelerar el primer render del PWA
 const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
 const AcceptInvitation = lazy(() => import("./pages/AcceptInvitation.tsx"));
+const ReclamarCupo = lazy(() => import("./pages/ReclamarCupo.tsx"));
 const AdminMembers = lazy(() => import("./pages/AdminMembers.tsx"));
 const AdminCourts = lazy(() => import("./pages/AdminCourts.tsx"));
 const Reservar = lazy(() => import("./pages/Reservar.tsx"));
@@ -138,6 +139,7 @@ const App = () => (
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/reset-password" element={<ResetPassword />} />
                   <Route path="/accept-invitation" element={<AcceptInvitation />} />
+                  <Route path="/reclamar/:token" element={<ReclamarCupo />} />
                   <Route path="/install" element={<Install />} />
                   <Route path="/live/:slug" element={<LiveOverlay />} />
 

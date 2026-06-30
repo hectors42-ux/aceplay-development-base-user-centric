@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Loader2, Trophy, Users, Wand2, Settings2, Plus, Lock } from "lucide-react";
+import { ArrowLeft, Loader2, Trophy, Users, Wand2, Settings2, Plus, Lock, Check, Link as LinkIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
@@ -165,6 +165,15 @@ function CategoryAdmin({ catId, name }: { catId: string; name: string }) {
     setRefresh((x) => x + 1); await load();
   };
 
+  // Camino B: invitar a un jugador a reclamar su cupo (genera enlace con token).
+  const invite = async (p: RosterP) => {
+    const { data, error } = await supabase.rpc("rr_invite_spot", { _roster_player_id: p.roster_player_id });
+    if (error) { toast.error(error.message); return; }
+    const link = `${window.location.origin}/reclamar/${data}`;
+    try { await navigator.clipboard.writeText(link); toast.success(`Enlace de ${p.display_name} copiado. Compártelo con el jugador.`); }
+    catch { toast.message(link); }
+  };
+
   // #6 · cierre de la categoría (motor vivo). Congela el standings y arma el podio.
   const cerrar = async () => {
     if (!window.confirm("¿Cerrar la categoría? Se congela el standings final y no se podrán cargar más resultados.")) return;
@@ -191,13 +200,23 @@ function CategoryAdmin({ catId, name }: { catId: string; name: string }) {
           <Users className="h-3.5 w-3.5" /> Inscritos · {isRoster ? `${roster.length} (roster)` : `${new Set(slots.flatMap((s) => [s.player_a, s.player_b]).filter(Boolean)).size} (motor)`}
         </p>
         {isRoster ? (
-          <div className="flex flex-wrap gap-1.5">
-            {roster.map((p) => (
-              <span key={p.roster_player_id} className="rounded-full border border-border bg-muted/40 px-2 py-0.5 text-[11px]">
-                {p.display_name}{p.claimed ? " ·✓" : ""}
-              </span>
-            ))}
-          </div>
+          <>
+            <div className="flex flex-wrap gap-1.5">
+              {roster.map((p) => (
+                <span key={p.roster_player_id} className={cn("inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px]", p.claimed ? "border-confirm/40 bg-confirm/10 text-confirm" : "border-border bg-muted/40")}>
+                  {p.display_name}
+                  {p.claimed ? (
+                    <Check className="h-3 w-3" />
+                  ) : (
+                    <button type="button" onClick={() => invite(p)} className="ml-0.5 inline-flex items-center gap-0.5 text-action hover:underline" title="Invitar a reclamar su cupo">
+                      <LinkIcon className="h-3 w-3" /> invitar
+                    </button>
+                  )}
+                </span>
+              ))}
+            </div>
+            <p className="mt-2 text-[10px] text-muted-foreground">Invita a cada jugador para que reclame su cupo y cargue sus propios resultados (reto vivo). Mientras no lo reclamen, cargas tú aquí.</p>
+          </>
         ) : (
           <p className="text-xs text-muted-foreground">{generated ? "Inscritos en la llave generada." : "Inscritos del motor."}</p>
         )}
